@@ -25,8 +25,13 @@ export default class Playground {
 			scene
 		)
 
+    const cube = BABYLON.MeshBuilder.CreateBox("ur mom", {}, scene)
+    console.log(cube)
+
 		// Move the sphere upward 1/2 its height
 		sphere.position.y = 1
+
+    console.log(sphere)
 
     const camera = new BABYLON.ArcRotateCamera(
       'camera',
