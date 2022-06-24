@@ -1,9 +1,10 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use crate::errors::GameLoadingResult;
+use regex::Regex;
 
 use super::section::Section;
+use crate::errors::{GameLoadingError, GameLoadingResult};
 
 /// This logic just reads/writes to/from file
 pub trait FileConverter {
@@ -23,11 +24,36 @@ pub trait FileConverter {
 
 /// This logic just converts string to sections and vice versa
 pub trait SectionConverter {
-    fn to_sections(content: String) -> GameLoadingResult<Vec<Section>> {
-        todo!()
+    fn _get_regex() -> Regex {
+        Regex::new(r"^# (\S+)").unwrap()
+    }
+
+    fn to_sections(content: &str) -> GameLoadingResult<Vec<Section>> {
+        let re = Self::_get_regex();
+
+        // getting sections names
+        let mut sections_names_iter = re.captures_iter(content).map(|cap| {
+            cap.get(0)
+                .map(|v| v.as_str().to_string())
+                .ok_or(GameLoadingError::CannotReadSections)
+        });
+
+        // getting their content
+        re.split(content)
+            .skip(1) // Skipping the first occurancy cause it's not a section
+            .map(|s| {
+                sections_names_iter
+                    .next()
+                    .unwrap()
+                    .map(|name| Section::new(name, s.to_string()))
+            })
+            .collect()
     }
 
     fn from_sections(sections: Vec<Section>) -> String {
-        todo!()
+        sections
+            .into_iter()
+            .map(|s| format!("# {}\n{}", s.name, s.content))
+            .collect()
     }
 }
