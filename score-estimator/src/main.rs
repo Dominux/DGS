@@ -1,6 +1,7 @@
+mod coordinates;
 mod errors;
 mod field;
-mod file_converter;
+mod file_converters;
 mod point;
 
 fn main() {

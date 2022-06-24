@@ -1,5 +1,8 @@
+use crate::coordinates::Coordinates;
+
 /// Represents a single point in a game field
-pub struct Point {
+pub struct Point<T> {
+    coords: Coordinates<T>,
     status: PointStatus,
 }
 
