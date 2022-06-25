@@ -1,0 +1,103 @@
+{
+	"version": 1,
+	"meta": {
+		"fieldType": "cube_sphere",
+		"encodingStrategy": "faces_edges_vertices"
+	},
+	"game": {
+		"count": {
+			"black": 0,
+			"white": 0
+		},
+		"size": 9,
+		"playerToMove": 1,
+		"symbols": {
+			"black": "2",
+			"white": "1",
+			"empty": "0",
+			"blocked": "3"
+		},
+		"field": {
+			"faces": {
+				"top": [
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0"
+				],
+				"front": [
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0"
+				],
+				"bottom": [
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0"
+				],
+				"back": [
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0"
+				],
+				"left": [
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0"
+				],
+				"right": [
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0",
+					"0 0 0 0 0 0 0"
+				]
+			},
+			"edges": {
+				"top_front": "0 0 0 0 0 0 0",
+				"top_back": "0 0 0 0 0 0 0",
+				"top_left": "0 0 0 0 0 0 0",
+				"top_right": "0 0 0 0 0 0 0",
+				"front_left": "0 0 0 0 0 0 0",
+				"left_back": "0 0 0 0 0 0 0",
+				"back_right": "0 0 0 0 0 0 0",
+				"right_front": "0 0 0 0 0 0 0",
+				"bottom_front": "0 0 0 0 0 0 0",
+				"bottom_back": "0 0 0 0 0 0 0",
+				"bottom_left": "0 0 0 0 0 0 0",
+				"bottom_right": "0 0 0 0 0 0 0"
+			},
+			"vertices": {
+				"top_right_front": "0",
+				"top_left_front": "0",
+				"top_left_back": "0",
+				"top_right_back": "0",
+				"bottom_right_front": "0",
+				"bottom_left_front": "0",
+				"bottom_left_back": "0",
+				"bottom_right_back": "0"
+			}
+		}
+	}
+}
