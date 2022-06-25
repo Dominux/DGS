@@ -22,11 +22,11 @@ pub trait FileConverter {
 }
 
 pub trait JSONizer {
-    fn deserialize(json: &str) -> serde_json::Result<StoredGame<usize>> {
+    fn deserialize(json: &str) -> serde_json::Result<StoredGame> {
         serde_json::from_str(json)
     }
 
-    fn serialize(game: &StoredGame<usize>) -> serde_json::Result<String> {
+    fn serialize(game: &StoredGame) -> serde_json::Result<String> {
         serde_json::to_string(game)
     }
 }

@@ -35,9 +35,9 @@ use crate::coordinates::Coordinates;
 /// ```
 ///
 #[derive(Debug, Deserialize, Serialize)]
-pub struct StoredGame<T> {
+pub struct StoredGame {
     pub meta: StoredGameMeta,
-    pub moves: Vec<StoredGameMove<T>>,
+    pub moves: Vec<StoredGameMove>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -48,11 +48,11 @@ pub struct StoredGameMeta {
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct StoredGameMove<T> {
+pub struct StoredGameMove {
     pub move_type: StoredGameMoveType,
 
     #[serde(default = "Option::default")]
-    pub coordinates: Option<Coordinates<T>>,
+    pub coordinates: Option<Coordinates>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
