@@ -1,0 +1,15 @@
+{
+	"meta": {
+		"field": "cube_sphere",
+		"size": 9
+	},
+	"moves": [
+		{
+			"moveType": "Move",
+			"coordinates": {
+				"x": 0,
+				"y": 0
+			}
+		}
+	]
+}
