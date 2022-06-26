@@ -9,3 +9,12 @@ pub enum GameLoadingError {
 }
 
 pub type GameLoadingResult<T> = Result<T, GameLoadingError>;
+
+/// All common errors
+#[derive(thiserror::Error, Debug)]
+pub enum GameError {
+    #[error("{0}")]
+    ValidationError(String),
+}
+
+pub type GameResult<T> = Result<T, GameError>;

@@ -1,4 +1,3 @@
-mod coordinates;
 mod errors;
 mod field;
 mod file_converters;

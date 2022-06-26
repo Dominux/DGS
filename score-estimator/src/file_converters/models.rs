@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::coordinates::Coordinates;
+use crate::point::PointID;
 
 ///
 /// Consider a stored game to be like this:
@@ -52,7 +52,7 @@ pub struct StoredGameMove {
     pub move_type: StoredGameMoveType,
 
     #[serde(default = "Option::default")]
-    pub coordinates: Option<Coordinates>,
+    pub coordinates: Option<PointID>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

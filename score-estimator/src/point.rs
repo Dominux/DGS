@@ -1,10 +1,19 @@
-use crate::coordinates::Coordinates;
+pub type PointID = usize;
 
 /// Represents a single point in a game field
 #[derive(Clone, Debug)]
 pub struct Point {
-    coords: Coordinates,
+    id: PointID,
     status: PointStatus,
+}
+
+impl Point {
+    pub fn new(id: PointID) -> Self {
+        Self {
+            id,
+            status: PointStatus::default(),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -12,6 +21,12 @@ pub enum PointStatus {
     Empty,
     Occupied(PlayerColor),
     Blocked,
+}
+
+impl Default for PointStatus {
+    fn default() -> Self {
+        Self::Empty
+    }
 }
 
 /// Represents a player for the game.
