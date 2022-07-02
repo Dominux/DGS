@@ -1,8 +1,3 @@
-use std::{
-    cell::RefCell,
-    rc::{Rc, Weak},
-};
-
 use crate::{
     aliases::{PointID, SizeType},
     errors::{GameError, GameResult},
@@ -14,22 +9,26 @@ use super::interface::Field;
 #[derive(Debug, Clone)]
 pub struct PointWrapper {
     pub inner: Point,
-    pub top: Relation,
-    pub left: Relation,
-    pub right: Relation,
-    pub bottom: Relation,
+    pub top: Option<PointID>,
+    pub left: Option<PointID>,
+    pub right: Option<PointID>,
+    pub bottom: Option<PointID>,
 }
 
-pub type Relation = Weak<RefCell<PointWrapper>>;
-
 impl PointWrapper {
-    pub fn new(inner: Point) -> Self {
+    pub fn new(
+        inner: Point,
+        top: Option<PointID>,
+        left: Option<PointID>,
+        right: Option<PointID>,
+        bottom: Option<PointID>,
+    ) -> Self {
         Self {
             inner,
-            top: Weak::new(),
-            left: Weak::new(),
-            right: Weak::new(),
-            bottom: Weak::new(),
+            top,
+            left,
+            right,
+            bottom,
         }
     }
 
@@ -40,7 +39,7 @@ impl PointWrapper {
 
 #[derive(Debug, Clone)]
 pub struct CubeSphereField {
-    points: Vec<Rc<RefCell<PointWrapper>>>,
+    points: Vec<PointWrapper>,
     size: SizeType,
 }
 
@@ -68,7 +67,7 @@ impl CubeSphereFieldBuilder {
         let mut points: Vec<_> = {
             let points_count = (*size as usize).pow(3);
             (0..points_count)
-                .map(|i| Rc::new(RefCell::new(PointWrapper::new(Point::new(i)))))
+                .map(|i| PointWrapper::new(Point::new(i), None, None, None, None))
                 .collect()
         };
 
