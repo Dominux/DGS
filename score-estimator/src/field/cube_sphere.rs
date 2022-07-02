@@ -119,12 +119,6 @@ impl CubeSphereFieldBuilder {
                 let last_top_edge_elem_2 = last_top_edge_elem_1 + size - 1;
                 let last_top_edge_elem_3 = last_top_edge_elem_2 + size - 1;
                 let last_top_edge_elem_4 = last_top_edge_elem_3 + size - 1;
-                let last_top_edge_elems = [
-                    last_top_edge_elem_1,
-                    last_top_edge_elem_2,
-                    last_top_edge_elem_3,
-                    last_top_edge_elem_4,
-                ];
 
                 let range_1 = quadratic_inner_size..=last_top_edge_elem_1;
                 let range_2 = last_top_edge_elem_1..=last_top_edge_elem_2;
@@ -157,10 +151,6 @@ impl CubeSphereFieldBuilder {
                     point.left = Some(id - 1);
                     point.right = Some(id + 1);
 
-                    if last_top_edge_elems.contains(&id) {
-                        // Last elements without their top neighbor
-                        continue;
-                    }
                     if range_1.contains(&id) {
                         point.top = Some((id - quadratic_size) * size);
                     }
