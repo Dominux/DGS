@@ -114,55 +114,102 @@ impl CubeSphereFieldBuilder {
             let quadratic_size = size.pow(2);
             let layer_size = quadratic_size - quadratic_inner_size;
 
+            // Top edges
             {
                 let last_top_edge_elem_1 = quadratic_inner_size + size - 1;
                 let last_top_edge_elem_2 = last_top_edge_elem_1 + size - 1;
                 let last_top_edge_elem_3 = last_top_edge_elem_2 + size - 1;
                 let last_top_edge_elem_4 = last_top_edge_elem_3 + size - 1;
+                let last_top_edge_elems = [
+                    last_top_edge_elem_1,
+                    last_top_edge_elem_2,
+                    last_top_edge_elem_3,
+                    last_top_edge_elem_4,
+                ];
 
                 let range_1 = quadratic_inner_size..=last_top_edge_elem_1;
                 let range_2 = last_top_edge_elem_1..=last_top_edge_elem_2;
                 let range_3 = last_top_edge_elem_2..=last_top_edge_elem_3;
-                let range_4 = last_top_edge_elem_3..=last_top_edge_elem_4;
 
                 let range_3_first_elem = last_top_edge_elem_2 + 1;
                 let last_top_elem = quadratic_inner_size - 1;
 
-                // Top edges
                 for id in quadratic_inner_size..quadratic_size {
-                    let point = &mut points[id];
+                    let top_id = {
+                        let point = &mut points[id];
 
-                    point.bottom = Some(id + layer_size);
+                        point.bottom = Some(id + layer_size);
 
-                    if id == quadratic_inner_size {
-                        // First element
-                        point.left = Some(id + quadratic_size - 1);
-                        point.right = Some(id + 1);
-                        continue;
-                    }
-                    if id == last_top_edge_elem_4 {
-                        // Last element
-                        point.right = Some(id - quadratic_size + 1);
-                        point.top = Some(0);
+                        if id == quadratic_inner_size {
+                            // First element
+                            point.left = Some(id + quadratic_size - 1);
+                            point.right = Some(id + 1);
+                            continue;
+                        }
+                        if id == last_top_edge_elem_4 {
+                            // Last element
+                            point.right = Some(id - quadratic_size + 1);
+                            point.top = Some(0);
+                            point.left = Some(id - 1);
+                            continue;
+                        }
+
                         point.left = Some(id - 1);
-                        continue;
-                    }
+                        point.right = Some(id + 1);
 
-                    point.left = Some(id - 1);
-                    point.right = Some(id + 1);
+                        if last_top_edge_elems.contains(&id) {
+                            // It does not have a top neighbor
+                            continue;
+                        }
 
-                    if range_1.contains(&id) {
-                        point.top = Some((id - quadratic_size) * size);
-                    }
-                    if range_2.contains(&id) {
-                        point.top = Some(id - (size * 2) + 2);
-                    }
-                    if range_3.contains(&id) {
-                        let k = id - range_3_first_elem;
-                        point.top = Some(last_top_elem - inner_size * k);
-                    }
-                    if range_4.contains(&id) {
-                        point.top = Some(last_top_edge_elem_4 - id);
+                        if range_1.contains(&id) {
+                            let top_id = (id - quadratic_size) * size;
+                            point.top = Some(top_id);
+                            top_id
+                        } else if range_2.contains(&id) {
+                            let top_id = id - (size * 2) + 2;
+                            point.top = Some(top_id);
+                            top_id
+                        } else if range_3.contains(&id) {
+                            let k = id - range_3_first_elem;
+                            let top_id = last_top_elem - inner_size * k;
+                            point.top = Some(top_id);
+                            top_id
+                        } else {
+                            let top_id = last_top_edge_elem_4 - id;
+                            point.top = Some(top_id);
+                            top_id
+                        }
+                    };
+                    points[top_id].bottom = Some(id);
+                }
+            }
+
+            // Middle faces and edges
+            {
+                for layer in 0..(size - 1) {
+                    let min = quadratic_size + layer_size * layer;
+                    let max = min + layer_size;
+
+                    for id in min..max {
+                        let point = &mut points[id];
+
+                        point.top = Some(id - layer_size);
+                        point.bottom = Some(id + layer_size);
+
+                        if id == min {
+                            // First element
+                            point.left = Some(max - 1);
+                            point.right = Some(id + 1);
+                        } else if id == max {
+                            // Last element
+                            point.left = Some(id - 1);
+                            point.right = Some(min);
+                        } else {
+                            // Default
+                            point.left = Some(id - 1);
+                            point.right = Some(id + 1)
+                        }
                     }
                 }
             }
