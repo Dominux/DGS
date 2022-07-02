@@ -1,4 +1,4 @@
-use crate::point::{Point, PointID};
+use crate::{aliases::PointID, point::Point};
 
 /// Any field must implement this trait to be representive for the game score-estimator
 pub trait Field {

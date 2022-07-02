@@ -1,9 +1,9 @@
-pub type PointID = usize;
+use crate::aliases::PointID;
 
 /// Represents a single point in a game field
 #[derive(Clone, Debug)]
 pub struct Point {
-    id: PointID,
+    pub id: PointID,
     status: PointStatus,
 }
 

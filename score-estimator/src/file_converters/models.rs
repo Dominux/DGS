@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::point::PointID;
+use crate::aliases::PointID;
 
 ///
 /// Consider a stored game to be like this:

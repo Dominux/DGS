@@ -1,14 +1,46 @@
+use std::{
+    cell::RefCell,
+    rc::{Rc, Weak},
+};
+
 use crate::{
+    aliases::{PointID, SizeType},
     errors::{GameError, GameResult},
-    point::{Point, PointID},
-    size_type::SizeType,
+    point::Point,
 };
 
 use super::interface::Field;
 
 #[derive(Debug, Clone)]
+pub struct PointWrapper {
+    pub inner: Point,
+    pub top: Relation,
+    pub left: Relation,
+    pub right: Relation,
+    pub bottom: Relation,
+}
+
+pub type Relation = Weak<RefCell<PointWrapper>>;
+
+impl PointWrapper {
+    pub fn new(inner: Point) -> Self {
+        Self {
+            inner,
+            top: Weak::new(),
+            left: Weak::new(),
+            right: Weak::new(),
+            bottom: Weak::new(),
+        }
+    }
+
+    pub fn id(&self) -> &PointID {
+        &self.inner.id
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct CubeSphereField {
-    points: Vec<Point>,
+    points: Vec<Rc<RefCell<PointWrapper>>>,
     size: SizeType,
 }
 
@@ -27,15 +59,27 @@ impl CubeSphereFieldBuilder {
         self.validate_size(size)?;
 
         // Constructing field
-        let size = *size as usize;
-        let field_len = size.pow(3);
-        let points = (1..=field_len).map(|id| Point::new(id)).collect();
-        let field = CubeSphereField {
-            points,
-            size: size as SizeType,
+        let field = self.construct(size);
+        Ok(field)
+    }
+
+    fn construct(&self, size: &SizeType) -> CubeSphereField {
+        // Creating points
+        let mut points: Vec<_> = {
+            let points_count = (*size as usize).pow(3);
+            (0..points_count)
+                .map(|i| Rc::new(RefCell::new(PointWrapper::new(Point::new(i)))))
+                .collect()
         };
 
-        Ok(field)
+        /*
+        For example I'm gonna create a field with size of 5
+        */
+
+        CubeSphereField {
+            points: points,
+            size: *size,
+        }
     }
 
     fn validate_size(&self, size: &SizeType) -> GameResult<()> {
@@ -46,31 +90,5 @@ impl CubeSphereFieldBuilder {
                 "size must be 2 or higher".to_string(),
             ))
         }
-    }
-}
-
-impl CubeSphereField {
-    #[inline]
-    pub(self) fn side_from_size(size: &SizeType) -> SizeType {
-        size - 1
-    }
-
-    #[inline]
-    fn side(&self) -> SizeType {
-        Self::side_from_size(&self.size)
-    }
-}
-
-impl Field for CubeSphereField {
-    fn get_neighbor_points(&self, point_id: &PointID) -> [Option<&Point>; 4] {
-        // let top = {
-        //     if point_id
-        // };
-
-        todo!()
-    }
-
-    fn get_neighbor_points_mut(&mut self, point_id: &PointID) -> [Option<&mut Point>; 4] {
-        todo!()
     }
 }
