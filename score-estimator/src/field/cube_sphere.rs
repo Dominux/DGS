@@ -46,6 +46,15 @@ pub struct CubicSphereField {
     size: SizeType,
 }
 
+impl CubicSphereField {
+    pub(crate) fn new(points: Vec<PointWrapper>, size: &SizeType) -> Self {
+        Self {
+            points,
+            size: *size,
+        }
+    }
+}
+
 /// Struct to build CubicSphereField
 pub struct CubicSphereFieldBuilder;
 
@@ -165,7 +174,7 @@ impl CubicSphereFieldBuilder {
                         }
 
                         if range_1.contains(&id) {
-                            let top_id = (id - quadratic_size) * size;
+                            let top_id = (id - quadratic_inner_size + 1) * size;
                             point.top = Some(top_id);
                             top_id
                         } else if range_2.contains(&id) {
@@ -253,7 +262,9 @@ impl CubicSphereFieldBuilder {
     }
 
     fn validate_size(&self, size: &SizeType) -> GameResult<()> {
-        if *size >= 2 {
+        // TODO: improve algorithm to be able to create fields with size 2 and 3
+        // if *size >= 2 {
+        if *size >= 4 {
             Ok(())
         } else {
             Err(GameError::ValidationError(
