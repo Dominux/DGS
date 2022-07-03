@@ -46,6 +46,8 @@ pub struct CubicSphereField {
     size: SizeType,
 }
 
+const MIN_SIZE: SizeType = 4;
+
 impl CubicSphereField {
     pub(crate) fn new(points: Vec<PointWrapper>, size: &SizeType) -> Self {
         Self {
@@ -268,13 +270,12 @@ impl CubicSphereFieldBuilder {
 
     fn validate_size(&self, size: &SizeType) -> GameResult<()> {
         // TODO: improve algorithm to be able to create fields with size 2 and 3
-        // if *size >= 2 {
-        if *size >= 4 {
+        if *size >= MIN_SIZE {
             Ok(())
         } else {
-            Err(GameError::ValidationError(
-                "size must be 2 or higher".to_string(),
-            ))
+            Err(GameError::ValidationError(format!(
+                "size must be {MIN_SIZE} or higher"
+            )))
         }
     }
 }
