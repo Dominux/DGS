@@ -42,7 +42,7 @@ impl PointWrapper {
 
 #[derive(Debug, Clone)]
 pub struct CubicSphereField {
-    points: Vec<PointWrapper>,
+    pub(crate) points: Vec<PointWrapper>,
     size: SizeType,
 }
 
@@ -146,7 +146,7 @@ impl CubicSphereFieldBuilder {
                 let last_top_elem = quadratic_inner_size - 1;
 
                 for id in quadratic_inner_size..quadratic_size {
-                    let top_id = {
+                    {
                         let point = &mut points[id];
 
                         point.bottom = Some(id + layer_size);
@@ -172,27 +172,26 @@ impl CubicSphereFieldBuilder {
                             // It does not have a top neighbor
                             continue;
                         }
+                    }
 
-                        if range_1.contains(&id) {
-                            let top_id = (id - quadratic_inner_size + 1) * size;
-                            point.top = Some(top_id);
-                            top_id
-                        } else if range_2.contains(&id) {
-                            let top_id = id - (size * 2) + 2;
-                            point.top = Some(top_id);
-                            top_id
-                        } else if range_3.contains(&id) {
-                            let k = id - range_3_first_elem;
-                            let top_id = last_top_elem - inner_size * k;
-                            point.top = Some(top_id);
-                            top_id
-                        } else {
-                            let top_id = last_top_edge_elem_4 - id;
-                            point.top = Some(top_id);
-                            top_id
-                        }
-                    };
-                    points[top_id].bottom = Some(id);
+                    if range_1.contains(&id) {
+                        let top_id = (id - quadratic_inner_size + 1) * size;
+                        points[id].top = Some(top_id);
+                        points[top_id].left = Some(id);
+                    } else if range_2.contains(&id) {
+                        let top_id = id - (size * 2) + 2;
+                        points[id].top = Some(top_id);
+                        points[top_id].bottom = Some(id);
+                    } else if range_3.contains(&id) {
+                        let k = id - range_3_first_elem;
+                        let top_id = last_top_elem - inner_size * k;
+                        points[id].top = Some(top_id);
+                        points[top_id].right = Some(id);
+                    } else {
+                        let top_id = last_top_edge_elem_4 - id;
+                        points[id].top = Some(top_id);
+                        points[top_id].top = Some(id);
+                    }
                 }
             }
 
@@ -268,6 +267,10 @@ impl CubicSphereFieldBuilder {
                     point.left = left_id;
                 }
             }
+        }
+
+        for p in points.iter() {
+            println!("{:?}", p)
         }
 
         CubicSphereField {

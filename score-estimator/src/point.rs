@@ -4,7 +4,7 @@ use crate::aliases::PointID;
 #[derive(Clone, Debug)]
 pub struct Point {
     pub id: PointID,
-    status: PointStatus,
+    pub(crate) status: PointStatus,
 }
 
 impl Point {
