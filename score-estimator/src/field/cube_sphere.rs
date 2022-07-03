@@ -41,22 +41,22 @@ impl PointWrapper {
 }
 
 #[derive(Debug, Clone)]
-pub struct CubeSphereField {
+pub struct CubicSphereField {
     points: Vec<PointWrapper>,
     size: SizeType,
 }
 
-/// Struct to build CubeSphereField
-pub struct CubeSphereFieldBuilder;
+/// Struct to build CubicSphereField
+pub struct CubicSphereFieldBuilder;
 
-impl Default for CubeSphereFieldBuilder {
+impl Default for CubicSphereFieldBuilder {
     fn default() -> Self {
         Self {}
     }
 }
 
-impl CubeSphereFieldBuilder {
-    pub fn with_size(&self, size: &SizeType) -> GameResult<CubeSphereField> {
+impl CubicSphereFieldBuilder {
+    pub fn with_size(&self, size: &SizeType) -> GameResult<CubicSphereField> {
         // Validating
         self.validate_size(size)?;
 
@@ -65,7 +65,7 @@ impl CubeSphereFieldBuilder {
         Ok(field)
     }
 
-    fn construct(&self, size: &SizeType) -> CubeSphereField {
+    fn construct(&self, size: &SizeType) -> CubicSphereField {
         let size = *size as usize;
         let inner_size = size - 2;
 
@@ -246,7 +246,7 @@ impl CubeSphereFieldBuilder {
             }
         }
 
-        CubeSphereField {
+        CubicSphereField {
             points,
             size: size as SizeType,
         }
