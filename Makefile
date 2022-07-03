@@ -1,2 +1,2 @@
 test:
-	cd ./score-estimator && cargo test || test && cd -
+	cd ./score-estimator && cargo test && cd -
