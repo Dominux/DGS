@@ -8,7 +8,7 @@ use crate::{
 
 use super::interface::Field;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PointWrapper {
     pub inner: Point,
     pub top: Option<PointID>,
@@ -107,18 +107,18 @@ impl CubicSphereFieldBuilder {
                     // Not left corner
                     point.left = Some(id - 1);
                 }
-                if side_k != size - 1 {
+                if side_k != inner_size - 1 {
                     // Not right corner
                     point.right = Some(id + 1);
                 }
 
-                if id >= size {
+                if id >= inner_size {
                     // Not top corner
-                    point.top = Some(id - size)
+                    point.top = Some(id - inner_size)
                 }
-                if id < quadratic_inner_size - size {
+                if id < quadratic_inner_size - inner_size {
                     // Not bottom corner
-                    point.bottom = Some(id + size)
+                    point.bottom = Some(id + inner_size)
                 }
             }
 
@@ -130,7 +130,7 @@ impl CubicSphereFieldBuilder {
                 let last_top_edge_elem_1 = quadratic_inner_size + size - 1;
                 let last_top_edge_elem_2 = last_top_edge_elem_1 + size - 1;
                 let last_top_edge_elem_3 = last_top_edge_elem_2 + size - 1;
-                let last_top_edge_elem_4 = last_top_edge_elem_3 + size - 1;
+                let last_top_edge_elem_4 = last_top_edge_elem_3 + size - 2;
                 let last_top_edge_elems = [
                     last_top_edge_elem_1,
                     last_top_edge_elem_2,
@@ -153,15 +153,16 @@ impl CubicSphereFieldBuilder {
 
                         if id == quadratic_inner_size {
                             // First element
-                            point.left = Some(id + quadratic_size - 1);
+                            point.left = Some(last_top_edge_elem_4);
                             point.right = Some(id + 1);
                             continue;
                         }
                         if id == last_top_edge_elem_4 {
                             // Last element
-                            point.right = Some(id - quadratic_size + 1);
-                            point.top = Some(0);
+                            point.right = Some(quadratic_inner_size);
                             point.left = Some(id - 1);
+                            point.top = Some(0);
+                            points[0].bottom = Some(id);
                             continue;
                         }
 
@@ -175,7 +176,7 @@ impl CubicSphereFieldBuilder {
                     }
 
                     if range_1.contains(&id) {
-                        let top_id = (id - quadratic_inner_size + 1) * size;
+                        let top_id = (id - quadratic_inner_size - 1) * inner_size;
                         points[id].top = Some(top_id);
                         points[top_id].left = Some(id);
                     } else if range_2.contains(&id) {
@@ -199,9 +200,9 @@ impl CubicSphereFieldBuilder {
             {
                 for layer in 0..(size - 1) {
                     let min = quadratic_size + layer_size * layer;
-                    let max = min + layer_size;
+                    let max = min + layer_size - 1;
 
-                    for id in min..max {
+                    for id in min..=max {
                         let point = &mut points[id];
 
                         point.top = Some(id - layer_size);
@@ -234,30 +235,16 @@ impl CubicSphereFieldBuilder {
                     let (top_id, right_id, bottom_id, left_id) = {
                         let mirror_point = &points[mirror_id];
 
-                        match mirror_point.top {
-                            Some(_) => [
-                                mirror_point.top,
-                                mirror_point.right,
-                                mirror_point.bottom,
-                                mirror_point.left,
-                            ]
-                            .into_iter()
-                            .map(|id| id.map(|i| last_elem - i))
-                            .collect_tuple()
-                            .unwrap(),
-
-                            // if mirror doesn't have a top -> then out point does not have a bottom
-                            None => [
-                                mirror_point.bottom,
-                                mirror_point.right,
-                                mirror_point.top,
-                                mirror_point.left,
-                            ]
-                            .into_iter()
-                            .map(|id| id.map(|i| last_elem - i))
-                            .collect_tuple()
-                            .unwrap(),
-                        }
+                        [
+                            mirror_point.bottom,
+                            mirror_point.right,
+                            mirror_point.top,
+                            mirror_point.left,
+                        ]
+                        .into_iter()
+                        .map(|id| id.map(|i| last_elem - i))
+                        .collect_tuple()
+                        .unwrap()
                     };
 
                     let point = &mut points[id];
@@ -270,7 +257,7 @@ impl CubicSphereFieldBuilder {
         }
 
         for p in points.iter() {
-            println!("{:?}", p)
+            println!("{:?}", [p.top, p.left, p.right, p.bottom])
         }
 
         CubicSphereField {

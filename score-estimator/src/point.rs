@@ -1,7 +1,7 @@
 use crate::aliases::PointID;
 
 /// Represents a single point in a game field
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Point {
     pub id: PointID,
     pub(crate) status: PointStatus,
@@ -16,7 +16,7 @@ impl Point {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum PointStatus {
     Empty,
     Occupied(PlayerColor),
@@ -31,7 +31,7 @@ impl Default for PointStatus {
 
 /// Represents a player for the game.
 /// For now we need only color
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum PlayerColor {
     Black,
     White,
