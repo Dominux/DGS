@@ -234,16 +234,31 @@ impl CubicSphereFieldBuilder {
 
                     let (top_id, right_id, bottom_id, left_id) = {
                         let mirror_point = &points[mirror_id];
-                        [
-                            mirror_point.top,
-                            mirror_point.right,
-                            mirror_point.bottom,
-                            mirror_point.left,
-                        ]
-                        .into_iter()
-                        .map(|id| id.map(|i| last_elem - i))
-                        .collect_tuple()
-                        .unwrap()
+
+                        match mirror_point.top {
+                            Some(_) => [
+                                mirror_point.top,
+                                mirror_point.right,
+                                mirror_point.bottom,
+                                mirror_point.left,
+                            ]
+                            .into_iter()
+                            .map(|id| id.map(|i| last_elem - i))
+                            .collect_tuple()
+                            .unwrap(),
+
+                            // if mirror doesn't have a top -> then out point does not have a bottom
+                            None => [
+                                mirror_point.bottom,
+                                mirror_point.right,
+                                mirror_point.top,
+                                mirror_point.left,
+                            ]
+                            .into_iter()
+                            .map(|id| id.map(|i| last_elem - i))
+                            .collect_tuple()
+                            .unwrap(),
+                        }
                     };
 
                     let point = &mut points[id];
