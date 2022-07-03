@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::{
     aliases::{PointID, SizeType},
     errors::{GameError, GameResult},
@@ -211,6 +213,35 @@ impl CubeSphereFieldBuilder {
                             point.right = Some(id + 1)
                         }
                     }
+                }
+            }
+
+            // Bottom edges and faces
+            {
+                let last_elem = points.len() - 1;
+                for id in (points.len() - quadratic_size)..points.len() {
+                    // Mirroring the top ones
+                    let mirror_id = last_elem - id;
+
+                    let (top_id, right_id, bottom_id, left_id) = {
+                        let mirror_point = &points[mirror_id];
+                        [
+                            mirror_point.top,
+                            mirror_point.right,
+                            mirror_point.bottom,
+                            mirror_point.left,
+                        ]
+                        .into_iter()
+                        .map(|id| id.map(|i| last_elem - i))
+                        .collect_tuple()
+                        .unwrap()
+                    };
+
+                    let point = &mut points[id];
+                    point.top = top_id;
+                    point.right = right_id;
+                    point.bottom = bottom_id;
+                    point.left = left_id;
                 }
             }
         }
