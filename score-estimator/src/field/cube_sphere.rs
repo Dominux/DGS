@@ -5,48 +5,16 @@ use itertools::Itertools;
 use crate::{
     aliases::{PointID, SizeType},
     errors::{GameError, GameResult},
-    point::Point,
+    point::{Point, PointWrapper},
 };
 
 use super::interface::Field;
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct PointWrapper {
-    pub inner: Point,
-    pub top: Option<PointID>,
-    pub left: Option<PointID>,
-    pub right: Option<PointID>,
-    pub bottom: Option<PointID>,
-}
-
-impl PointWrapper {
-    pub fn new(
-        inner: Point,
-        top: Option<PointID>,
-        left: Option<PointID>,
-        right: Option<PointID>,
-        bottom: Option<PointID>,
-    ) -> Self {
-        Self {
-            inner,
-            top,
-            left,
-            right,
-            bottom,
-        }
-    }
-
-    #[inline]
-    pub fn id(&self) -> &PointID {
-        &self.inner.id
-    }
-}
 
 pub type PointOwner = Rc<RefCell<PointWrapper>>;
 
 #[derive(Debug, Clone)]
 pub struct CubicSphereField {
-    pub(crate) points: Vec<PointOwner>,
+    points: Vec<PointOwner>,
     size: SizeType,
 }
 
@@ -285,5 +253,22 @@ impl CubicSphereFieldBuilder {
                 "size must be {MIN_SIZE} or higher"
             )))
         }
+    }
+}
+
+impl Field for CubicSphereField {
+    #[inline]
+    fn len(&self) -> usize {
+        self.points.len()
+    }
+
+    fn get_point(&self, point_id: &PointID) -> Rc<RefCell<PointWrapper>> {
+        self.points[*point_id].clone()
+    }
+
+    fn get_neighbor_points(&self, point_id: &PointID) -> [Option<Rc<RefCell<PointWrapper>>>; 4] {
+        let point = self.get_point(point_id);
+        let p = point.borrow();
+        [p.top, p.right, p.bottom, p.left].map(|id| id.map(|id| self.get_point(&id)))
     }
 }

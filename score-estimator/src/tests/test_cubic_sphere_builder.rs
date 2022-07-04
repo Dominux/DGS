@@ -2,8 +2,11 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    field::cube_sphere::{CubicSphereField, CubicSphereFieldBuilder, PointWrapper},
-    point::Point,
+    field::{
+        cube_sphere::{CubicSphereField, CubicSphereFieldBuilder},
+        interface::Field,
+    },
+    point::{Point, PointWrapper},
 };
 
 const COMPRESSED_FIELD: [[Option<usize>; 4]; 218] = [
@@ -248,7 +251,10 @@ fn test_cubic_sphere_builder_with_size_7() {
 
     let real = CubicSphereFieldBuilder::default().with_size(&7).unwrap();
 
-    for id in 0..expected_field.points.len() {
-        assert_eq!(expected_field.points[id], real.points[id])
+    for id in 0..expected_field.len() {
+        assert_eq!(
+            *expected_field.get_point(&id).borrow(),
+            *real.get_point(&id).borrow()
+        )
     }
 }

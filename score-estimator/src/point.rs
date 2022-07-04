@@ -36,3 +36,35 @@ pub enum PlayerColor {
     Black,
     White,
 }
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct PointWrapper {
+    pub inner: Point,
+    pub top: Option<PointID>,
+    pub left: Option<PointID>,
+    pub right: Option<PointID>,
+    pub bottom: Option<PointID>,
+}
+
+impl PointWrapper {
+    pub fn new(
+        inner: Point,
+        top: Option<PointID>,
+        left: Option<PointID>,
+        right: Option<PointID>,
+        bottom: Option<PointID>,
+    ) -> Self {
+        Self {
+            inner,
+            top,
+            left,
+            right,
+            bottom,
+        }
+    }
+
+    #[inline]
+    pub fn id(&self) -> &PointID {
+        &self.inner.id
+    }
+}

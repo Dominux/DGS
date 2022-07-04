@@ -1,7 +1,10 @@
-use crate::{aliases::PointID, point::Point};
+use std::{cell::RefCell, rc::Rc};
+
+use crate::{aliases::PointID, point::PointWrapper};
 
 /// Any field must implement this trait to be representive for the game score-estimator
 pub trait Field {
-    fn get_neighbor_points(&self, point_id: &PointID) -> [Option<&Point>; 4];
-    fn get_neighbor_points_mut(&mut self, point_id: &PointID) -> [Option<&mut Point>; 4];
+    fn len(&self) -> usize;
+    fn get_point(&self, point_id: &PointID) -> Rc<RefCell<PointWrapper>>;
+    fn get_neighbor_points(&self, point_id: &PointID) -> [Option<Rc<RefCell<PointWrapper>>>; 4];
 }
