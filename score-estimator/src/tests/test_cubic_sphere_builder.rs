@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::{
     field::cube_sphere::{CubicSphereField, CubicSphereFieldBuilder, PointWrapper},
     point::Point,
@@ -230,7 +233,15 @@ fn test_cubic_sphere_builder_with_size_7() {
         let points = COMPRESSED_FIELD
             .iter()
             .enumerate()
-            .map(|(id, p)| PointWrapper::new(Point::new(id), p[0], p[1], p[2], p[3]))
+            .map(|(id, p)| {
+                Rc::new(RefCell::new(PointWrapper::new(
+                    Point::new(id),
+                    p[0],
+                    p[1],
+                    p[2],
+                    p[3],
+                )))
+            })
             .collect();
         CubicSphereField::new(points, &7)
     };

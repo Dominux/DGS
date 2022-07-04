@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use itertools::Itertools;
 
 use crate::{
@@ -40,16 +42,18 @@ impl PointWrapper {
     }
 }
 
+pub type PointOwner = Rc<RefCell<PointWrapper>>;
+
 #[derive(Debug, Clone)]
 pub struct CubicSphereField {
-    pub(crate) points: Vec<PointWrapper>,
+    pub(crate) points: Vec<PointOwner>,
     size: SizeType,
 }
 
 const MIN_SIZE: SizeType = 4;
 
 impl CubicSphereField {
-    pub(crate) fn new(points: Vec<PointWrapper>, size: &SizeType) -> Self {
+    pub(crate) fn new(points: Vec<PointOwner>, size: &SizeType) -> Self {
         Self {
             points,
             size: *size,
@@ -81,10 +85,18 @@ impl CubicSphereFieldBuilder {
         let inner_size = size - 2;
 
         // Creating points
-        let mut points: Vec<_> = {
+        let points: Vec<_> = {
             let points_count = size.pow(3) - inner_size.pow(3);
             (0..points_count)
-                .map(|i| PointWrapper::new(Point::new(i), None, None, None, None))
+                .map(|i| {
+                    Rc::new(RefCell::new(PointWrapper::new(
+                        Point::new(i),
+                        None,
+                        None,
+                        None,
+                        None,
+                    )))
+                })
                 .collect()
         };
 
@@ -101,7 +113,7 @@ impl CubicSphereFieldBuilder {
 
             // Top face
             for id in 0..quadratic_inner_size {
-                let point = &mut points[id];
+                let mut point = points[id].borrow_mut();
 
                 let side_k = id % quadratic_inner_size;
 
@@ -149,7 +161,7 @@ impl CubicSphereFieldBuilder {
 
                 for id in quadratic_inner_size..quadratic_size {
                     {
-                        let point = &mut points[id];
+                        let mut point = points[id].borrow_mut();
 
                         point.bottom = Some(id + layer_size);
 
@@ -164,7 +176,7 @@ impl CubicSphereFieldBuilder {
                             point.right = Some(quadratic_inner_size);
                             point.left = Some(id - 1);
                             point.top = Some(0);
-                            points[0].bottom = Some(id);
+                            points[0].borrow_mut().bottom = Some(id);
                             continue;
                         }
 
@@ -179,21 +191,21 @@ impl CubicSphereFieldBuilder {
 
                     if range_1.contains(&id) {
                         let top_id = (id - quadratic_inner_size - 1) * inner_size;
-                        points[id].top = Some(top_id);
-                        points[top_id].left = Some(id);
+                        points[id].borrow_mut().top = Some(top_id);
+                        points[top_id].borrow_mut().left = Some(id);
                     } else if range_2.contains(&id) {
                         let top_id = id - (size * 2) + 2;
-                        points[id].top = Some(top_id);
-                        points[top_id].bottom = Some(id);
+                        points[id].borrow_mut().top = Some(top_id);
+                        points[top_id].borrow_mut().bottom = Some(id);
                     } else if range_3.contains(&id) {
                         let k = id - range_3_first_elem;
                         let top_id = last_top_elem - inner_size * k;
-                        points[id].top = Some(top_id);
-                        points[top_id].right = Some(id);
+                        points[id].borrow_mut().top = Some(top_id);
+                        points[top_id].borrow_mut().right = Some(id);
                     } else {
                         let top_id = last_top_edge_elem_4 - id;
-                        points[id].top = Some(top_id);
-                        points[top_id].top = Some(id);
+                        points[id].borrow_mut().top = Some(top_id);
+                        points[top_id].borrow_mut().top = Some(id);
                     }
                 }
             }
@@ -205,7 +217,7 @@ impl CubicSphereFieldBuilder {
                     let max = min + layer_size - 1;
 
                     for id in min..=max {
-                        let point = &mut points[id];
+                        let mut point = points[id].borrow_mut();
 
                         point.top = Some(id - layer_size);
                         point.bottom = Some(id + layer_size);
@@ -235,7 +247,7 @@ impl CubicSphereFieldBuilder {
                     let mirror_id = last_elem - id;
 
                     let (top_id, right_id, bottom_id, left_id) = {
-                        let mirror_point = &points[mirror_id];
+                        let mirror_point = points[mirror_id].borrow();
 
                         [
                             mirror_point.bottom,
@@ -249,17 +261,13 @@ impl CubicSphereFieldBuilder {
                         .unwrap()
                     };
 
-                    let point = &mut points[id];
+                    let mut point = points[id].borrow_mut();
                     point.top = top_id;
                     point.right = right_id;
                     point.bottom = bottom_id;
                     point.left = left_id;
                 }
             }
-        }
-
-        for p in points.iter() {
-            println!("{:?}", [p.top, p.left, p.right, p.bottom])
         }
 
         CubicSphereField {
