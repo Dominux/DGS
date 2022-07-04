@@ -5,7 +5,7 @@ use crate::aliases::PointID;
 ///
 /// Consider a stored game to be like this:
 ///
-/// ```
+/// ```jsonc
 /// {
 /// 	"meta": {
 /// 		"field": "cube_sphere",
