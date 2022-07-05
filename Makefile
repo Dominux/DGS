@@ -1,2 +1,2 @@
 test:
-	cd ./score-estimator && cargo test && cd -
+	cd ./game_lib && cargo test && cd -

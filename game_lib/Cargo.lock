@@ -9,16 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f107b87b6afc2a64fd13cac55fe06d6c8859f12d4b14cbcdd2c67d0976781be"
 
 [[package]]
-name = "game_lib"
-version = "0.1.0"
-dependencies = [
- "itertools",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
 name = "itertools"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -86,6 +76,16 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "spherical_go_game_lib"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]

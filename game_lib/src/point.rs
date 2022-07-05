@@ -14,6 +14,29 @@ impl Point {
             status: PointStatus::default(),
         }
     }
+
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        matches!(self.status, PointStatus::Empty)
+    }
+
+    #[inline]
+    pub fn is_blocked(&self) -> bool {
+        matches!(self.status, PointStatus::Blocked)
+    }
+
+    #[inline]
+    pub fn is_occupied(&self) -> bool {
+        matches!(self.status, PointStatus::Occupied(_))
+    }
+
+    #[inline]
+    pub fn has_color(&self, color: PlayerColor) -> bool {
+        match &self.status {
+            PointStatus::Occupied(c) if *c == color => true,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -35,6 +58,15 @@ impl Default for PointStatus {
 pub enum PlayerColor {
     Black,
     White,
+}
+
+impl PlayerColor {
+    pub fn different_color(&self) -> Self {
+        match self {
+            Self::Black => Self::White,
+            Self::White => Self::Black,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

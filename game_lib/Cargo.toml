@@ -1,5 +1,5 @@
 [package]
-name = "game_lib"
+name = "spherical_go_game_lib"
 version = "0.1.0"
 edition = "2021"
 
