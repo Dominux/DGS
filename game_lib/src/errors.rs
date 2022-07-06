@@ -1,5 +1,7 @@
 use std::io;
 
+use crate::{aliases::PointID, state::GameState};
+
 #[derive(thiserror::Error, Debug)]
 pub enum GameLoadingError {
     #[error("file does not exist")]
@@ -13,6 +15,12 @@ pub type GameLoadingResult<T> = Result<T, GameLoadingError>;
 pub enum GameError {
     #[error("{0}")]
     ValidationError(String),
+    #[error("{action} is not possible at {current:?} game state")]
+    GameStateError { current: GameState, action: String },
+    #[error("Point with id \"{0}\" is blocked")]
+    PointBlocked(PointID),
+    #[error("Point with id \"{0}\" is not empty")]
+    PointOccupied(PointID),
 }
 
 pub type GameResult<T> = Result<T, GameError>;
