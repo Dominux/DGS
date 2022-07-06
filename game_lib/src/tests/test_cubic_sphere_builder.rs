@@ -2,10 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    field::{
-        cube_sphere::{CubicSphereField, CubicSphereFieldBuilder},
-        interface::Field,
-    },
+    field::{CubicSphereField, CubicSphereFieldBuilder, Field},
     point::{Point, PointWrapper},
 };
 

@@ -1,16 +1,16 @@
 use crate::{
     aliases::PointID,
     errors::{GameError, GameResult},
-    field::interface::Field,
+    field::Field,
     group::Group,
     point::{PlayerColor, PointStatus},
-    rules::interface::GameRules,
+    rules::GameRules,
     state::GameState,
 };
 
 /// Low level game struct
 #[derive(Debug)]
-pub struct Game<'a, F, R>
+pub struct Game<F, R>
 where
     F: Field,
     R: GameRules,
@@ -19,13 +19,13 @@ where
     rules: R,
     field: F,
     move_number: Option<usize>,
-    black_groups: Vec<Group<'a, F>>,
-    white_groups: Vec<Group<'a, F>>,
+    black_groups: Vec<Group>,
+    white_groups: Vec<Group>,
     black_score: Option<usize>,
     white_score: Option<usize>,
 }
 
-impl<'a, F, R> Game<'a, F, R>
+impl<F, R> Game<F, R>
 where
     F: Field,
     R: GameRules,
@@ -93,12 +93,6 @@ where
                     self.black_score.clone().unwrap(),
                 ),
             };
-            // Setting cloned field to cloned groups
-            for collection in [&mut players_groups, &mut enemies_groups] {
-                for group in collection {
-                    group.set_field(&cloned_field)
-                }
-            }
 
             for g in players_groups.drain_filter(|group| group.has_liberty(point_id)) {
                 group |= g
@@ -111,7 +105,7 @@ where
             let new_score: usize = enemies_groups
                 .drain_filter(|mut group| {
                     if group.has_liberty(point_id) && group.liberties_amount() == 1 {
-                        group.refresh_liberties();
+                        group.refresh_liberties(&self.field);
                         group.liberties_amount() == 0
                     } else {
                         false
@@ -133,11 +127,11 @@ where
 
             // Refreshing liberties of all player's groups
             for group in players_groups.iter_mut() {
-                group.refresh_liberties()
+                group.refresh_liberties(&self.field)
             }
         } else {
             // Checking if this move is suicidal
-            group.refresh_liberties();
+            group.refresh_liberties(&self.field);
             if group.liberties_amount() == 0 {
                 // Checking if suicide is permitted
                 if self.rules.can_commit_suicide() {
@@ -146,7 +140,7 @@ where
 
                     // Refreshing liberties of all player's groups
                     for group in enemies_groups.iter_mut() {
-                        group.refresh_liberties()
+                        group.refresh_liberties(&self.field)
                     }
                 } else {
                     return Err(GameError::SuicideMoveIsNotPermitted);

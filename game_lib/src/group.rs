@@ -1,20 +1,19 @@
 use std::{collections::HashSet, fmt::Debug, ops::BitOrAssign};
 
-use crate::{aliases::PointID, field::interface::Field, point::PlayerColor};
+use crate::{aliases::PointID, field::Field, point::PlayerColor};
 
 #[derive(Clone)]
-pub struct Group<'a, T: Field> {
+pub struct Group {
     pub(crate) points_ids: HashSet<PointID>,
     pub(crate) liberties: HashSet<PointID>,
-    field: &'a T,
 }
 
-impl<'a, T> Group<'a, T>
-where
-    T: Field,
-{
+impl Group {
     /// Consider making any new point a group
-    pub fn new<'b>(point_id: &PointID, field: &'a T, color: &PlayerColor) -> Self {
+    pub fn new<T>(point_id: &PointID, field: &T, color: &PlayerColor) -> Self
+    where
+        T: Field,
+    {
         let mut points_ids = HashSet::new();
         points_ids.insert(*point_id);
         Self {
@@ -31,12 +30,11 @@ where
                     }
                 })
                 .collect(),
-            field,
         }
     }
 
     /// Merge another group into current
-    pub fn merge(&mut self, mut other: Group<T>) {
+    pub fn merge(&mut self, mut other: Group) {
         // Removing intersections between them
         self.liberties = &self.liberties - &other.points_ids;
         other.liberties = &other.liberties - &self.points_ids;
@@ -46,12 +44,15 @@ where
         self.liberties = &self.liberties | &other.liberties;
     }
 
-    pub fn refresh_liberties(&mut self) {
+    pub fn refresh_liberties<T>(&mut self, field: &T)
+    where
+        T: Field,
+    {
         self.liberties = self
             .points_ids
             .iter()
             .map(|id| {
-                self.field
+                field
                     .get_neighbor_points(id)
                     .into_iter()
                     .filter_map(|point| match point {
@@ -63,11 +64,6 @@ where
             })
             .flatten()
             .collect()
-    }
-
-    #[inline]
-    pub fn set_field(&mut self, field: &'a T) {
-        self.field = field
     }
 
     /// Defines if the group has a liberty with the given point id
@@ -87,19 +83,13 @@ where
     }
 }
 
-impl<'a, T> BitOrAssign for Group<'a, T>
-where
-    T: Field,
-{
+impl BitOrAssign for Group {
     fn bitor_assign(&mut self, rhs: Self) {
         self.merge(rhs)
     }
 }
 
-impl<'a, T> Debug for Group<'a, T>
-where
-    T: Field,
-{
+impl Debug for Group {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("")
             .field(&self.points_ids)

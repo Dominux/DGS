@@ -1,1 +1,3 @@
-pub mod interface;
+mod interface;
+
+pub use interface::GameRules;

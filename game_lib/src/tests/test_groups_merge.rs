@@ -1,6 +1,6 @@
 use crate::{
     aliases::PointID,
-    field::{cube_sphere::CubicSphereFieldBuilder, interface::Field},
+    field::{CubicSphereFieldBuilder, Field},
     group::Group,
     point::{PlayerColor, PointStatus},
 };
@@ -43,7 +43,7 @@ fn test_merge_groups() {
 }
 
 /// Mock function to make moves without validations at all
-fn make_move<'a, T>(field: &'a T, point_id: &PointID, color: PlayerColor) -> Group<'a, T>
+fn make_move<T>(field: &T, point_id: &PointID, color: PlayerColor) -> Group
 where
     T: Field,
 {
