@@ -54,7 +54,7 @@ impl Default for PointStatus {
 
 /// Represents a player for the game.
 /// For now we need only color
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Copy)]
 pub enum PlayerColor {
     Black,
     White,

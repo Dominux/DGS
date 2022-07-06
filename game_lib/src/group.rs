@@ -46,9 +46,44 @@ where
         self.liberties = &self.liberties | &other.liberties;
     }
 
+    pub fn refresh_liberties(&mut self) {
+        self.liberties = self
+            .points_ids
+            .iter()
+            .map(|id| {
+                self.field
+                    .get_neighbor_points(id)
+                    .into_iter()
+                    .filter_map(|point| match point {
+                        Some(p) if p.borrow().inner.is_occupied() => None,
+                        Some(p) => Some(*p.borrow().id()),
+                        None => None,
+                    })
+                    .collect::<HashSet<_>>()
+            })
+            .flatten()
+            .collect()
+    }
+
+    #[inline]
+    pub fn set_field(&mut self, field: &'a T) {
+        self.field = field
+    }
+
+    /// Defines if the group has a liberty with the given point id
+    #[inline]
+    pub fn has_liberty(&self, point_id: &PointID) -> bool {
+        self.liberties.contains(point_id)
+    }
+
     #[inline]
     pub fn liberties_amount(&self) -> usize {
         self.liberties.len()
+    }
+
+    #[inline]
+    pub fn points_amount(&self) -> usize {
+        self.points_ids.len()
     }
 }
 

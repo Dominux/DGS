@@ -1,3 +1,6 @@
+#![feature(drain_filter)]
+#![feature(slice_flatten)]
+
 mod aliases;
 mod errors;
 mod field;

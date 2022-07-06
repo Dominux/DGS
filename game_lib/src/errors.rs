@@ -21,6 +21,8 @@ pub enum GameError {
     PointBlocked(PointID),
     #[error("Point with id \"{0}\" is not empty")]
     PointOccupied(PointID),
+    #[error("Suicide move is not permitted")]
+    SuicideMoveIsNotPermitted,
 }
 
 pub type GameResult<T> = Result<T, GameError>;
