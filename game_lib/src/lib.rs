@@ -4,12 +4,14 @@
 mod aliases;
 mod errors;
 mod field;
-mod file_converters;
 mod game;
 mod group;
 mod point;
 mod rules;
 mod state;
+
+#[cfg(feature = "json")]
+mod file_converters;
 
 #[cfg(test)]
 mod tests;
