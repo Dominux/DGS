@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@babylonjs/core": "^5.16.0",
-    "@babylonjs/materials": "^5.16.0",
     "sirv-cli": "^2.0.0"
   }
 }
