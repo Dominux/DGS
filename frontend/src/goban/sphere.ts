@@ -1,4 +1,5 @@
-import BABYLON from 'babylonjs'
+import { GridMaterial } from '@babylonjs/materials'
+import * as BABYLON from '@babylonjs/core'
 
 export default class Playground {
 	public static createScene(canvas: HTMLCanvasElement): BABYLON.Scene {
@@ -24,58 +25,16 @@ export default class Playground {
 
 		// Creating material
 		// Our built-in 'sphere' shape. Params: name, options, scene
-		const gridSize = 7
-		const height = 1000
-		const gridInc = height / gridSize
-		const textureGrid = new BABYLON.DynamicTexture(
-			'grid texture',
-			height,
-			scene,
-			false
-		)
+		const gridSize = 12
+		const material = new GridMaterial('goban', scene)
 
-		const textureContext = textureGrid.getContext()
-		textureContext.fillStyle = 'white'
-		textureContext.fillRect(0, 0, height, height)
-		textureGrid.update()
+		material.mainColor = BABYLON.Color3.FromHexString('#FFFFFF')
+		material.lineColor = BABYLON.Color3.FromHexString('#000000')
+		material.gridRatio = 1 / gridSize
+		material.majorUnitFrequency = Math.round(gridSize / 3)
+		material.useMaxLine = true
 
-		textureContext.lineWidth = 10 / gridSize
-		textureContext.strokeStyle = 'black'
-		textureContext.fillStyle = 'black'
-
-		const k = gridSize * 2
-		const lines = [...Array(k + 1).keys()]
-			.filter((n) => n % 2 == 1)
-			.map((n) => n / (k * 2) + 0.25)
-		console.log(lines)
-
-		for (const line of lines) {
-			const scaledLine = line * height
-
-			textureContext.moveTo(0, scaledLine)
-			textureContext.lineTo(height, scaledLine)
-			textureContext.stroke()
-		}
-
-		// for (let x = 0; x < 1; x += gridInc) {
-		// 	// Normalization
-		// 	const y = x / 2 + normalization_k
-
-		// 	console.log(y)
-
-		// 	// textureContext.beginPath()
-		// 	// textureContext.moveTo(y, 0)
-		// 	// textureContext.lineTo(y, height)
-		// 	textureContext.stroke()
-		// 	textureContext.moveTo(0, y)
-		// 	textureContext.lineTo(height, y)
-		// 	textureContext.stroke()
-		// }
-		textureGrid.update()
-
-		const mat = new BABYLON.StandardMaterial('Mat', scene)
-		mat.diffuseTexture = textureGrid
-		sphere.material = mat
+		sphere.material = material
 
 		const camera = new BABYLON.ArcRotateCamera(
 			'camera',
