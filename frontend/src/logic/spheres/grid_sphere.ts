@@ -1,5 +1,4 @@
 import * as BABYLON from '@babylonjs/core'
-import { GridMaterial } from '@babylonjs/materials'
 
 export default class GridSpherePlayground {
 	public static createScene(canvas: HTMLCanvasElement): BABYLON.Scene {
