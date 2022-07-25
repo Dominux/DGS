@@ -34,6 +34,8 @@ export default class GridSpherePlayground {
 			scene
 		)
 
+		const gridSize = 10
+
 		BABYLON.NodeMaterial.ParseFromSnippetAsync(
 			// 'gridMaterial',
 			'YCMALW#7',
@@ -66,10 +68,14 @@ export default class GridSpherePlayground {
 			const lineColor = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'lineColor'
 			)
+			const circleColor = gridMaterial.getInputBlockByPredicate(
+				(b) => b.name === 'circleColor'
+			)
 
 			bgColor.value = BABYLON.Color3.White()
 			lineColor.value = BABYLON.Color3.Black()
-			gridRatio.value = 0.1
+			circleColor.value = BABYLON.Color3.Green()
+			gridRatio.value = 1 / gridSize
 			majorUnitFrequency.value = 1
 			minorUnitVisibility.value = 0
 			circleRadius.value = 0.03
@@ -146,6 +152,34 @@ export default class GridSpherePlayground {
 			engine.resize()
 		})
 
+		console.log(GridSpherePlayground.generatePoints(gridSize, 0.5))
+
 		return scene
+	}
+
+	/**
+	 * Generates ids for all points
+	 *
+	 * Since ids are integers starting from 0,
+	 * array of points coordinates are returns
+	 */
+	protected static generatePoints(
+		gridSize: number,
+		min: number
+	): Array<BABYLON.Vector3> {
+		const result = []
+
+		// Starting from the top
+		const points = [...Array(gridSize + 1).keys()].map(
+			(p) => p / gridSize - min
+		)
+
+		return points
+
+		// TODO
+
+		// for (const layer of points) {
+		// 	console.log(layer)
+		// }
 	}
 }
