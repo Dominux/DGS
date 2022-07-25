@@ -1,6 +1,6 @@
 import * as BABYLON from '@babylonjs/core'
 
-export default class Playground {
+export default class QuadSpherePlayground {
 	public static createScene(canvas: HTMLCanvasElement): BABYLON.Scene {
 		const engine = new BABYLON.Engine(canvas, true)
 
@@ -170,7 +170,6 @@ export default class Playground {
 			vertexData.colors = colors
 			vertexData.uvs = uvs
 			vertexData.applyToMesh(customMesh)
-			console.log(uvs)
 
 			customMesh.name = name
 			customMesh.quadCenters = quadCenters
