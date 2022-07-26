@@ -48,7 +48,7 @@ where
     ////////////////////////////////////////////////////////////////////
 
     /// Main function to perform moves
-    pub fn do_move(&mut self, point_id: &PointID) -> GameResult<()> {
+    pub fn make_move(&mut self, point_id: &PointID) -> GameResult<()> {
         // Validation
         if !self.is_started() {
             return Err(GameError::GameStateError {
