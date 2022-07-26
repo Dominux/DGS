@@ -16,7 +16,7 @@ export default class GridSphere {
 	private points: Array<Coordinates>
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
-	readonly stoneSize = 0.25
+	readonly stoneSize = 1
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		// Our built-in 'sphere' shape. Params: name, options, scene
@@ -66,7 +66,7 @@ export default class GridSphere {
 				(b) => b.name === 'circleColor'
 			)
 
-			bgColor.value = BABYLON.Color3.White()
+			bgColor.value = BABYLON.Color3.Gray()
 			lineColor.value = BABYLON.Color3.Black()
 			circleColor.value = BABYLON.Color3.Green()
 			gridRatio.value = 1 / gridSize
@@ -97,8 +97,6 @@ export default class GridSphere {
 				jointPosition.y = Math.round(jointPosition.y)
 				jointPosition.z = Math.round(jointPosition.z)
 				jointPosition.scaleInPlace(1 / gridFactor)
-
-				// console.log(jointPosition)
 
 				const jointPositionSqrd = jointPosition.multiply(jointPosition)
 
@@ -139,7 +137,6 @@ export default class GridSphere {
 					this.activePointID = null
 					this.activePoint = undefined
 				} else {
-					// console.log(jointPosition)
 					this.activePointID = this.getPointID(jointPosition)
 					this.activePoint = jointPosition
 				}
@@ -147,7 +144,6 @@ export default class GridSphere {
 		})
 
 		this.points = this.generatePoints(0.5)
-		console.log(this.points)
 		this._sphere = sphere
 	}
 
@@ -165,15 +161,28 @@ export default class GridSphere {
 	}
 
 	private putStone() {
-		console.log(this.activePoint)
+		const diameter = (0.5 * this.stoneSize) / this.gridSize
+		const stone = BABYLON.MeshBuilder.CreateCylinder('cyl', {
+			diameter,
+			height: diameter / 2,
+		})
+		stone.position = this.activePoint
 
-		// const stone = BABYLON.MeshBuilder.CreateCylinder('cyl', {
-		// 	diameter: (0.5 * this.stoneSize) / this.gridSize,
-		// 	height: 0.25,
-		// })
-		// stone.position = this.activePoint?
-		// const orientation = BABYLON.Vector3.RotationFromAxis()
-		// stone.rotation = orientation
+		// Creating stone's material
+		const material = new BABYLON.StandardMaterial('stone', this.scene)
+		material.diffuseColor = BABYLON.Color3.Black()
+		stone.material = material
+
+		const path = new BABYLON.Path3D([
+			new BABYLON.Vector3(0, 0, 0),
+			this.activePoint,
+		])
+		const orientation = BABYLON.Vector3.RotationFromAxis(
+			path.getBinormalAt(0),
+			path.getTangentAt(0),
+			path.getNormalAt(0)
+		)
+		stone.rotation = orientation
 	}
 
 	protected getPointID(coords: BABYLON.Vector3): number {
@@ -204,7 +213,6 @@ export default class GridSphere {
 		}
 
 		for (const [i, p] of this.points.entries()) {
-			// debugger
 			if (['x', 'y', 'z'].every((key) => faildCheck(key, p, coords))) {
 				return i
 			}
@@ -220,11 +228,9 @@ export default class GridSphere {
 	protected generatePoints(min: number): Array<Coordinates> {
 		const result: Array<Coordinates> = []
 
-		// const k = this.gridSize - 1
 		const points = [...Array(this.gridSize).keys()].map(
 			(p) => p / (this.gridSize - 1) - min
 		)
-		console.log(points)
 
 		// Starting from the top
 		for (const y of [...points].reverse()) {
