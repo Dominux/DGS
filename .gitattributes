@@ -1,6 +1,0 @@
-*.svelte linguist-language=TypeScript
-
-*.html linguist-detectable=false
-*.css linguist-detectable=false
-*.js linguist-detectable=false
-*.env linguist-detectable=false
