@@ -1,30 +1,20 @@
 import * as BABYLON from '@babylonjs/core'
 
-export default class GridSpherePlayground {
-	public static createScene(canvas: HTMLCanvasElement): BABYLON.Scene {
-		const engine = new BABYLON.Engine(canvas, true)
+export enum Pole {
+	POSITIVE = 'POZITIVE',
+	NEGATIVE = 'NEGATIVE',
+}
 
-		const scene = new BABYLON.Scene(engine)
+export type Coordinates = {
+	x: number | Pole
+	y: number | Pole
+	z: number | Pole
+}
 
-		const camera = new BABYLON.ArcRotateCamera(
-			'camera',
-			-Math.PI / 2,
-			Math.PI / 2,
-			3,
-			new BABYLON.Vector3(0, 0, 0),
-			scene
-		)
+export default class GridSphere {
+	readonly _sphere: BABYLON.Mesh
 
-		// This attaches the camera to the canvas
-		camera.attachControl(canvas, true)
-
-		// This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-		const light = new BABYLON.HemisphericLight(
-			'light1',
-			new BABYLON.Vector3(1, 1, 0),
-			scene
-		)
-
+	constructor(scene: BABYLON.Scene, readonly gridSize: number) {
 		// Our built-in 'sphere' shape. Params: name, options, scene
 		const sphereRadius = 1
 		const sphereRadiusSqrd = sphereRadius * sphereRadius
@@ -33,8 +23,6 @@ export default class GridSpherePlayground {
 			{ diameter: sphereRadius * 2, segments: 32 },
 			scene
 		)
-
-		const gridSize = 10
 
 		BABYLON.NodeMaterial.ParseFromSnippetAsync(
 			// 'gridMaterial',
@@ -75,7 +63,7 @@ export default class GridSpherePlayground {
 			bgColor.value = BABYLON.Color3.White()
 			lineColor.value = BABYLON.Color3.Black()
 			circleColor.value = BABYLON.Color3.Green()
-			gridRatio.value = 1 / gridSize
+			gridRatio.value = 1 / (gridSize - 1)
 			majorUnitFrequency.value = 1
 			minorUnitVisibility.value = 0
 			circleRadius.value = 0.03
@@ -85,7 +73,7 @@ export default class GridSpherePlayground {
 			sphere.enablePointerMoveEvents = true
 
 			scene.onPointerMove = (
-				event: BABYLON.IPointerEvent,
+				_event: BABYLON.IPointerEvent,
 				pickInfo: BABYLON.PickingInfo
 			) => {
 				if (pickInfo.pickedMesh !== sphere) {
@@ -132,8 +120,6 @@ export default class GridSpherePlayground {
 					circleAmount.value = absX > cutoff || absY > cutoff ? 0 : 1
 				}
 
-				console.log(jointPosition)
-
 				circlePosition.value = jointPosition
 				if (
 					BABYLON.Vector3.Distance(pointerPosition, jointPosition) >
@@ -144,17 +130,7 @@ export default class GridSpherePlayground {
 			}
 		})
 
-		engine.runRenderLoop(() => {
-			scene.render()
-		})
-
-		window.addEventListener('resize', () => {
-			engine.resize()
-		})
-
-		console.log(GridSpherePlayground.generatePoints(gridSize, 0.5))
-
-		return scene
+		this._sphere = sphere
 	}
 
 	/**
@@ -163,23 +139,55 @@ export default class GridSpherePlayground {
 	 * Since ids are integers starting from 0,
 	 * array of points coordinates are returns
 	 */
-	protected static generatePoints(
-		gridSize: number,
-		min: number
-	): Array<BABYLON.Vector3> {
-		const result = []
+	protected generatePoints(min: number): Array<Coordinates> {
+		const result: Array<Coordinates> = []
 
-		// Starting from the top
-		const points = [...Array(gridSize + 1).keys()].map(
-			(p) => p / gridSize - min
+		const points = [...Array(this.gridSize).keys()].map(
+			(p) => p / this.gridSize - min
 		)
 
-		return points
+		// Starting from the top
+		for (const y of [...points].reverse()) {
+			for (const x of points) {
+				result.push({ x, y, z: Pole.POSITIVE })
+			}
+		}
 
-		// TODO
+		// Filling sides
+		for (const z of [...points].reverse()) {
+			for (let x = 1; x < 5; x++) {
+				switch (x) {
+					case 1:
+						for (const y of [...points].reverse()) {
+							result.push({ x: Pole.NEGATIVE, y, z })
+						}
+						break
+					case 2:
+						for (const x of points) {
+							result.push({ x, y: Pole.NEGATIVE, z })
+						}
+						break
+					case 3:
+						for (const y of points) {
+							result.push({ x: Pole.POSITIVE, y, z })
+						}
+						break
+					case 4:
+						for (const x of [...points].reverse()) {
+							result.push({ x, y: Pole.POSITIVE, z })
+						}
+						break
+				}
+			}
+		}
 
-		// for (const layer of points) {
-		// 	console.log(layer)
-		// }
+		// Filling the bottom
+		for (const y of points) {
+			for (const x of [...points].reverse()) {
+				result.push({ x, y, z: Pole.POSITIVE })
+			}
+		}
+
+		return result
 	}
 }

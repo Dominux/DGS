@@ -1,12 +1,18 @@
-import { Component, onMount } from 'solid-js'
+import { Component, createSignal, onMount } from 'solid-js'
 
 import styles from './App.module.css'
-import GridSpherePlayground from './logic/spheres/grid_sphere'
+import Scene from './logic/scene'
+import GridSphere from './logic/spheres/grid_sphere'
 
 const App: Component = () => {
+	// TODO: bind changing grid size
+	const [gridSize, _setGridSize] = createSignal(7)
+
 	let canvas: HTMLCanvasElement
+
 	onMount(() => {
-		GridSpherePlayground.createScene(canvas)
+		const scene = new Scene(canvas)
+		new GridSphere(scene._scene, gridSize())
 	})
 
 	return (
