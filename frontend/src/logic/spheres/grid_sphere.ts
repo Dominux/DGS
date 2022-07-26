@@ -14,7 +14,9 @@ export type Coordinates = {
 export default class GridSphere {
 	readonly _sphere: BABYLON.Mesh
 	private points: Array<Coordinates>
-	private activePoint: Coordinates | null
+	private activePointID: number | null = null
+	private activePoint: BABYLON.Vector3 | undefined
+	readonly stoneSize = 0.25
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		// Our built-in 'sphere' shape. Params: name, options, scene
@@ -85,7 +87,7 @@ export default class GridSphere {
 			) => {
 				if (pickInfo.pickedMesh !== sphere) {
 					circleAmount.value = 0
-					this.activePoint = null
+					this.activePointID = null
 					return
 				}
 
@@ -134,10 +136,12 @@ export default class GridSphere {
 					circleRadius.value
 				) {
 					circleAmount.value = 0
-					this.activePoint = null
+					this.activePointID = null
+					this.activePoint = undefined
 				} else {
 					// console.log(jointPosition)
-					this.activePoint = this.getPoint(jointPosition)
+					this.activePointID = this.getPointID(jointPosition)
+					this.activePoint = jointPosition
 				}
 			}
 		})
@@ -152,8 +156,8 @@ export default class GridSphere {
 			if (
 				pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP &&
 				pointerInfo.pickInfo?.hit &&
-				pointerInfo.pickInfo.pickedMesh === this._sphere
-				// this.activePoint
+				pointerInfo.pickInfo.pickedMesh === this._sphere &&
+				this.activePointID
 			) {
 				this.putStone()
 			}
@@ -162,9 +166,17 @@ export default class GridSphere {
 
 	private putStone() {
 		console.log(this.activePoint)
+
+		// const stone = BABYLON.MeshBuilder.CreateCylinder('cyl', {
+		// 	diameter: (0.5 * this.stoneSize) / this.gridSize,
+		// 	height: 0.25,
+		// })
+		// stone.position = this.activePoint?
+		// const orientation = BABYLON.Vector3.RotationFromAxis()
+		// stone.rotation = orientation
 	}
 
-	protected getPoint(coords: BABYLON.Vector3) {
+	protected getPointID(coords: BABYLON.Vector3): number {
 		const roundK = 10e6
 		const round = (n: number) =>
 			Math.round((n + Number.EPSILON) * roundK) / roundK
@@ -191,10 +203,10 @@ export default class GridSphere {
 			return true
 		}
 
-		for (const p of this.points) {
+		for (const [i, p] of this.points.entries()) {
 			// debugger
 			if (['x', 'y', 'z'].every((key) => faildCheck(key, p, coords))) {
-				return p
+				return i
 			}
 		}
 	}
