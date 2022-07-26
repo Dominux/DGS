@@ -1,7 +1,7 @@
 import * as BABYLON from '@babylonjs/core'
 
 export enum Pole {
-	POSITIVE = 'POZITIVE',
+	POSITIVE = 'POSITIVE',
 	NEGATIVE = 'NEGATIVE',
 }
 
@@ -13,9 +13,13 @@ export type Coordinates = {
 
 export default class GridSphere {
 	readonly _sphere: BABYLON.Mesh
+	private points: Array<Coordinates>
+	private activePoint: Coordinates | null
 
-	constructor(scene: BABYLON.Scene, readonly gridSize: number) {
+	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		// Our built-in 'sphere' shape. Params: name, options, scene
+		gridSize--
+
 		const sphereRadius = 1
 		const sphereRadiusSqrd = sphereRadius * sphereRadius
 		const sphere = BABYLON.MeshBuilder.CreateSphere(
@@ -63,7 +67,7 @@ export default class GridSphere {
 			bgColor.value = BABYLON.Color3.White()
 			lineColor.value = BABYLON.Color3.Black()
 			circleColor.value = BABYLON.Color3.Green()
-			gridRatio.value = 1 / (gridSize - 1)
+			gridRatio.value = 1 / gridSize
 			majorUnitFrequency.value = 1
 			minorUnitVisibility.value = 0
 			circleRadius.value = 0.03
@@ -72,23 +76,27 @@ export default class GridSphere {
 			sphere.material = gridMaterial
 			sphere.enablePointerMoveEvents = true
 
+			const gridFactor =
+				1 / gridRatio.value / Math.round(majorUnitFrequency.value)
+
 			scene.onPointerMove = (
 				_event: BABYLON.IPointerEvent,
 				pickInfo: BABYLON.PickingInfo
 			) => {
 				if (pickInfo.pickedMesh !== sphere) {
 					circleAmount.value = 0
+					this.activePoint = null
 					return
 				}
 
 				const pointerPosition = pickInfo.pickedPoint.subtract(sphere.position)
-				const gridFactor =
-					1 / gridRatio.value / Math.round(majorUnitFrequency.value)
 				const jointPosition = pointerPosition.scale(gridFactor)
 				jointPosition.x = Math.round(jointPosition.x)
 				jointPosition.y = Math.round(jointPosition.y)
 				jointPosition.z = Math.round(jointPosition.z)
 				jointPosition.scaleInPlace(1 / gridFactor)
+
+				// console.log(jointPosition)
 
 				const jointPositionSqrd = jointPosition.multiply(jointPosition)
 
@@ -126,11 +134,69 @@ export default class GridSphere {
 					circleRadius.value
 				) {
 					circleAmount.value = 0
+					this.activePoint = null
+				} else {
+					// console.log(jointPosition)
+					this.activePoint = this.getPoint(jointPosition)
 				}
 			}
 		})
 
+		this.points = this.generatePoints(0.5)
+		console.log(this.points)
 		this._sphere = sphere
+	}
+
+	allowPuttingStones() {
+		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
+			if (
+				pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP &&
+				pointerInfo.pickInfo?.hit &&
+				pointerInfo.pickInfo.pickedMesh === this._sphere
+				// this.activePoint
+			) {
+				this.putStone()
+			}
+		})
+	}
+
+	private putStone() {
+		console.log(this.activePoint)
+	}
+
+	protected getPoint(coords: BABYLON.Vector3) {
+		const roundK = 10e6
+		const round = (n: number) =>
+			Math.round((n + Number.EPSILON) * roundK) / roundK
+
+		const faildCheck = (
+			key: string,
+			p: Coordinates,
+			coords: BABYLON.Vector3
+		) => {
+			switch (typeof p[key]) {
+				case 'number':
+					if (round(p[key]) !== round(coords[key])) return false
+					break
+				default:
+					switch (p[key]) {
+						case Pole.POSITIVE:
+							if (coords[key] < 0) return false
+							break
+						case Pole.NEGATIVE:
+							if (coords[key] > 0) return false
+					}
+			}
+
+			return true
+		}
+
+		for (const p of this.points) {
+			// debugger
+			if (['x', 'y', 'z'].every((key) => faildCheck(key, p, coords))) {
+				return p
+			}
+		}
 	}
 
 	/**
@@ -142,9 +208,11 @@ export default class GridSphere {
 	protected generatePoints(min: number): Array<Coordinates> {
 		const result: Array<Coordinates> = []
 
+		// const k = this.gridSize - 1
 		const points = [...Array(this.gridSize).keys()].map(
-			(p) => p / this.gridSize - min
+			(p) => p / (this.gridSize - 1) - min
 		)
+		console.log(points)
 
 		// Starting from the top
 		for (const y of [...points].reverse()) {
@@ -184,7 +252,7 @@ export default class GridSphere {
 		// Filling the bottom
 		for (const y of points) {
 			for (const x of [...points].reverse()) {
-				result.push({ x, y, z: Pole.POSITIVE })
+				result.push({ x, y, z: Pole.NEGATIVE })
 			}
 		}
 

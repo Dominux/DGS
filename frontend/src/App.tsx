@@ -6,13 +6,14 @@ import GridSphere from './logic/spheres/grid_sphere'
 
 const App: Component = () => {
 	// TODO: bind changing grid size
-	const [gridSize, _setGridSize] = createSignal(7)
+	const [gridSize, _setGridSize] = createSignal(17)
 
 	let canvas: HTMLCanvasElement
 
 	onMount(() => {
 		const scene = new Scene(canvas)
-		new GridSphere(scene._scene, gridSize())
+		const field = new GridSphere(scene._scene, gridSize())
+		field.allowPuttingStones()
 	})
 
 	return (
