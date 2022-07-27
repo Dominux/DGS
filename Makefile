@@ -11,3 +11,6 @@ run_dev:
 
 front_build:
 	cd ./frontend && pnpm run build || true && cd -
+
+pnpm_i:
+	cd ./frontend && pnpm i || true && cd -
