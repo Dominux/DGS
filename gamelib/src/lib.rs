@@ -32,7 +32,9 @@ impl Game {
     }
 
     /// Make a move
-    pub fn make_move(&mut self, point_id: &PointID) -> errors::GameResult<()> {
+    ///
+    /// Returns list of stoned became dead by this move
+    pub fn make_move(&mut self, point_id: &PointID) -> errors::GameResult<Vec<PointID>> {
         self.inner.make_move(point_id)
     }
 

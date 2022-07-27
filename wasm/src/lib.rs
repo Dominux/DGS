@@ -35,9 +35,9 @@ impl Game {
     }
 
     /// Make a move
-    pub fn make_move(&mut self, point_id: PointID) -> GameResult<()> {
-        self.inner.make_move(&point_id)?;
-        Ok(())
+    pub fn make_move(&mut self, point_id: PointID) -> GameResult<Vec<PointID>> {
+        let deadlist = self.inner.make_move(&point_id)?;
+        Ok(deadlist)
     }
 
     /// Start game

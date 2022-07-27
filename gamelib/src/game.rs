@@ -48,7 +48,7 @@ where
     ////////////////////////////////////////////////////////////////////
 
     /// Main function to perform moves
-    pub fn make_move(&mut self, point_id: &PointID) -> GameResult<()> {
+    pub fn make_move(&mut self, point_id: &PointID) -> GameResult<Vec<PointID>> {
         // Validation
         if !self.is_started() {
             return Err(GameError::GameStateError {
@@ -62,6 +62,7 @@ where
         let player = self.player_turn().unwrap();
         let cloned_field = self.field.clone();
         let point = cloned_field.get_point(point_id);
+        let mut deadlist = vec![];
 
         // 1. Checking if the point is empty and not blocked
         match point.borrow().inner.status {
@@ -110,7 +111,13 @@ where
                         false
                     }
                 })
-                .map(|dead_group| dead_group.points_amount())
+                .map(|dead_group| {
+                    let sum = dead_group.points_amount();
+
+                    // Adding stones into deadlist
+                    deadlist.extend(dead_group.points_ids);
+                    sum
+                })
                 .sum();
 
             // Increasing player's score
@@ -134,6 +141,8 @@ where
             if group.liberties_amount() == 0 {
                 // Checking if suicide is permitted
                 if self.rules.can_commit_suicide() {
+                    // TODO: add recalculating deadlist
+
                     // Increasing enemy's score
                     enemies_score += group.points_amount();
 
@@ -185,7 +194,7 @@ where
         // 8. Increasing move number
         self.move_number = self.move_number.map(|n| n + 1);
 
-        Ok(())
+        Ok(deadlist)
     }
 
     #[inline]

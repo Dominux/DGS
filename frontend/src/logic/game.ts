@@ -13,8 +13,8 @@ export default class Game {
 		this.inner.start()
 	}
 
-	makeMove(pointID: number) {
-		this.inner.make_move(pointID)
+	makeMove(pointID: number): Array<number> {
+		return [...this.inner.make_move(pointID)]
 	}
 
 	get playerTurn() {

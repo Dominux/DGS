@@ -1,5 +1,6 @@
 import * as BABYLON from '@babylonjs/core'
 import Game from '../game'
+import StoneManager from '../stone_manager'
 
 export enum Pole {
 	POSITIVE = 'POSITIVE',
@@ -14,18 +15,17 @@ export type Coordinates = {
 
 export default class GridSphere {
 	readonly _sphere: BABYLON.Mesh
+	protected stoneManager: StoneManager
 	private points: Array<Coordinates>
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
-	readonly stoneSize = 1.6
 
 	constructor(
 		readonly scene: BABYLON.Scene,
 		readonly gridSize: number,
 		protected game: Game
 	) {
-		// Our built-in 'sphere' shape. Params: name, options, scene
 		gridSize--
 
 		const sphereRadius = 1
@@ -35,6 +35,8 @@ export default class GridSphere {
 			{ diameter: sphereRadius * 2, segments: 32 },
 			scene
 		)
+
+		this.stoneManager = new StoneManager(scene, gridSize)
 
 		BABYLON.NodeMaterial.ParseFromSnippetAsync(
 			// 'gridMaterial',
@@ -183,30 +185,12 @@ export default class GridSphere {
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
-		this.game.makeMove(this.activePointID)
+		const deadlist = this.game.makeMove(this.activePointID)
 
-		const diameter = (0.5 * this.stoneSize) / this.gridSize
-		const stone = BABYLON.MeshBuilder.CreateCylinder('cyl', {
-			diameter,
-			height: diameter / 2,
-		})
-		stone.position = this.activePoint
+		console.log(deadlist)
 
-		// Creating stone's material
-		const material = new BABYLON.StandardMaterial('stone', this.scene)
-		material.diffuseColor = color
-		stone.material = material
-
-		const path = new BABYLON.Path3D([
-			new BABYLON.Vector3(0, 0, 0),
-			this.activePoint,
-		])
-		const orientation = BABYLON.Vector3.RotationFromAxis(
-			path.getBinormalAt(0),
-			path.getTangentAt(0),
-			path.getNormalAt(0)
-		)
-		stone.rotation = orientation
+		this.stoneManager.create(this.activePointID, this.activePoint, color)
+		this.stoneManager.delete(deadlist)
 	}
 
 	protected getPointID(coords: BABYLON.Vector3): number {
