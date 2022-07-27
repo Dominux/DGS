@@ -181,7 +181,7 @@ export default class GridSphere {
 
 	private putStone() {
 		const color =
-			this.game.playerTurn === 'White'
+			this.game.playerTurn === 'Black'
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
