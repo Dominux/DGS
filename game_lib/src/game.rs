@@ -65,7 +65,7 @@ where
 
         // 1. Checking if the point is empty and not blocked
         match point.borrow().inner.status {
-            PointStatus::Blocked => return Err(GameError::PointBlocked(*point_id)),
+            // PointStatus::Blocked => return Err(GameError::PointBlocked(*point_id)),
             PointStatus::Occupied(_) => return Err(GameError::PointOccupied(*point_id)),
             PointStatus::Empty => (),
         }
@@ -78,8 +78,7 @@ where
 
         // 3. Merging all the groups we got this move
         let (mut players_groups, mut player_score, mut enemies_groups, mut enemies_score) = {
-            let (mut players_groups, player_score, mut enemies_groups, enemies_score) = match player
-            {
+            let (mut players_groups, player_score, enemies_groups, enemies_score) = match player {
                 PlayerColor::Black => (
                     self.black_groups.clone(),
                     self.black_score.clone().unwrap(),
@@ -103,7 +102,7 @@ where
         // 4. Removing dead enemies groups
         let are_there_dead_enemies_groups = {
             let new_score: usize = enemies_groups
-                .drain_filter(|mut group| {
+                .drain_filter(|group| {
                     if group.has_liberty(point_id) && group.liberties_amount() == 1 {
                         group.refresh_liberties(&self.field);
                         group.liberties_amount() == 0

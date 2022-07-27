@@ -13,35 +13,34 @@ use super::Field;
 pub type PointOwner = Rc<RefCell<PointWrapper>>;
 
 #[derive(Debug, Clone)]
-pub struct AxisSphereField {
+pub struct GridSphereField {
     points: Vec<PointOwner>,
-    size: SizeType,
 }
 
-impl AxisSphereField {
-    pub(crate) fn new(points: Vec<PointOwner>, size: &SizeType) -> Self {
-        Self {
-            points,
-            size: size.clone(),
-        }
+impl GridSphereField {
+    #[allow(dead_code)]
+    pub(crate) fn new(points: Vec<PointOwner>) -> Self {
+        Self { points }
     }
 }
 
-/// Struct to build AxisSphereField
-pub struct AxisSphereFieldBuilder;
+/// Struct to build GridSphereField
+pub struct GridSphereFieldBuilder;
 
-impl Default for AxisSphereFieldBuilder {
+impl Default for GridSphereFieldBuilder {
     fn default() -> Self {
         Self {}
     }
 }
 
-impl AxisSphereFieldBuilder {
-    pub fn with_size(&self, size: &SizeType) -> AxisSphereField {
+impl GridSphereFieldBuilder {
+    #[allow(dead_code)]
+    pub fn with_size(&self, size: &SizeType) -> GridSphereField {
         self.construct(size)
     }
 
-    fn construct(&self, size: &SizeType) -> AxisSphereField {
+    #[allow(dead_code)]
+    fn construct(&self, size: &SizeType) -> GridSphereField {
         let size = *size as usize;
 
         // Creating points
@@ -220,14 +219,11 @@ impl AxisSphereFieldBuilder {
             }
         }
 
-        AxisSphereField {
-            points,
-            size: size as SizeType,
-        }
+        GridSphereField { points }
     }
 }
 
-impl Field for AxisSphereField {
+impl Field for GridSphereField {
     #[inline]
     fn len(&self) -> usize {
         self.points.len()

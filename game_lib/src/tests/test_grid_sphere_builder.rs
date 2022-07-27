@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    field::{AxisSphereField, AxisSphereFieldBuilder, Field},
+    field::{Field, GridSphereField, GridSphereFieldBuilder},
     point::{Point, PointWrapper},
 };
 
@@ -64,7 +64,7 @@ const COMPRESSED_FIELD: [[usize; 4]; 54] = [
 ];
 
 #[test]
-fn test_axis_sphere_builder_with_size_7() {
+fn test_grid_sphere_builder_with_size_7() {
     let expected_field = {
         let points = COMPRESSED_FIELD
             .iter()
@@ -79,10 +79,10 @@ fn test_axis_sphere_builder_with_size_7() {
                 )))
             })
             .collect();
-        AxisSphereField::new(points, &7)
+        GridSphereField::new(points)
     };
 
-    let real = AxisSphereFieldBuilder::default().with_size(&3);
+    let real = GridSphereFieldBuilder::default().with_size(&3);
 
     for id in 0..real.len() {
         assert_eq!(

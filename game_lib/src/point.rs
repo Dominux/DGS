@@ -15,15 +15,15 @@ impl Point {
         }
     }
 
-    #[inline]
-    pub fn is_empty(&self) -> bool {
-        matches!(self.status, PointStatus::Empty)
-    }
+    // #[inline]
+    // pub fn is_empty(&self) -> bool {
+    //     matches!(self.status, PointStatus::Empty)
+    // }
 
-    #[inline]
-    pub fn is_blocked(&self) -> bool {
-        matches!(self.status, PointStatus::Blocked)
-    }
+    // #[inline]
+    // pub fn is_blocked(&self) -> bool {
+    //     matches!(self.status, PointStatus::Blocked)
+    // }
 
     #[inline]
     pub fn is_occupied(&self) -> bool {
@@ -43,7 +43,7 @@ impl Point {
 pub enum PointStatus {
     Empty,
     Occupied(PlayerColor),
-    Blocked,
+    // Blocked,
 }
 
 impl Default for PointStatus {

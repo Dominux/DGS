@@ -243,7 +243,7 @@ fn test_cubic_sphere_builder_with_size_7() {
                 )))
             })
             .collect();
-        CubicSphereField::new(points, &7)
+        CubicSphereField::new(points)
     };
 
     let real = CubicSphereFieldBuilder::default().with_size(&7).unwrap();

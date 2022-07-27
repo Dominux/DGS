@@ -15,16 +15,17 @@ pub type PointOwner = Rc<RefCell<PointWrapper>>;
 #[derive(Debug, Clone)]
 pub struct CubicSphereField {
     points: Vec<PointOwner>,
-    size: SizeType,
+    // size: SizeType,
 }
 
 const MIN_SIZE: SizeType = 4;
 
 impl CubicSphereField {
-    pub(crate) fn new(points: Vec<PointOwner>, size: &SizeType) -> Self {
+    #[allow(dead_code)]
+    pub(crate) fn new(points: Vec<PointOwner>) -> Self {
         Self {
             points,
-            size: *size,
+            // size: *size,
         }
     }
 }
@@ -240,7 +241,7 @@ impl CubicSphereFieldBuilder {
 
         CubicSphereField {
             points,
-            size: size as SizeType,
+            // size: size as SizeType,
         }
     }
 
