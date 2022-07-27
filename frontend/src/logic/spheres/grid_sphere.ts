@@ -1,4 +1,5 @@
 import * as BABYLON from '@babylonjs/core'
+import Game from '../game'
 
 export enum Pole {
 	POSITIVE = 'POSITIVE',
@@ -17,9 +18,13 @@ export default class GridSphere {
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
-	readonly stoneSize = 1
+	readonly stoneSize = 1.6
 
-	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
+	constructor(
+		readonly scene: BABYLON.Scene,
+		readonly gridSize: number,
+		protected game: Game
+	) {
 		// Our built-in 'sphere' shape. Params: name, options, scene
 		gridSize--
 
@@ -149,6 +154,8 @@ export default class GridSphere {
 	}
 
 	allowPuttingStones() {
+		this.game.start()
+
 		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
 			switch (pointerInfo.type) {
 				case BABYLON.PointerEventTypes.POINTERDOWN:
@@ -171,6 +178,13 @@ export default class GridSphere {
 	}
 
 	private putStone() {
+		const color =
+			this.game.playerTurn === 'White'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
+
+		this.game.makeMove(this.activePointID)
+
 		const diameter = (0.5 * this.stoneSize) / this.gridSize
 		const stone = BABYLON.MeshBuilder.CreateCylinder('cyl', {
 			diameter,
@@ -180,7 +194,7 @@ export default class GridSphere {
 
 		// Creating stone's material
 		const material = new BABYLON.StandardMaterial('stone', this.scene)
-		material.diffuseColor = BABYLON.Color3.Black()
+		material.diffuseColor = color
 		stone.material = material
 
 		const path = new BABYLON.Path3D([

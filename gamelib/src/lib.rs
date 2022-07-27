@@ -2,6 +2,7 @@
 #![feature(slice_flatten)]
 
 pub use aliases::{PointID, SizeType};
+pub use point::PlayerColor;
 
 mod aliases;
 pub mod errors;
@@ -45,16 +46,34 @@ impl Game {
         self.inner.end()
     }
 
+    #[inline]
     pub fn is_not_started(&self) -> bool {
         self.inner.is_not_started()
     }
 
+    #[inline]
     pub fn is_started(&self) -> bool {
         self.inner.is_started()
     }
 
+    #[inline]
     pub fn is_ended(&self) -> bool {
         self.inner.is_ended()
+    }
+
+    #[inline]
+    pub fn get_black_score(&self) -> Option<usize> {
+        self.inner.get_black_score()
+    }
+
+    #[inline]
+    pub fn get_white_score(&self) -> Option<usize> {
+        self.inner.get_white_score()
+    }
+
+    #[inline]
+    pub fn player_turn(&self) -> Option<PlayerColor> {
+        self.inner.player_turn()
     }
 }
 

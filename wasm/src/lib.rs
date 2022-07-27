@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 
-use spherical_go_game_lib::{Game as InnerGame, PointID, SizeType};
+use spherical_go_game_lib::{Game as InnerGame, PlayerColor, PointID, SizeType};
 
 #[wasm_bindgen]
 pub struct Game {
@@ -8,6 +8,22 @@ pub struct Game {
 }
 
 type GameResult<T> = Result<T, JsError>;
+
+#[wasm_bindgen]
+#[derive(Debug, Clone, Copy)]
+pub enum Player {
+    Black = "Black",
+    White = "White",
+}
+
+impl From<PlayerColor> for Player {
+    fn from(p: PlayerColor) -> Self {
+        match p {
+            PlayerColor::Black => Self::Black,
+            PlayerColor::White => Self::White,
+        }
+    }
+}
 
 #[wasm_bindgen]
 impl Game {
@@ -46,5 +62,17 @@ impl Game {
 
     pub fn is_ended(&self) -> bool {
         self.inner.is_ended()
+    }
+
+    pub fn get_black_score(&self) -> Option<usize> {
+        self.inner.get_black_score()
+    }
+
+    pub fn get_white_score(&self) -> Option<usize> {
+        self.inner.get_white_score()
+    }
+
+    pub fn player_turn(&self) -> Option<Player> {
+        self.inner.player_turn().map(|p| Player::from(p))
     }
 }

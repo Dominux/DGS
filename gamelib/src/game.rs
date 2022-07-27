@@ -228,9 +228,7 @@ where
         }
 
         self.state = GameState::Started;
-        self.move_number = Some(1);
-        self.black_score = Some(0);
-        self.white_score = Some(0);
+        self.move_number = None;
         Ok(())
     }
 
@@ -247,5 +245,15 @@ where
     #[inline]
     pub fn is_ended(&self) -> bool {
         matches!(self.state, GameState::Ended)
+    }
+
+    #[inline]
+    pub fn get_black_score(&self) -> Option<usize> {
+        self.black_score
+    }
+
+    #[inline]
+    pub fn get_white_score(&self) -> Option<usize> {
+        self.white_score
     }
 }
