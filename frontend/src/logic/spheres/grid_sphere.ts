@@ -16,6 +16,7 @@ export default class GridSphere {
 	private points: Array<Coordinates>
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
+	private canPutStone = false
 	readonly stoneSize = 1
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
@@ -149,13 +150,22 @@ export default class GridSphere {
 
 	allowPuttingStones() {
 		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
-			if (
-				pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP &&
-				pointerInfo.pickInfo?.hit &&
-				pointerInfo.pickInfo.pickedMesh === this._sphere &&
-				this.activePointID
-			) {
-				this.putStone()
+			switch (pointerInfo.type) {
+				case BABYLON.PointerEventTypes.POINTERDOWN:
+					this.canPutStone = true
+					break
+				case BABYLON.PointerEventTypes.POINTERMOVE:
+					this.canPutStone = false
+					break
+				case BABYLON.PointerEventTypes.POINTERUP:
+					if (
+						this.canPutStone &&
+						pointerInfo.pickInfo?.hit &&
+						pointerInfo.pickInfo.pickedMesh === this._sphere &&
+						this.activePointID
+					) {
+						this.putStone()
+					}
 			}
 		})
 	}
