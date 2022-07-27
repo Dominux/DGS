@@ -16,13 +16,13 @@ mod state;
 mod file_converters;
 
 pub struct Game {
-    inner: game::Game<field::CubicSphereField, rules::JapaneseRules>,
+    inner: game::Game<field::GridSphereField, rules::JapaneseRules>,
 }
 
 impl Game {
     /// Create the game
     pub fn new(size: &SizeType) -> errors::GameResult<Self> {
-        let field = field::CubicSphereFieldBuilder::default().with_size(size)?;
+        let field = field::GridSphereFieldBuilder::default().with_size(size);
         let rules = rules::JapaneseRules::new();
         let game = Self {
             inner: game::Game::new(field, rules),
