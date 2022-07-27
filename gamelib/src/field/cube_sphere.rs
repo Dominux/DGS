@@ -18,6 +18,7 @@ pub struct CubicSphereField {
     // size: SizeType,
 }
 
+#[allow(dead_code)]
 const MIN_SIZE: SizeType = 4;
 
 impl CubicSphereField {
@@ -40,6 +41,7 @@ impl Default for CubicSphereFieldBuilder {
 }
 
 impl CubicSphereFieldBuilder {
+    #[allow(dead_code)]
     pub fn with_size(&self, size: &SizeType) -> GameResult<CubicSphereField> {
         // Validating
         self.validate_size(size)?;
@@ -49,6 +51,7 @@ impl CubicSphereFieldBuilder {
         Ok(field)
     }
 
+    #[allow(dead_code)]
     fn construct(&self, size: &SizeType) -> CubicSphereField {
         let size = *size as usize;
         let inner_size = size - 2;
