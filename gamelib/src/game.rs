@@ -71,7 +71,7 @@ where
             PointStatus::Empty => (),
         }
 
-        // 2. Occuping point and turning it into a group
+        // 2. Occupying point and turning it into a group
         let mut group = {
             point.borrow_mut().inner.status = PointStatus::Occupied(player);
             Group::new(point_id, &cloned_field, &player)
@@ -145,14 +145,16 @@ where
 
                     // Increasing enemy's score
                     enemies_score += group.points_amount();
-
-                    // Refreshing liberties of all player's groups
-                    for group in enemies_groups.iter_mut() {
-                        group.refresh_liberties(&self.field)
-                    }
                 } else {
                     return Err(GameError::SuicideMoveIsNotPermitted);
                 }
+            } else {
+                // Adding new group
+                players_groups.push(group);
+            }
+            // Refreshing liberties of all enemy's groups
+            for group in enemies_groups.iter_mut() {
+                group.refresh_liberties(&self.field)
             }
         }
 
@@ -200,8 +202,8 @@ where
     #[inline]
     pub fn player_turn(&self) -> Option<PlayerColor> {
         self.move_number.map(|n| match n % 2 {
-            1 => PlayerColor::White,
-            _ => PlayerColor::Black,
+            1 => PlayerColor::Black,
+            _ => PlayerColor::White,
         })
     }
 
