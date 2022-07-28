@@ -1,6 +1,10 @@
 use std::{collections::HashSet, fmt::Debug, ops::BitOrAssign};
 
-use crate::{aliases::PointID, field::Field, point::PlayerColor};
+use crate::{
+    aliases::PointID,
+    field::Field,
+    point::{PlayerColor, PointStatus},
+};
 
 #[derive(Clone)]
 pub struct Group {
@@ -64,6 +68,15 @@ impl Group {
             })
             .flatten()
             .collect()
+    }
+
+    pub fn delete<T>(self, field: &T)
+    where
+        T: Field,
+    {
+        for id in self.points_ids {
+            field.get_point(&id).borrow_mut().inner.status = PointStatus::Empty;
+        }
     }
 
     /// Defines if the group has a liberty with the given point id

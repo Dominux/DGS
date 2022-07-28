@@ -19,8 +19,8 @@ where
     rules: R,
     pub(crate) field: F,
     move_number: Option<usize>,
-    black_groups: Vec<Group>,
-    white_groups: Vec<Group>,
+    pub(crate) black_groups: Vec<Group>,
+    pub(crate) white_groups: Vec<Group>,
     black_score: Option<usize>,
     white_score: Option<usize>,
 }
@@ -63,6 +63,7 @@ where
         let cloned_field = self.field.clone();
         let point = cloned_field.get_point(point_id);
         let mut deadlist = vec![];
+        let mut dead_groups = vec![];
 
         // 1. Checking if the point is empty and not blocked
         match point.borrow().inner.status {
@@ -115,7 +116,10 @@ where
                     let sum = dead_group.points_amount();
 
                     // Adding stones into deadlist
-                    deadlist.extend(dead_group.points_ids);
+                    deadlist.extend(dead_group.points_ids.clone());
+
+                    // Adding groups into dead groups
+                    dead_groups.push(dead_group);
                     sum
                 })
                 .sum();
@@ -128,6 +132,11 @@ where
 
         // 5. Post removing dead enemies groups actions
         if are_there_dead_enemies_groups {
+            // Deleting enemies groups amd emptying their points
+            for group in dead_groups {
+                group.delete(&cloned_field)
+            }
+
             // Adding new group
             players_groups.push(group);
 
