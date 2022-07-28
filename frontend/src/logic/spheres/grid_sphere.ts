@@ -171,7 +171,7 @@ export default class GridSphere {
 						this.canPutStone &&
 						pointerInfo.pickInfo?.hit &&
 						pointerInfo.pickInfo.pickedMesh === this._sphere &&
-						this.activePointID
+						this.activePointID !== null
 					) {
 						this.putStone()
 					}
@@ -185,9 +185,9 @@ export default class GridSphere {
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
-		const deadlist = this.game.makeMove(this.activePointID)
+		console.log(this.activePointID, this.activePoint)
 
-		console.log(deadlist)
+		const deadlist = this.game.makeMove(this.activePointID)
 
 		this.stoneManager.create(this.activePointID, this.activePoint, color)
 		this.stoneManager.delete(deadlist)
@@ -198,7 +198,7 @@ export default class GridSphere {
 		const round = (n: number) =>
 			Math.round((n + Number.EPSILON) * roundK) / roundK
 
-		const faildCheck = (
+		const failCheck = (
 			key: string,
 			p: Coordinates,
 			coords: BABYLON.Vector3
@@ -221,7 +221,7 @@ export default class GridSphere {
 		}
 
 		for (const [i, p] of this.points.entries()) {
-			if (['x', 'y', 'z'].every((key) => faildCheck(key, p, coords))) {
+			if (['x', 'y', 'z'].every((key) => failCheck(key, p, coords))) {
 				return i
 			}
 		}
@@ -242,42 +242,30 @@ export default class GridSphere {
 
 		// Starting from the top
 		for (const y of [...points].reverse()) {
-			for (const x of points) {
+			for (const x of [...points].reverse()) {
 				result.push({ x, y, z: Pole.POSITIVE })
 			}
 		}
 
 		// Filling sides
 		for (const z of [...points].reverse()) {
-			for (let x = 1; x < 5; x++) {
-				switch (x) {
-					case 1:
-						for (const y of [...points].reverse()) {
-							result.push({ x: Pole.NEGATIVE, y, z })
-						}
-						break
-					case 2:
-						for (const x of points) {
-							result.push({ x, y: Pole.NEGATIVE, z })
-						}
-						break
-					case 3:
-						for (const y of points) {
-							result.push({ x: Pole.POSITIVE, y, z })
-						}
-						break
-					case 4:
-						for (const x of [...points].reverse()) {
-							result.push({ x, y: Pole.POSITIVE, z })
-						}
-						break
-				}
+			for (const y of [...points].reverse()) {
+				result.push({ x: Pole.POSITIVE, y, z })
+			}
+			for (const x of [...points].reverse()) {
+				result.push({ x, y: Pole.NEGATIVE, z })
+			}
+			for (const y of points) {
+				result.push({ x: Pole.NEGATIVE, y, z })
+			}
+			for (const x of points) {
+				result.push({ x, y: Pole.POSITIVE, z })
 			}
 		}
 
 		// Filling the bottom
-		for (const y of points) {
-			for (const x of [...points].reverse()) {
+		for (const x of points) {
+			for (const y of points) {
 				result.push({ x, y, z: Pole.NEGATIVE })
 			}
 		}
