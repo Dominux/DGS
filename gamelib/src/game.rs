@@ -17,7 +17,7 @@ where
 {
     state: GameState,
     rules: R,
-    field: F,
+    pub(crate) field: F,
     move_number: Option<usize>,
     black_groups: Vec<Group>,
     white_groups: Vec<Group>,

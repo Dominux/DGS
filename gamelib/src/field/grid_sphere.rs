@@ -161,7 +161,7 @@ impl GridSphereFieldBuilder {
 
             // Middle faces and edges
             {
-                for layer in 1..size {
+                for layer in 1..(size - 1) {
                     let min = quadratic_size + layer_size * layer;
                     let max = min + layer_size - 1;
 
@@ -190,8 +190,9 @@ impl GridSphereFieldBuilder {
 
             // Bottom edges and faces
             {
+                let layer_size = size * 4;
                 let last_elem = points.len() - 1;
-                for id in (points.len() - quadratic_size)..points.len() {
+                for id in (points.len() - (quadratic_size + layer_size))..points.len() {
                     // Mirroring the top ones
                     let mirror_id = last_elem - id;
 
