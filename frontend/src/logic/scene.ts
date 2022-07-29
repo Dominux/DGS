@@ -1,5 +1,7 @@
 import * as BABYLON from '@babylonjs/core'
 
+import { HDR } from '../constants'
+
 export default class Scene {
 	readonly _scene: BABYLON.Scene
 
@@ -7,6 +9,12 @@ export default class Scene {
 		const engine = new BABYLON.Engine(canvas, true)
 
 		this._scene = new BABYLON.Scene(engine)
+
+		// Loading environment
+		this._scene.environmentTexture = new BABYLON.CubeTexture(
+			'src/assets/environment.env',
+			this._scene
+		)
 
 		const camera = new BABYLON.ArcRotateCamera(
 			'camera',

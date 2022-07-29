@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@babylonjs/core": "^5.16.0",
+    "@suid/icons-material": "^0.2.5",
+    "@suid/material": "^0.4.3",
     "solid-js": "^1.4.7"
   }
 }

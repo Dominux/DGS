@@ -16,23 +16,24 @@ export type Coordinates = {
 export default class GridSphere {
 	readonly _sphere: BABYLON.Mesh
 	protected stoneManager: StoneManager
-	private points: Array<Coordinates>
+	protected game: Game | undefined
+	protected sphereRadius = 1
+	private points: Array<Coordinates> = []
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
+	private circleRadius
+	private circleAmount
+	private circlePosition
+	private gridRatio
+	private majorUnitFrequency
 
-	constructor(
-		readonly scene: BABYLON.Scene,
-		readonly gridSize: number,
-		protected game: Game
-	) {
+	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		gridSize--
 
-		const sphereRadius = 1
-		const sphereRadiusSqrd = sphereRadius * sphereRadius
-		const sphere = BABYLON.MeshBuilder.CreateSphere(
+		this._sphere = BABYLON.MeshBuilder.CreateSphere(
 			'sphere',
-			{ diameter: sphereRadius * 2, segments: 32 },
+			{ diameter: this.sphereRadius * 2, segments: 32 },
 			scene
 		)
 
@@ -43,22 +44,22 @@ export default class GridSphere {
 			'YCMALW#7',
 			scene
 		).then((gridMaterial) => {
-			const gridRatio = gridMaterial.getInputBlockByPredicate(
+			this.gridRatio = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'gridRatio'
 			)
-			const majorUnitFrequency = gridMaterial.getInputBlockByPredicate(
+			this.majorUnitFrequency = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'majorUnitFrequency'
 			)
 			const minorUnitVisibility = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'minorUnitVisibility'
 			)
-			const circleRadius = gridMaterial.getInputBlockByPredicate(
+			this.circleRadius = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'circleRadius'
 			)
-			const circleAmount = gridMaterial.getInputBlockByPredicate(
+			this.circleAmount = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'circleAmount'
 			)
-			const circlePosition = gridMaterial.getInputBlockByPredicate(
+			this.circlePosition = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'circlePosition'
 			)
 			const circleSmoothness = gridMaterial.getInputBlockByPredicate(
@@ -77,87 +78,106 @@ export default class GridSphere {
 			bgColor.value = BABYLON.Color3.Gray()
 			lineColor.value = BABYLON.Color3.Black()
 			circleColor.value = BABYLON.Color3.Green()
-			gridRatio.value = 1 / gridSize
-			majorUnitFrequency.value = 1
+			this.gridRatio.value = 1 / gridSize
+			this.majorUnitFrequency.value = 1
 			minorUnitVisibility.value = 0
-			circleRadius.value = 0.03
+			this.circleRadius.value = 0.03
 			circleSmoothness.value = 0.005
 
-			sphere.material = gridMaterial
-			sphere.enablePointerMoveEvents = true
-
-			const gridFactor =
-				1 / gridRatio.value / Math.round(majorUnitFrequency.value)
-
-			scene.onPointerMove = (
-				_event: BABYLON.IPointerEvent,
-				pickInfo: BABYLON.PickingInfo
-			) => {
-				if (pickInfo.pickedMesh !== sphere) {
-					circleAmount.value = 0
-					this.activePointID = null
-					return
-				}
-
-				const pointerPosition = pickInfo.pickedPoint.subtract(sphere.position)
-				const jointPosition = pointerPosition.scale(gridFactor)
-				jointPosition.x = Math.round(jointPosition.x)
-				jointPosition.y = Math.round(jointPosition.y)
-				jointPosition.z = Math.round(jointPosition.z)
-				jointPosition.scaleInPlace(1 / gridFactor)
-
-				const jointPositionSqrd = jointPosition.multiply(jointPosition)
-
-				const cutoff = 0.5 * sphereRadius
-				const absX = Math.abs(jointPosition.x)
-				const absY = Math.abs(jointPosition.y)
-				const absZ = Math.abs(jointPosition.z)
-				const max = Math.max(Math.max(absX, absY, absZ))
-				if (max === absX) {
-					jointPosition.x =
-						Math.sign(jointPosition.x) *
-						Math.sqrt(
-							sphereRadiusSqrd - jointPositionSqrd.y - jointPositionSqrd.z
-						)
-					circleAmount.value = absY > cutoff || absZ > cutoff ? 0 : 1
-				} else if (max === absY) {
-					jointPosition.y =
-						Math.sign(jointPosition.y) *
-						Math.sqrt(
-							sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.z
-						)
-					circleAmount.value = absX > cutoff || absZ > cutoff ? 0 : 1
-				} else {
-					jointPosition.z =
-						Math.sign(jointPosition.z) *
-						Math.sqrt(
-							sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.y
-						)
-					circleAmount.value = absX > cutoff || absY > cutoff ? 0 : 1
-				}
-
-				circlePosition.value = jointPosition
-				if (
-					BABYLON.Vector3.Distance(pointerPosition, jointPosition) >
-					circleRadius.value
-				) {
-					circleAmount.value = 0
-					this.activePointID = null
-					this.activePoint = undefined
-				} else {
-					this.activePointID = this.getPointID(jointPosition)
-					this.activePoint = jointPosition
-				}
-			}
+			this._sphere.material = gridMaterial
 		})
-
-		this.points = this.generatePoints(0.5)
-		this._sphere = sphere
 	}
 
-	allowPuttingStones() {
-		this.game.start()
+	start(game: Game) {
+		this.game = game
 
+		this._sphere.enablePointerMoveEvents = true
+
+		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
+		const gridFactor =
+			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
+
+		this.scene.onPointerMove = (
+			_event: BABYLON.IPointerEvent,
+			pickInfo: BABYLON.PickingInfo
+		) => {
+			if (pickInfo.pickedMesh !== this._sphere) {
+				this.circleAmount.value = 0
+				this.activePointID = null
+				return
+			}
+
+			const pointerPosition = pickInfo.pickedPoint.subtract(
+				this._sphere.position
+			)
+			const jointPosition = pointerPosition.scale(gridFactor)
+			jointPosition.x = Math.round(jointPosition.x)
+			jointPosition.y = Math.round(jointPosition.y)
+			jointPosition.z = Math.round(jointPosition.z)
+			jointPosition.scaleInPlace(1 / gridFactor)
+
+			const jointPositionSqrd = jointPosition.multiply(jointPosition)
+
+			const cutoff = 0.5 * this.sphereRadius
+			const absX = Math.abs(jointPosition.x)
+			const absY = Math.abs(jointPosition.y)
+			const absZ = Math.abs(jointPosition.z)
+			const max = Math.max(Math.max(absX, absY, absZ))
+			if (max === absX) {
+				jointPosition.x =
+					Math.sign(jointPosition.x) *
+					Math.sqrt(
+						sphereRadiusSqrd - jointPositionSqrd.y - jointPositionSqrd.z
+					)
+				this.circleAmount.value = absY > cutoff || absZ > cutoff ? 0 : 1
+			} else if (max === absY) {
+				jointPosition.y =
+					Math.sign(jointPosition.y) *
+					Math.sqrt(
+						sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.z
+					)
+				this.circleAmount.value = absX > cutoff || absZ > cutoff ? 0 : 1
+			} else {
+				jointPosition.z =
+					Math.sign(jointPosition.z) *
+					Math.sqrt(
+						sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.y
+					)
+				this.circleAmount.value = absX > cutoff || absY > cutoff ? 0 : 1
+			}
+
+			this.circlePosition.value = jointPosition
+			if (
+				BABYLON.Vector3.Distance(pointerPosition, jointPosition) >
+				this.circleRadius.value
+			) {
+				this.circleAmount.value = 0
+				this.activePointID = null
+				this.activePoint = undefined
+			} else {
+				this.activePointID = this.getPointID(jointPosition)
+				this.activePoint = jointPosition
+			}
+		}
+
+		// Calculating points
+		this.points = this.generatePoints(0.5)
+
+		// Starting the game process
+		this.game?.start()
+
+		// Allowing putting stones
+		this.allowPuttingStones()
+	}
+
+	/**
+	 * Delete sphere
+	 */
+	delete() {
+		this._sphere.dispose()
+	}
+
+	protected allowPuttingStones() {
 		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
 			switch (pointerInfo.type) {
 				case BABYLON.PointerEventTypes.POINTERDOWN:
@@ -170,7 +190,7 @@ export default class GridSphere {
 					if (
 						this.canPutStone &&
 						pointerInfo.pickInfo?.hit &&
-						pointerInfo.pickInfo.pickedMesh === this._sphere &&
+						pointerInfo.pickInfo?.pickedMesh === this._sphere &&
 						this.activePointID !== null
 					) {
 						this.putStone()
@@ -181,13 +201,11 @@ export default class GridSphere {
 
 	private putStone() {
 		const color =
-			this.game.playerTurn === 'Black'
+			this.game?.playerTurn === 'Black'
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
-		console.log(this.activePointID, this.activePoint)
-
-		const deadlist = this.game.makeMove(this.activePointID)
+		const deadlist = this.game?.makeMove(this.activePointID)
 
 		this.stoneManager.create(this.activePointID, this.activePoint, color)
 		this.stoneManager.delete(deadlist)
