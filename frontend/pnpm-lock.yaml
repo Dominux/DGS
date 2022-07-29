@@ -1,18 +1,18 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@babylonjs/core': ^5.16.0
   '@suid/icons-material': ^0.2.5
   '@suid/material': ^0.4.3
+  babylonjs: ^5.17.1
   solid-js: ^1.4.7
   typescript: ^4.7.4
   vite: ^3.0.0
   vite-plugin-solid: ^2.3.0
 
 dependencies:
-  '@babylonjs/core': 5.16.0
   '@suid/icons-material': 0.2.5_solid-js@1.4.7
   '@suid/material': 0.4.3_solid-js@1.4.7
+  babylonjs: 5.17.1
   solid-js: 1.4.7
 
 devDependencies:
@@ -329,12 +329,6 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
-  /@babylonjs/core/5.16.0:
-    resolution: {integrity: sha512-6sHhLCxemO9jXpUqzssJOSAlzXk0QW2YW+lSP7wRS4nCK55bw+xasSGe+toQjy4SzpmW/gaeJ2c8yxo4kUyH4Q==}
-    dependencies:
-      tslib: 2.4.0
-    dev: false
-
   /@jridgewell/gen-mapping/0.1.1:
     resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}
     engines: {node: '>=6.0.0'}
@@ -490,6 +484,11 @@ packages:
       '@babel/core': 7.18.6
       babel-plugin-jsx-dom-expressions: 0.33.12_@babel+core@7.18.6
     dev: true
+
+  /babylonjs/5.17.1:
+    resolution: {integrity: sha512-YzzIeR/dHKnAlax1ftq++61l2d1WuzDFnVlhUjmKtTdEcDQwHhsBVb9O4+D9PTXhW2iMclEFPEwwOYRv4UmCFA==}
+    requiresBuild: true
+    dev: false
 
   /browserslist/4.21.2:
     resolution: {integrity: sha512-MonuOgAtUB46uP5CezYbRaYKBNt2LxP0yX+Pmj4LkcDFGkn9Cbpi83d9sCjwQDErXsIJSzY5oKGDbgOlF/LPAA==}
@@ -943,10 +942,6 @@ packages:
   /ts-toolbelt/9.6.0:
     resolution: {integrity: sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==}
     dev: true
-
-  /tslib/2.4.0:
-    resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
-    dev: false
 
   /typescript/4.7.4:
     resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}

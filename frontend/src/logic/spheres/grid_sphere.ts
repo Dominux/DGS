@@ -1,4 +1,4 @@
-import * as BABYLON from '@babylonjs/core'
+import * as BABYLON from 'babylonjs'
 import Game from '../game'
 import StoneManager from '../stone_manager'
 

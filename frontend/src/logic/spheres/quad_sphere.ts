@@ -1,4 +1,4 @@
-import * as BABYLON from '@babylonjs/core'
+import * as BABYLON from 'babylonjs'
 
 export default class QuadSpherePlayground {
 	public static createScene(canvas: HTMLCanvasElement): BABYLON.Scene {
