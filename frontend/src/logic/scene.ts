@@ -11,10 +11,7 @@ export default class Scene {
 		this._scene = new BABYLON.Scene(engine)
 
 		// Loading environment
-		this._scene.environmentTexture = new BABYLON.CubeTexture(
-			'src/assets/environment.env',
-			this._scene
-		)
+		this.loadEnv()
 
 		const camera = new BABYLON.ArcRotateCamera(
 			'camera',
@@ -42,5 +39,25 @@ export default class Scene {
 		window.addEventListener('resize', () => {
 			engine.resize()
 		})
+	}
+
+	protected loadEnv() {
+		setTimeout(() => {
+			const hdrTexture = new BABYLON.HDRCubeTexture(HDR, this._scene, 512)
+
+			// Skybox
+			const hdrSkybox = BABYLON.Mesh.CreateBox('hdrSkyBox', 1000.0, this._scene)
+			const hdrSkyboxMaterial = new BABYLON.PBRMaterial('skyBox', this._scene)
+			hdrSkyboxMaterial.backFaceCulling = false
+			hdrSkyboxMaterial.reflectionTexture = hdrTexture.clone()
+			hdrSkyboxMaterial.reflectionTexture.coordinatesMode =
+				BABYLON.Texture.SKYBOX_MODE
+			hdrSkyboxMaterial.microSurface = 1.0
+			hdrSkyboxMaterial.cameraExposure = 0.66
+			hdrSkyboxMaterial.cameraContrast = 1.66
+			hdrSkyboxMaterial.disableLighting = true
+			hdrSkybox.material = hdrSkyboxMaterial
+			hdrSkybox.infiniteDistance = true
+		}, 0)
 	}
 }
