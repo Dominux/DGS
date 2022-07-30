@@ -18,6 +18,8 @@ export default class GridSphere {
 	protected stoneManager: StoneManager
 	protected game: Game | undefined
 	protected sphereRadius = 1
+	private onEnvMove: Function | undefined
+	private onDeath: Function | undefined
 	private points: Array<Coordinates> = []
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
@@ -88,8 +90,10 @@ export default class GridSphere {
 		})
 	}
 
-	start(game: Game) {
+	start(game: Game, onEndMove: Function, onDeath: Function) {
 		this.game = game
+		this.onDeath = onDeath
+		this.onEnvMove = onEndMove
 
 		this._sphere.enablePointerMoveEvents = true
 
@@ -177,6 +181,18 @@ export default class GridSphere {
 		this._sphere.dispose()
 	}
 
+	get playerTurn() {
+		return this.game?.playerTurn
+	}
+
+	get blackScore() {
+		return this.game?.blackScore
+	}
+
+	get whiteScore() {
+		return this.game?.whiteScore
+	}
+
 	protected allowPuttingStones() {
 		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
 			switch (pointerInfo.type) {
@@ -209,6 +225,9 @@ export default class GridSphere {
 
 		this.stoneManager.create(this.activePointID, this.activePoint, color)
 		this.stoneManager.delete(deadlist)
+
+		if (deadlist?.length) this.onDeath()
+		this.onEnvMove()
 	}
 
 	protected getPointID(coords: BABYLON.Vector3): number {

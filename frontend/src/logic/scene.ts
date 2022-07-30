@@ -21,16 +21,18 @@ export default class Scene {
 			new BABYLON.Vector3(0, 0, 0),
 			this._scene
 		)
-
-		// This attaches the camera to the canvas
 		camera.attachControl(canvas, true)
 
-		// // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-		// const light = new BABYLON.HemisphericLight(
-		// 	'light1',
-		// 	new BABYLON.Vector3(1, 1, 0),
-		// 	this._scene
-		// )
+		new BABYLON.HemisphericLight(
+			'light1',
+			new BABYLON.Vector3(1, 1, 0),
+			this._scene
+		)
+		new BABYLON.HemisphericLight(
+			'light2',
+			new BABYLON.Vector3(-1, 0, -1),
+			this._scene
+		)
 
 		engine.runRenderLoop(() => {
 			this._scene.render()
