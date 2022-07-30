@@ -65,12 +65,16 @@ export default class Scene {
 			hdrSkybox.material = hdrSkyboxMaterial
 			hdrSkybox.infiniteDistance = true
 
-			this._scene.environmentTexture.setReflectionTextureMatrix(
-				BABYLON.Matrix.RotationY(0)
-			)
-			// const hdrTexture = new BABYLON.HDRCubeTexture(HDR, this._scene, 512)
+			// this._scene.environmentTexture.setReflectionTextureMatrix(
+			// 	BABYLON.Matrix.RotationY(0)
+			// )
+			// const hdrTexture = new BABYLON.HDRCubeTexture(
+			// 	'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/whipple_creek_regional_park_04_2k.hdr',
+			// 	this._scene,
+			// 	512
+			// )
 
-			// // Skybox
+			// Skybox
 			// const hdrSkybox = BABYLON.Mesh.CreateBox('hdrSkyBox', 1000.0, this._scene)
 			// const hdrSkyboxMaterial = new BABYLON.PBRMaterial('skyBox', this._scene)
 			// hdrSkyboxMaterial.backFaceCulling = false
@@ -80,7 +84,7 @@ export default class Scene {
 			// hdrSkyboxMaterial.microSurface = 1.0
 			// hdrSkyboxMaterial.cameraExposure = 0.66
 			// hdrSkyboxMaterial.cameraContrast = 1.66
-			// hdrSkyboxMaterial.disableLighting = true
+			// // hdrSkyboxMaterial.disableLighting = true
 			// hdrSkybox.material = hdrSkyboxMaterial
 			// hdrSkybox.infiniteDistance = true
 		}, 0)
