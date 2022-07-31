@@ -9,6 +9,7 @@ pub mod errors;
 mod field;
 mod game;
 mod group;
+mod ko_guard;
 mod point;
 mod rules;
 mod state;

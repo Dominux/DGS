@@ -12,7 +12,7 @@ use super::Field;
 
 pub type PointOwner = Rc<RefCell<PointWrapper>>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct GridSphereField {
     points: Vec<PointOwner>,
 }
@@ -20,6 +20,18 @@ pub struct GridSphereField {
 impl GridSphereField {
     #[allow(dead_code)]
     pub(crate) fn new(points: Vec<PointOwner>) -> Self {
+        Self { points }
+    }
+}
+
+// Custom implementation cause Rc<RefCell<_>> does not create completely new object in memory on .clone()
+impl Clone for GridSphereField {
+    fn clone(&self) -> Self {
+        let points = self
+            .points
+            .iter()
+            .map(|point| Rc::new(RefCell::new(point.borrow().clone())))
+            .collect();
         Self { points }
     }
 }

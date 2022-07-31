@@ -1,14 +1,17 @@
+use std::collections::HashSet;
+
 use crate::{
     aliases::PointID,
     errors::{GameError, GameResult},
     field::Field,
     group::Group,
+    ko_guard::KoGuard,
     point::{PlayerColor, PointStatus},
     rules::GameRules,
     state::GameState,
 };
 
-/// Low level game struct
+/// Lib level game struct
 #[derive(Debug)]
 pub struct Game<F, R>
 where
@@ -23,6 +26,7 @@ where
     pub(crate) white_groups: Vec<Group>,
     black_score: Option<usize>,
     white_score: Option<usize>,
+    ko_guard: KoGuard,
 }
 
 impl<F, R> Game<F, R>
@@ -40,6 +44,7 @@ where
             move_number: None,
             black_score: None,
             white_score: None,
+            ko_guard: KoGuard::new(),
         }
     }
 
@@ -106,7 +111,7 @@ where
             let new_score: usize = enemies_groups
                 .drain_filter(|group| {
                     if group.has_liberty(point_id) && group.liberties_amount() == 1 {
-                        group.refresh_liberties(&self.field);
+                        group.refresh_liberties(&cloned_field);
                         group.liberties_amount() == 0
                     } else {
                         false
@@ -142,11 +147,11 @@ where
 
             // Refreshing liberties of all player's groups
             for group in players_groups.iter_mut() {
-                group.refresh_liberties(&self.field)
+                group.refresh_liberties(&cloned_field)
             }
         } else {
             // Checking if this move is suicidal
-            group.refresh_liberties(&self.field);
+            group.refresh_liberties(&cloned_field);
             if group.liberties_amount() == 0 {
                 // Checking if suicide is permitted
                 if self.rules.can_commit_suicide() {
@@ -163,46 +168,54 @@ where
             }
             // Refreshing liberties of all enemy's groups
             for group in enemies_groups.iter_mut() {
-                group.refresh_liberties(&self.field)
+                group.refresh_liberties(&cloned_field)
             }
         }
 
-        // 6. Blocking/unblocking points
-        // TODO
+        // 6. Converting groups and scores back from the player/enemy form into black/white
+        let (black_groups, black_score, white_groups, white_score) = match player {
+            PlayerColor::Black => (
+                players_groups,
+                Some(player_score),
+                enemies_groups,
+                Some(enemies_score),
+            ),
+            PlayerColor::White => (
+                enemies_groups,
+                Some(enemies_score),
+                players_groups,
+                Some(player_score),
+            ),
+        };
 
-        // 7. COMMIT transaction
+        // 7. Blocking move because of the Ko rule
         {
-            // Setting original field to cloned groups
-            // for collection in [&mut players_groups, &mut enemies_groups] {
-            //     for group in collection {
-            //         group.set_field(&self.field)
-            //     }
-            // }
+            let next_black_points = Self::list_groups_points_ids(&black_groups);
+            let next_white_points = Self::list_groups_points_ids(&white_groups);
 
-            (
-                self.black_groups,
-                self.black_score,
-                self.white_groups,
-                self.white_score,
-            ) = match player {
-                PlayerColor::Black => (
-                    players_groups,
-                    Some(player_score),
-                    enemies_groups,
-                    Some(enemies_score),
-                ),
-                PlayerColor::White => (
-                    enemies_groups,
-                    Some(enemies_score),
-                    players_groups,
-                    Some(player_score),
-                ),
-            };
+            // If the Ko rule was violated -> raise Error
+            if self.ko_guard.check(next_black_points, next_white_points) {
+                "lol";
+                return Err(GameError::PointBlocked(*point_id));
+            }
+
+            // Otherwise update the Ko guard with previos values
+            let black_points = Self::list_groups_points_ids(&self.black_groups);
+            let white_points = Self::list_groups_points_ids(&self.white_groups);
+            self.ko_guard.update(black_points, white_points)
+        }
+
+        // 9. COMMIT transaction
+        {
+            self.black_groups = black_groups;
+            self.black_score = black_score;
+            self.white_groups = white_groups;
+            self.white_score = white_score;
 
             self.field = cloned_field;
         }
 
-        // 8. Increasing move number
+        // 9. Increasing move number
         self.move_number = self.move_number.map(|n| n + 1);
 
         Ok(deadlist)
@@ -275,5 +288,17 @@ where
     #[inline]
     pub fn get_white_score(&self) -> Option<usize> {
         self.white_score
+    }
+
+    ///////////////////////////////////////////////////////////
+    ///     Helpers
+    ///////////////////////////////////////////////////////////
+    #[inline]
+    fn list_groups_points_ids(groups: &Vec<Group>) -> HashSet<PointID> {
+        groups
+            .iter()
+            .map(|group| group.points_ids.clone())
+            .flatten()
+            .collect()
     }
 }
