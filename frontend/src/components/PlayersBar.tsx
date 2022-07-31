@@ -22,7 +22,6 @@ const PlayersBar: Component<PlayersBarProps> = (props) => {
 					position: 'absolute',
 					top: 0,
 					right: 0,
-					zIndex: 9999,
 					backgroundColor: 'white',
 				}}
 				disablePadding

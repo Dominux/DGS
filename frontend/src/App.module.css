@@ -5,3 +5,7 @@
 .canvas {
 	min-width: 100%;
 }
+
+.ux {
+	z-index: 9999;
+}

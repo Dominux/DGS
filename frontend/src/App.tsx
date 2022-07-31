@@ -1,8 +1,11 @@
+import Alert from '@suid/material/Alert'
+import AlertTitle from '@suid/material/AlertTitle'
 import { Component, createSignal, onMount, Show } from 'solid-js'
 
 import styles from './App.module.css'
 import GameCreationForm from './components/GameCreationForm'
 import PlayersBar from './components/PlayersBar'
+import { ERROR_MSG_TIMEOUT } from './constants'
 import Game from './logic/game'
 import Scene from './logic/scene'
 import GridSphere from './logic/spheres/grid_sphere'
@@ -16,6 +19,7 @@ const App: Component = () => {
 	const [whiteScore, setWhiteScore] = createSignal(0)
 	const [scene, setScene] = createSignal<Scene | undefined>()
 	const [field, setField] = createSignal<GridSphere | undefined>()
+	const [errorMessage, setErrorMessage] = createSignal('')
 
 	function onChangeGridSize(newVal: number) {
 		setGridSize(newVal)
@@ -33,7 +37,7 @@ const App: Component = () => {
 		// Starting game
 		const game_field = field()
 		const game = new Game(gridSize())
-		game_field?.start(game, onEndMove, onDeath)
+		game_field?.start(game, onEndMove, onDeath, onError)
 		setField(game_field)
 	}
 
@@ -42,12 +46,18 @@ const App: Component = () => {
 	}
 
 	function onDeath() {
-		// console.log(field()?.playerTurn)
 		if (playerTurn().toLowerCase() === 'black') {
 			setBlackScore(field()?.blackScore)
 		} else {
 			setWhiteScore(field()?.whiteScore)
 		}
+	}
+
+	function onError(errorMsg: string) {
+		setErrorMessage(errorMsg)
+		setTimeout(() => {
+			if (errorMessage() === errorMsg) setErrorMessage('')
+		}, ERROR_MSG_TIMEOUT * 1000)
 	}
 
 	onMount(() => {
@@ -64,19 +74,36 @@ const App: Component = () => {
 			{/* Game Canvas */}
 			<canvas ref={canvas} class={styles.canvas}></canvas>
 
-			<Show when={!isStarted()}>
-				<GameCreationForm
-					onChange={onChangeGridSize}
-					onStart={onStart}
-				></GameCreationForm>
-			</Show>
-			<Show when={isStarted()}>
-				<PlayersBar
-					playersTurn={playerTurn()}
-					blackScore={blackScore()}
-					whiteScore={whiteScore()}
-				></PlayersBar>
-			</Show>
+			<div class={styles.ux}>
+				<Show when={!isStarted()}>
+					<GameCreationForm
+						onChange={onChangeGridSize}
+						onStart={onStart}
+					></GameCreationForm>
+				</Show>
+				<Show when={isStarted()}>
+					<PlayersBar
+						playersTurn={playerTurn()}
+						blackScore={blackScore()}
+						whiteScore={whiteScore()}
+					></PlayersBar>
+				</Show>
+				<Show when={errorMessage()}>
+					<Alert
+						severity="error"
+						sx={{
+							textAlign: 'left',
+							width: 'fit-content',
+							position: 'absolute',
+							top: '0.7em',
+							left: '0.5em',
+						}}
+					>
+						<AlertTitle>Error</AlertTitle>
+						{errorMessage()}
+					</Alert>
+				</Show>
+			</div>
 		</div>
 	)
 }

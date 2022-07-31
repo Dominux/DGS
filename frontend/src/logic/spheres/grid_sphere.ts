@@ -20,6 +20,7 @@ export default class GridSphere {
 	protected sphereRadius = 1
 	private onEnvMove: Function | undefined
 	private onDeath: Function | undefined
+	private onError: Function | undefined
 	private points: Array<Coordinates> = []
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
@@ -89,10 +90,11 @@ export default class GridSphere {
 		})
 	}
 
-	start(game: Game, onEndMove: Function, onDeath: Function) {
+	start(game: Game, onEndMove: Function, onDeath: Function, onError: Function) {
 		this.game = game
 		this.onDeath = onDeath
 		this.onEnvMove = onEndMove
+		this.onError = onError
 
 		this._sphere.enablePointerMoveEvents = true
 
@@ -220,7 +222,13 @@ export default class GridSphere {
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
-		const deadlist = this.game?.makeMove(this.activePointID)
+		let deadlist = []
+		try {
+			deadlist = this.game?.makeMove(this.activePointID)
+		} catch (error) {
+			this.onError(error.message)
+			throw error
+		}
 
 		this.stoneManager.create(this.activePointID, this.activePoint, color)
 		this.stoneManager.delete(deadlist)

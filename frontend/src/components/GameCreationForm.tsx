@@ -55,7 +55,7 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 
 	return (
 		<>
-			<Drawer anchor="right" open sx={{ zIndex: 9999 }} variant="persistent">
+			<Drawer anchor="right" open variant="persistent">
 				<Box sx={{ width: 300, marginTop: '100%' }} role="form">
 					<List>
 						<ListItem sx={{ paddingBottom: 2 }}>

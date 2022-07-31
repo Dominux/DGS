@@ -3,3 +3,5 @@ export const ENV_TEXTURE =
 
 export const MIN_GRIDSIZE = 5
 export const MAX_GRIDSIZE = 255
+
+export const ERROR_MSG_TIMEOUT = 3
