@@ -41,9 +41,9 @@ export default class GridSphere {
 
 		this.stoneManager = new StoneManager(scene, gridSize)
 
-		BABYLON.NodeMaterial.ParseFromSnippetAsync(
-			// 'gridMaterial',
-			'YCMALW#7',
+		BABYLON.NodeMaterial.ParseFromFileAsync(
+			'gridMaterial',
+			'src/assets/gridMaterial.json',
 			scene
 		).then((gridMaterial) => {
 			this.gridRatio = gridMaterial.getInputBlockByPredicate(
@@ -77,13 +77,12 @@ export default class GridSphere {
 				(b) => b.name === 'circleColor'
 			)
 
-			bgColor.value = BABYLON.Color3.Gray()
 			lineColor.value = BABYLON.Color3.Black()
 			circleColor.value = BABYLON.Color3.Green()
 			this.gridRatio.value = 1 / gridSize
 			this.majorUnitFrequency.value = 1
 			minorUnitVisibility.value = 0
-			this.circleRadius.value = 0.03
+			this.circleRadius.value = 0.4 / gridSize
 			circleSmoothness.value = 0.005
 
 			this._sphere.material = gridMaterial

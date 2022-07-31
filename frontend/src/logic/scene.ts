@@ -23,16 +23,18 @@ export default class Scene {
 		)
 		camera.attachControl(canvas, true)
 
-		new BABYLON.HemisphericLight(
+		const light1 = new BABYLON.HemisphericLight(
 			'light1',
 			new BABYLON.Vector3(1, 1, 0),
 			this._scene
 		)
-		new BABYLON.HemisphericLight(
+		const light2 = new BABYLON.HemisphericLight(
 			'light2',
 			new BABYLON.Vector3(-1, 0, -1),
 			this._scene
 		)
+		light1.intensity = 0.7
+		light2.intensity = 0.7
 
 		engine.runRenderLoop(() => {
 			this._scene.render()

@@ -7,6 +7,8 @@ import List from '@suid/material/List'
 import ListItem from '@suid/material/ListItem'
 import Button from '@suid/material/Button'
 
+import { MAX_GRIDSIZE, MIN_GRIDSIZE } from '../constants'
+
 export type GameCreationFormProps = {
 	onChange: Function
 	onStart: Function
@@ -26,17 +28,17 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 
 	function validateGridSize(value: number) {
 		// Now numbers must be between 5 and ...100, and also to be only odd
-		const min = 5
-		const max = 100
-		const oddRangeStr = [min, min + 2, min + 4].join(',')
+		const oddRangeStr = [MIN_GRIDSIZE, MIN_GRIDSIZE + 2, MIN_GRIDSIZE + 4].join(
+			','
+		)
 
-		if (value < min) {
-			setErrorMessage(`Number must be >= ${min}`)
+		if (value < MIN_GRIDSIZE) {
+			setErrorMessage(`Number must be >= ${MIN_GRIDSIZE}`)
 			setIsValid(false)
 			return false
 		}
-		if (value >= max) {
-			setErrorMessage(`Number must be < ${max}`)
+		if (value > MAX_GRIDSIZE) {
+			setErrorMessage(`Number must be <= ${MAX_GRIDSIZE}`)
 			setIsValid(false)
 			return false
 		}
