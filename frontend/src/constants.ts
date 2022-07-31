@@ -1,5 +1,7 @@
 export const ENV_TEXTURE =
 	'https://raw.githubusercontent.com/Dominux/spherical-go/main/frontend/src/assets/environment.env'
+export const GRID_MATERIAL =
+	'https://raw.githubusercontent.com/Dominux/spherical-go/main/frontend/src/assets/gridMaterial.json'
 
 export const MIN_GRIDSIZE = 5
 export const MAX_GRIDSIZE = 255

@@ -1,4 +1,5 @@
 import * as BABYLON from 'babylonjs'
+import { GRID_MATERIAL } from '../../constants'
 import Game from '../game'
 import StoneManager from '../stone_manager'
 
@@ -44,7 +45,7 @@ export default class GridSphere {
 
 		BABYLON.NodeMaterial.ParseFromFileAsync(
 			'gridMaterial',
-			'src/assets/gridMaterial.json',
+			GRID_MATERIAL,
 			scene
 		).then((gridMaterial) => {
 			this.gridRatio = gridMaterial.getInputBlockByPredicate(
