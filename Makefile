@@ -4,7 +4,7 @@ test:
 compile_gamelib_to_wasm:
 	cd ./wasm &&\
 	wasm-pack build --target web || true &&\
-	rm -r ../frontend/src/pkg &&\
+	rm -r ../frontend/src/pkg || true &&\
 	mv pkg ../frontend/src &&\
 	cd -
 
