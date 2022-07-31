@@ -68,3 +68,24 @@ fn test_remove_one_stone_at_border() {
     // }
     // assert!(false)
 }
+
+#[test]
+fn test_refreshing_enemies_liberties_after_losing_group() {
+    // Creating and starting game
+    let mut game = create_and_start_game(&5);
+
+    // Making moves
+    let moves = [
+        42, 81, 82, 60, 63, 41, 61, 62, 101, 83, 80, 100, 61, 79, 40, 81, 3, 102, 80, 59, 120, 81,
+        121,
+    ];
+    for id in moves {
+        game.make_move(&id).unwrap();
+    }
+
+    // Making a killing move
+    let result = game.make_move(&62);
+    assert!(result.is_ok(), "{}", result.unwrap_err());
+    let deadlist = result.unwrap();
+    assert_eq!(deadlist.len(), 1);
+}

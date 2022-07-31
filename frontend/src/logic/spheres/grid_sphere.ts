@@ -223,6 +223,8 @@ export default class GridSphere {
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
+		console.log(this.activePointID)
+
 		let deadlist = []
 		try {
 			deadlist = this.game?.makeMove(this.activePointID)

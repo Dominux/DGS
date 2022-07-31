@@ -136,36 +136,39 @@ where
         };
 
         // 5. Post removing dead enemies groups actions
-        if are_there_dead_enemies_groups {
-            // Deleting enemies groups amd emptying their points
-            for group in dead_groups {
-                group.delete(&cloned_field)
-            }
-
-            // Adding new group
-            players_groups.push(group);
-
-            // Refreshing liberties of all player's groups
-            for group in players_groups.iter_mut() {
-                group.refresh_liberties(&cloned_field)
-            }
-        } else {
-            // Checking if this move is suicidal
-            group.refresh_liberties(&cloned_field);
-            if group.liberties_amount() == 0 {
-                // Checking if suicide is permitted
-                if self.rules.can_commit_suicide() {
-                    // TODO: add recalculating deadlist
-
-                    // Increasing enemy's score
-                    enemies_score += group.points_amount();
-                } else {
-                    return Err(GameError::SuicideMoveIsNotPermitted);
+        {
+            if are_there_dead_enemies_groups {
+                // Deleting enemies groups amd emptying their points
+                for group in dead_groups {
+                    group.delete(&cloned_field)
                 }
-            } else {
+
                 // Adding new group
                 players_groups.push(group);
+
+                // Refreshing liberties of all player's groups
+                for group in players_groups.iter_mut() {
+                    group.refresh_liberties(&cloned_field)
+                }
+            } else {
+                // Checking if this move is suicidal
+                group.refresh_liberties(&cloned_field);
+                if group.liberties_amount() == 0 {
+                    // Checking if suicide is permitted
+                    if self.rules.can_commit_suicide() {
+                        // TODO: add recalculating deadlist
+
+                        // Increasing enemy's score
+                        enemies_score += group.points_amount();
+                    } else {
+                        return Err(GameError::SuicideMoveIsNotPermitted);
+                    }
+                } else {
+                    // Adding new group
+                    players_groups.push(group);
+                }
             }
+
             // Refreshing liberties of all enemy's groups
             for group in enemies_groups.iter_mut() {
                 group.refresh_liberties(&cloned_field)
@@ -195,7 +198,6 @@ where
 
             // If the Ko rule was violated -> raise Error
             if self.ko_guard.check(next_black_points, next_white_points) {
-                "lol";
                 return Err(GameError::PointBlocked(*point_id));
             }
 
