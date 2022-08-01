@@ -5,7 +5,7 @@ import { ENV_TEXTURE } from '../constants'
 export default class Scene {
 	readonly _scene: BABYLON.Scene
 
-	constructor(canvas: HTMLCanvasElement) {
+	constructor(canvas: HTMLCanvasElement, sphereRadius: number) {
 		const engine = new BABYLON.Engine(canvas, true)
 
 		this._scene = new BABYLON.Scene(engine)
@@ -22,6 +22,8 @@ export default class Scene {
 			this._scene
 		)
 		camera.attachControl(canvas, true)
+		camera.lowerRadiusLimit = sphereRadius * 2
+		camera.upperRadiusLimit = sphereRadius * 10
 
 		const light1 = new BABYLON.HemisphericLight(
 			'light1',
@@ -63,8 +65,8 @@ export default class Scene {
 			hdrSkyboxMaterial.reflectionTexture.coordinatesMode =
 				BABYLON.Texture.SKYBOX_MODE
 			hdrSkyboxMaterial.microSurface = 1.0
-			hdrSkyboxMaterial.cameraExposure = 0.66
-			hdrSkyboxMaterial.cameraContrast = 1.66
+			hdrSkyboxMaterial.cameraExposure = 0.8
+			hdrSkyboxMaterial.cameraContrast = 1.5
 			hdrSkyboxMaterial.disableLighting = true
 			hdrSkybox.material = hdrSkyboxMaterial
 			hdrSkybox.infiniteDistance = true

@@ -5,7 +5,7 @@ import { Component, createSignal, onMount, Show } from 'solid-js'
 import styles from './App.module.css'
 import GameCreationForm from './components/GameCreationForm'
 import PlayersBar from './components/PlayersBar'
-import { ERROR_MSG_TIMEOUT } from './constants'
+import { ERROR_MSG_TIMEOUT, SPHERE_RADIUS } from './constants'
 import Game from './logic/game'
 import Scene from './logic/scene'
 import GridSphere from './logic/spheres/grid_sphere'
@@ -62,7 +62,7 @@ const App: Component = () => {
 
 	onMount(() => {
 		// Creating game
-		const _scene = new Scene(canvas)
+		const _scene = new Scene(canvas, SPHERE_RADIUS)
 		setScene(_scene)
 		setField(new GridSphere(_scene._scene, gridSize()))
 	})

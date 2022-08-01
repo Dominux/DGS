@@ -1,5 +1,5 @@
 import * as BABYLON from 'babylonjs'
-import { GRID_MATERIAL } from '../../constants'
+import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager from '../stone_manager'
 
@@ -18,7 +18,7 @@ export default class GridSphere {
 	readonly _sphere: BABYLON.Mesh
 	protected stoneManager: StoneManager
 	protected game: Game | undefined
-	protected sphereRadius = 1
+	protected sphereRadius = SPHERE_RADIUS
 	private onEnvMove: Function | undefined
 	private onDeath: Function | undefined
 	private onError: Function | undefined
