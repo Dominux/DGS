@@ -23,7 +23,8 @@ export default class Scene {
 		)
 		camera.attachControl(canvas, true)
 		camera.lowerRadiusLimit = sphereRadius * 2
-		camera.upperRadiusLimit = sphereRadius * 10
+		camera.upperRadiusLimit = sphereRadius * 8
+		camera.wheelPrecision = 50
 
 		const light1 = new BABYLON.HemisphericLight(
 			'light1',
