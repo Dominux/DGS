@@ -4,7 +4,7 @@
 
 ## TL/DR
 
-Try it [right here, right now](<https://en.wikipedia.org/wiki/Go_(game)>)
+Try it [right here, right now](https://dominux.github.io/spherical-go/)
 
 # Idea and prerequesities
 
