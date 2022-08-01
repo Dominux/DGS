@@ -16,3 +16,19 @@ front_build:
 
 pnpm_i:
 	cd ./frontend && pnpm i || true && cd -
+
+deploy:
+	git branch -D gh-pages || true &&\
+	git checkout -b gh-pages &&\
+	make compile_gamelib_to_wasm &&\
+	make pnpm_i &&\
+	make front_build &&\
+	mv ./frontend/dist/* ./ &&\
+	rm -rf ./frontend &&\
+	find . -not \( -wholename './.git/*' -or -name 'index.html' -or -wholename './assets/*' \) -delete &&\
+	sed -i "s/href='\//href='/g" ./index.html &&\
+	sed -i "s/src='\//src='/g" ./index.html &&\sed -i "s/" &&\
+	sed -i "s/URL(\"\/assets/URL(\"assets/g" ./assets/*.js &&\
+	git add --all &&\
+	git commit -m "lol" &&\
+	git push -f -u origin gh-pages
