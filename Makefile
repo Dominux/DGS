@@ -31,4 +31,5 @@ deploy:
 	sed -i "s/URL(\"\/assets/URL(\"assets/g" ./assets/*.js &&\
 	git add --all &&\
 	git commit -m "lol" &&\
-	git push -f -u origin gh-pages
+	git push -f -u origin gh-pages &&\
+	git checkout -
