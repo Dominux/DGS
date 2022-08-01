@@ -26,8 +26,8 @@ deploy:
 	mv ./frontend/dist/* ./ &&\
 	rm -rf ./frontend &&\
 	find . -not \( -wholename './.git/*' -or -name 'index.html' -or -wholename './assets/*' \) -delete || true &&\
-	sed -i "s/href='\//href='/g" ./index.html &&\
-	sed -i "s/src='\//src='/g" ./index.html &&\
+	sed -i "s/href=\"\//href=\"/g" ./index.html &&\
+	sed -i "s/src=\"\//src=\"/g" ./index.html &&\
 	sed -i "s/URL(\"\/assets/URL(\"assets/g" ./assets/*.js &&\
 	git add --all &&\
 	git commit -m "lol" &&\
