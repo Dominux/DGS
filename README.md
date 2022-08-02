@@ -95,7 +95,7 @@ Dead stone remover IMHO is to deside which stones have become dead and to remove
 <img src="https://i.imgflip.com/6olvmv.jpg" title="made at imgflip.com" width="500"/>
 <br/>
 
-# Architecture
+# Tech stack
 
 > Only hyped techologies used
 
@@ -109,4 +109,17 @@ Static type system gives ability to use programs on this language to be compiled
 
 It also can be used as a library for any language it can compiled to. Like JS/TS with Wasm, Python with something like [PyO3](https://github.com/PyO3/pyo3) and [Maturin](https://github.com/PyO3/maturin), etc. So, **the single game lib for many languages to build a shell to use it**.
 
-For easy interactions and cause of my belief in a total overcome of web techologies over desktop/mobile natives apps. Simple idea is to show that to try the game you don't need specific system and hardware requirements and don't need to install something - **just follow the link and that's all**.
+For easy interactions and cause of my belief in a total overcome of web techologies over desktop/mobile natives apps the example of such a shell is implemented as a web app, but you can also use it to create native apps, why not. Simple idea is to show that to try the game you don't need specific system and hardware requirements and don't need to install something - **just follow the link and that's all**. So, I used the greatest 3D JS/TS lib - [BabylonJS](https://www.babylonjs.com/). As UI framework I used [SolidJS](https://www.solidjs.com/) and UI components lib - [SUID](https://suid.io/).
+
+# Entities
+
+> Creating abstractions for each entity and then implement just one for each as a lifestyle
+
+For now there are such entities as:
+
+- Fields
+- Rules
+
+The lib itself contains implementations of the Grid Sphere and the Quad Sphere, with tests for each of them. But the Quad Sphere doesn't yet have frontend implementation. So, you can touch only the Grid one.
+
+Since Go has many [rulesets](https://en.wikipedia.org/wiki/Rules_of_Go#Rulesets) we should implement them too. But for now the lib contains only the stone remover algorithm so the only rules difference among popular rules I know is that some of them (for example [Ing ruleset](https://en.wikipedia.org/wiki/Rules_of_Go#Ing_rules)) allow players to commit suicide moves when the majority of other rulesets ([Japanese](https://en.wikipedia.org/wiki/Rules_of_Go#Japanese_rules), [Chinese](https://en.wikipedia.org/wiki/Rules_of_Go#Chinese_rules), [American Go Association](https://en.wikipedia.org/wiki/Rules_of_Go#AGA_rules) and others) forbid such moves. The majority of other differencies among them are in score estimating so I'll need to implement all of them too when I will finally be ready to develop the score estimator algorithm. For now the game includes only Japanese ruleset.
