@@ -20,8 +20,8 @@ export default class StoneManager {
 		stone.position = position
 
 		// Creating stone's material
-		const material = new BABYLON.StandardMaterial('stone', this.scene)
-		material.diffuseColor = color
+		const material = new BABYLON.PBRMetallicRoughnessMaterial('stone')
+		material._albedoColor = color
 		stone.material = material
 
 		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 0, 0), position])

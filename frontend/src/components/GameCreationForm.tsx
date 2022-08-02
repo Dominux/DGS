@@ -16,6 +16,7 @@ export type GameCreationFormProps = {
 
 const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 	const [isValid, setIsValid] = createSignal(false)
+	const [isStarted, setIsStarted] = createSignal(false)
 	const [errorMessage, setErrorMessage] = createSignal('')
 
 	function onInput(e) {
@@ -53,10 +54,20 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 		return true
 	}
 
+	function onSubmit() {
+		setIsStarted(true)
+		props.onStart()
+	}
+
 	return (
 		<>
-			<Drawer anchor="right" open variant="persistent">
-				<Box sx={{ width: 300, marginTop: '100%' }} role="form">
+			<Drawer
+				sx={{ width: 300, maxWidth: '30%' }}
+				anchor="right"
+				open={!isStarted()}
+				variant="persistent"
+			>
+				<Box sx={{ marginTop: '100%' }} role="form">
 					<List>
 						<ListItem sx={{ paddingBottom: 2 }}>
 							<TextField
@@ -79,7 +90,7 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 								variant="contained"
 								size="large"
 								disabled={!isValid()}
-								onClick={(e) => props.onStart()}
+								onClick={onSubmit}
 							>
 								Start
 							</Button>

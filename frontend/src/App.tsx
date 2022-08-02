@@ -75,12 +75,10 @@ const App: Component = () => {
 			<canvas ref={canvas} class={styles.canvas}></canvas>
 
 			<div class={styles.ux}>
-				<Show when={!isStarted()}>
-					<GameCreationForm
-						onChange={onChangeGridSize}
-						onStart={onStart}
-					></GameCreationForm>
-				</Show>
+				<GameCreationForm
+					onChange={onChangeGridSize}
+					onStart={onStart}
+				></GameCreationForm>
 				<Show when={isStarted()}>
 					<PlayersBar
 						playersTurn={playerTurn()}
