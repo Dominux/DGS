@@ -109,7 +109,7 @@ Static type system gives ability to use programs on this language to be compiled
 
 It also can be used as a library for any language it can compiled to. Like JS/TS with Wasm, Python with something like [PyO3](https://github.com/PyO3/pyo3) and [Maturin](https://github.com/PyO3/maturin), etc. So, **the single game lib for many languages to build a shell to use it**.
 
-For easy interactions and cause of my belief in a total overcome of web techologies over desktop/mobile natives apps the example of such a shell is implemented as a web app, but you can also use it to create native apps, why not. Simple idea is to show that to try the game you don't need specific system and hardware requirements and don't need to install something - **just follow the link and that's all**. So, I used the greatest 3D JS/TS lib - [BabylonJS](https://www.babylonjs.com/). As UI framework I used [SolidJS](https://www.solidjs.com/) and UI components lib - [SUID](https://suid.io/).
+For easy interactions and cause of my belief in a absolute superiority of web techologies over desktop/mobile natives apps the example of such a shell is implemented as a web app, but you can also use it to create native apps, why not. Simple idea is to show that to try the game you don't need specific system and hardware requirements and don't need to install something - **just follow the link and that's all**. So, I used the greatest 3D JS/TS lib - [BabylonJS](https://www.babylonjs.com/). As UI framework I used [SolidJS](https://www.solidjs.com/) and UI components lib - [SUID](https://suid.io/).
 
 # Entities
 
