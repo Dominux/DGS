@@ -200,9 +200,7 @@ export default class GridSphere {
 			switch (pointerInfo.type) {
 				case BABYLON.PointerEventTypes.POINTERDOWN:
 					this.canPutStone = true
-					break
-				case BABYLON.PointerEventTypes.POINTERMOVE:
-					this.canPutStone = false
+					setTimeout(() => (this.canPutStone = false), 300)
 					break
 				case BABYLON.PointerEventTypes.POINTERUP:
 					if (
