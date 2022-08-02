@@ -32,4 +32,7 @@ deploy:
 	git add --all &&\
 	git commit -m "lol" &&\
 	git push -f -u origin gh-pages &&\
-	git checkout -
+	git checkout - &&\
+	make pnpm_i &&\
+	make compile_gamelib_to_wasm
+
