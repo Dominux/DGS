@@ -78,7 +78,7 @@ There's another fact. This field has completely different distances between neig
 <img src="/docs/images/grid_sphere.png" width="600" />
 <br/>
 
-# The algorithm
+# Algorithm
 
 > Actually it's 2 algorithms. At least I consider them this way
 
@@ -93,3 +93,20 @@ The first one as far as I got is used after the game ends and we need auto score
 Dead stone remover IMHO is to deside which stones have become dead and to remove it at every move. This task seems to be hard too and needs to implement some sort of AI too (not nessereally [ML](https://en.wikipedia.org/wiki/Machine_learning)), but I did it. Actually, since the repo called "score-estimator" I think the dead stone remover algo is part of the score-estimator algo and originally it's purpose is to deside which stones are dead at the end of the game. But who cares?! I'll create my own stone remover, with blackjack and removing stones every move.
 
 <img src="https://i.imgflip.com/6olvmv.jpg" title="made at imgflip.com" width="500"/>
+<br/>
+
+# Architecture
+
+> Only hyped techologies used
+
+The library itself as was said previously is written in Rust because of it's benefits:
+
+- [GC](<https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)>)-free language with memory safe approache is best for implementing algorithms since it uses the smallest amount of [RAM](https://en.wikipedia.org/wiki/Random-access_memory) and the smallest amount of needed [CPU](https://en.wikipedia.org/wiki/Central_processing_unit) computations (because it doesn't use computation for GC). It grants the best performance to a program,
+- [Runtime](<https://en.wikipedia.org/wiki/Runtime_(program_lifecycle_phase)>)-free language without common runtime stuff like that GC, interpretor and others makes a program to have the smallest size and to increase it's performance more,
+- [Static typing](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) language prevents developers from missing type errors. It helps to write code that will work properly.
+
+Static type system gives ability to use programs on this language to be compiled into [Wasm](https://en.wikipedia.org/wiki/WebAssembly) to be further used inside a webpage in a web browser. And a small program size and the best performance only increases it's benefits from using such a program from Wasm.
+
+It also can be used as a library for any language it can compiled to. Like JS/TS with Wasm, Python with something like [PyO3](https://github.com/PyO3/pyo3) and [Maturin](https://github.com/PyO3/maturin), etc. So, **the single game lib for many languages to build a shell to use it**.
+
+For easy interactions and cause of my belief in a total overcome of web techologies over desktop/mobile natives apps. Simple idea is to show that to try the game you don't need specific system and hardware requirements and don't need to install something - **just follow the link and that's all**.
