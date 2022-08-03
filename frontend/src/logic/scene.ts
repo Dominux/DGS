@@ -22,7 +22,7 @@ export default class Scene {
 			this._scene
 		)
 		camera.attachControl(canvas, true)
-		camera.lowerRadiusLimit = sphereRadius * 2
+		camera.lowerRadiusLimit = sphereRadius * 2.2
 		camera.upperRadiusLimit = sphereRadius * 10
 		camera.wheelPrecision = 50
 
