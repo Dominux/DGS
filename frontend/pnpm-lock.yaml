@@ -4,7 +4,6 @@ specifiers:
   '@suid/icons-material': ^0.2.5
   '@suid/material': ^0.4.3
   babylonjs: ^5.17.1
-  babylonjs-loaders: ^5.17.1
   solid-js: ^1.4.7
   typescript: ^4.7.4
   vite: ^3.0.0
@@ -14,7 +13,6 @@ dependencies:
   '@suid/icons-material': 0.2.5_solid-js@1.4.7
   '@suid/material': 0.4.3_solid-js@1.4.7
   babylonjs: 5.17.1
-  babylonjs-loaders: 5.17.1
   solid-js: 1.4.7
 
 devDependencies:
@@ -486,17 +484,6 @@ packages:
       '@babel/core': 7.18.6
       babel-plugin-jsx-dom-expressions: 0.33.12_@babel+core@7.18.6
     dev: true
-
-  /babylonjs-gltf2interface/5.17.1:
-    resolution: {integrity: sha512-QVT+jSVd/8zCiXojd4X3j9USGErrrd6oiB6PWOvnX/o2WSjrHvyEfIvgXHMNLoai8kTXv+qg3N1wwF6JMOovIA==}
-    dev: false
-
-  /babylonjs-loaders/5.17.1:
-    resolution: {integrity: sha512-GnHoOPpkShJHbs5CiDEoG94+WcCNC1xIQ6OduSxEl4vKU1gjJ2iimCjG6nSzbzfqFHSuwWbAZTWI5UyNrxJFNQ==}
-    dependencies:
-      babylonjs: 5.17.1
-      babylonjs-gltf2interface: 5.17.1
-    dev: false
 
   /babylonjs/5.17.1:
     resolution: {integrity: sha512-YzzIeR/dHKnAlax1ftq++61l2d1WuzDFnVlhUjmKtTdEcDQwHhsBVb9O4+D9PTXhW2iMclEFPEwwOYRv4UmCFA==}

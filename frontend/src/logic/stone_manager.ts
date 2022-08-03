@@ -1,5 +1,4 @@
 import * as BABYLON from 'babylonjs'
-import { OBJFileLoader } from 'babylonjs-loaders'
 
 type Stone = {
 	id: number
@@ -8,26 +7,33 @@ type Stone = {
 
 export default class StoneManager {
 	protected stones: Array<Stone> = []
-	protected model
 	readonly stoneSize = 1.6
+	readonly height: number
 
-	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
-		// this.model = OBJFileLoader.
+	constructor(readonly scene: BABYLON.Scene, gridSize: number) {
+		this.height = (0.2 * this.stoneSize) / gridSize
 	}
 
 	create(id: number, position: BABYLON.Vector3, color: BABYLON.Color3) {
-		const diameter = (0.5 * this.stoneSize) / this.gridSize
-		const stone = BABYLON.MeshBuilder.CreateCylinder('cyl', {
-			diameter,
-			height: diameter / 2,
+		const diameter = this.height * 3
+
+		// Creating stone
+		const stone = BABYLON.MeshBuilder.CreateSphere(`sphere_${id}`, {
+			diameterX: diameter,
+			diameterY: this.height,
+			diameterZ: diameter,
 		})
-		stone.position = position
+
+		// Setting right position
+		const multiplier = 1 + this.height / 2 - this.height * 0.025
+		stone.position = position.scale(multiplier)
 
 		// Creating stone's material
 		const material = new BABYLON.PBRMetallicRoughnessMaterial('stone')
 		material._albedoColor = color
 		stone.material = material
 
+		// Setting stone's rotation
 		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 0, 0), position])
 		const orientation = BABYLON.Vector3.RotationFromAxis(
 			path.getBinormalAt(0),
