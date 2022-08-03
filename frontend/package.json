@@ -18,6 +18,7 @@
     "@suid/icons-material": "^0.2.5",
     "@suid/material": "^0.4.3",
     "babylonjs": "^5.17.1",
+    "babylonjs-loaders": "^5.17.1",
     "solid-js": "^1.4.7"
   }
 }

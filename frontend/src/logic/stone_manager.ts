@@ -1,4 +1,5 @@
 import * as BABYLON from 'babylonjs'
+import { OBJFileLoader } from 'babylonjs-loaders'
 
 type Stone = {
 	id: number
@@ -7,9 +8,12 @@ type Stone = {
 
 export default class StoneManager {
 	protected stones: Array<Stone> = []
+	protected model
 	readonly stoneSize = 1.6
 
-	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {}
+	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
+		// this.model = OBJFileLoader.
+	}
 
 	create(id: number, position: BABYLON.Vector3, color: BABYLON.Color3) {
 		const diameter = (0.5 * this.stoneSize) / this.gridSize
