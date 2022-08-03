@@ -1,57 +1,35 @@
 import { Component } from 'solid-js'
 
 import ListItem from '@suid/material/ListItem'
-import Card from '@suid/material/Card'
-import CardContent from '@suid/material/CardContent'
-import Typography from '@suid/material/Typography'
-import Avatar from '@suid/material/Avatar'
 import { blueGrey, red } from '@suid/material/colors'
+
+import styles from '../App.module.css'
 
 export type PlayersBarItemProps = {
 	color: string
 	score: number
 	isTurn: boolean
+	class?: string
 }
 
 const PlayersBarItem: Component<PlayersBarItemProps> = (props) => {
 	return (
 		<>
 			<ListItem disablePadding>
-				<Card
-					sx={{
-						bgcolor: props.isTurn ? red[300] : blueGrey[100],
-						display: 'flex',
-						borderRadius: 0,
+				<div
+					class={`${styles.playersBarItem} ${props.class}`}
+					style={{
+						'background-color': props.isTurn ? red[300] : blueGrey[100],
 					}}
 				>
-					<CardContent
-						sx={{
-							display: 'flex',
-							flexDirection: 'row',
-						}}
-					>
-						<Typography
-							component="div"
-							variant="h4"
-							sx={{
-								width: '5em',
-								textAlign: 'center',
-								lineHeight: '1.5em',
-							}}
-						>
-							{props.score}
-						</Typography>
-						<Avatar
-							sx={{
-								bgcolor: props.color,
-								width: '3em',
-								height: '3em',
-							}}
-						>
-							{' '}
-						</Avatar>
-					</CardContent>
-				</Card>
+					<h3 class={styles.score}>{props.score}</h3>
+					<div>
+						<div
+							class={styles.stoneAvatar}
+							style={{ 'background-color': props.color }}
+						></div>
+					</div>
+				</div>
 			</ListItem>
 		</>
 	)

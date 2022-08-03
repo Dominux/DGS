@@ -1,9 +1,9 @@
 import { Component } from 'solid-js'
 
 import List from '@suid/material/List'
-import Divider from '@suid/material/Divider'
 import PlayersBarItem from './PlayersBarItem'
 
+import styles from '../App.module.css'
 export type PlayersBarProps = {
 	playersTurn: string
 	blackScore: number
@@ -22,7 +22,7 @@ const PlayersBar: Component<PlayersBarProps> = (props) => {
 					position: 'absolute',
 					top: 0,
 					right: 0,
-					backgroundColor: 'white',
+					// backgroundColor: 'white',
 				}}
 				disablePadding
 			>
@@ -31,11 +31,11 @@ const PlayersBar: Component<PlayersBarProps> = (props) => {
 					score={props.blackScore}
 					isTurn={isBlack()}
 				></PlayersBarItem>
-				<Divider />
 				<PlayersBarItem
 					color="white"
 					score={props.whiteScore}
 					isTurn={!isBlack()}
+					class={styles.bottomPlayersBarItem}
 				></PlayersBarItem>
 			</List>
 		</>

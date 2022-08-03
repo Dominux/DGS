@@ -1,4 +1,4 @@
-import { Component, createSignal } from 'solid-js'
+import { Component, createSignal, Show } from 'solid-js'
 
 import Drawer from '@suid/material/Drawer'
 import Box from '@suid/material/Box'
@@ -8,6 +8,8 @@ import ListItem from '@suid/material/ListItem'
 import Button from '@suid/material/Button'
 
 import { MAX_GRIDSIZE, MIN_GRIDSIZE } from '../constants'
+import ShowHideButton from './ShowHideButton'
+import styles from '../App.module.css'
 
 export type GameCreationFormProps = {
 	onChange: Function
@@ -17,6 +19,7 @@ export type GameCreationFormProps = {
 const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 	const [isValid, setIsValid] = createSignal(false)
 	const [isStarted, setIsStarted] = createSignal(false)
+	const [isShowed, setIsShowed] = createSignal(true)
 	const [errorMessage, setErrorMessage] = createSignal('')
 
 	function onInput(e) {
@@ -59,14 +62,30 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 		props.onStart()
 	}
 
+	const toggleShowHide = () => setIsShowed(!isShowed())
+
 	return (
 		<>
+			<Show when={!isStarted() && !isShowed()}>
+				<ShowHideButton
+					class={`${styles.showHideButton} ${styles.showButton}`}
+					isShowed={false}
+					onClick={toggleShowHide}
+				/>
+			</Show>
+
 			<Drawer
 				sx={{ width: 300, maxWidth: '30%' }}
 				anchor="right"
-				open={!isStarted()}
+				open={!isStarted() && isShowed()}
 				variant="persistent"
 			>
+				<ShowHideButton
+					class={styles.showHideButton}
+					isShowed={true}
+					onClick={toggleShowHide}
+				/>
+
 				<Box sx={{ marginTop: '100%' }} role="form">
 					<List>
 						<ListItem sx={{ paddingBottom: 2 }}>

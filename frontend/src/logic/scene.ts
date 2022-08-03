@@ -17,13 +17,13 @@ export default class Scene {
 			'camera',
 			-Math.PI / 2,
 			Math.PI / 2,
-			3,
+			sphereRadius * 6,
 			new BABYLON.Vector3(0, 0, 0),
 			this._scene
 		)
 		camera.attachControl(canvas, true)
 		camera.lowerRadiusLimit = sphereRadius * 2
-		camera.upperRadiusLimit = sphereRadius * 8
+		camera.upperRadiusLimit = sphereRadius * 10
 		camera.wheelPrecision = 50
 
 		engine.runRenderLoop(() => {
