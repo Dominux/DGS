@@ -2,9 +2,13 @@
 
 ##### [The Go game's](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with variouty of spherical fields.
 
+
 ## TL/DR
 
 Try it [right here, right now](https://dominux.github.io/spherical-go/)
+
+![image](https://user-images.githubusercontent.com/55978340/193566975-8db1cf24-7a49-4e1f-ab57-27a404793b06.png)
+
 
 # Idea and prerequesities
 
