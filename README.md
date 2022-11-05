@@ -1,5 +1,9 @@
 # Spherical Go
 
+##### [The Go game's](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with variouty of spherical fields.
+
+</br>
+
 <p align="center">
     <a href="https://github.com/AstroNvim/AstroNvim/pulse">
       <img src="https://img.shields.io/github/last-commit/Dominux/spherical-go?style=for-the-badge&logo=github&color=7dc4e4&logoColor=D9E0EE&labelColor=302D41"/>
@@ -8,9 +12,6 @@
       <img src="https://img.shields.io/github/stars/Dominux/spherical-go?style=for-the-badge&logo=apachespark&color=eebebe&logoColor=D9E0EE&labelColor=302D41"/>
     </a>
 </p>
-
-##### [The Go game's](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with variouty of spherical fields.
-
 
 ## TL/DR
 
