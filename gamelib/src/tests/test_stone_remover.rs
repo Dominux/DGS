@@ -1,4 +1,4 @@
-use crate::{field::Field, point::PointStatus};
+use crate::point::PointStatus;
 
 use super::fixtures::game::create_and_start_game;
 

@@ -18,7 +18,7 @@ mod state;
 mod file_converters;
 
 pub struct Game {
-    pub(crate) inner: game::Game<field::GridSphereField, rules::JapaneseRules>,
+    pub(crate) inner: game::Game<rules::JapaneseRules>,
 }
 
 impl Game {

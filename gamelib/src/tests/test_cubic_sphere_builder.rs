@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    field::{CubicSphereField, CubicSphereFieldBuilder, Field},
+    field::{CubicSphereFieldBuilder, Field, FieldType},
     point::{Point, PointWrapper},
 };
 
@@ -243,7 +243,7 @@ fn test_cubic_sphere_builder_with_size_7() {
                 )))
             })
             .collect();
-        CubicSphereField::new(points)
+        Field::new(points, FieldType::CubicSphere)
     };
 
     let real = CubicSphereFieldBuilder::default().with_size(&7).unwrap();

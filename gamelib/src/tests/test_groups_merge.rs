@@ -43,10 +43,7 @@ fn test_merge_groups() {
 }
 
 /// Mock function to make moves without validations at all
-fn make_move<T>(field: &T, point_id: &PointID, color: PlayerColor) -> Group
-where
-    T: Field,
-{
+fn make_move(field: &Field, point_id: &PointID, color: PlayerColor) -> Group {
     field.get_point(point_id).borrow_mut().inner.status = PointStatus::Occupied(color.clone());
     Group::new(point_id, field, &color)
 }

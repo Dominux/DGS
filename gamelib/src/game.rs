@@ -13,14 +13,13 @@ use crate::{
 
 /// Lib level game struct
 #[derive(Debug)]
-pub struct Game<F, R>
+pub struct Game<R>
 where
-    F: Field,
     R: GameRules,
 {
     state: GameState,
     rules: R,
-    pub(crate) field: F,
+    pub(crate) field: Field,
     move_number: Option<usize>,
     pub(crate) black_groups: Vec<Group>,
     pub(crate) white_groups: Vec<Group>,
@@ -29,12 +28,11 @@ where
     ko_guard: KoGuard,
 }
 
-impl<F, R> Game<F, R>
+impl<R> Game<R>
 where
-    F: Field,
     R: GameRules,
 {
-    pub fn new(field: F, rules: R) -> Self {
+    pub fn new(field: Field, rules: R) -> Self {
         Self {
             state: GameState::default(),
             field,
@@ -207,7 +205,7 @@ where
             self.ko_guard.update(black_points, white_points)
         }
 
-        // 9. COMMIT transaction
+        // 8. COMMIT transaction
         {
             self.black_groups = black_groups;
             self.black_score = black_score;
