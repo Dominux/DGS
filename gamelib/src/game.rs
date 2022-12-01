@@ -207,7 +207,7 @@ where
             self.ko_guard.update(black_points, white_points)
         }
 
-        // 9. COMMIT transaction
+        // 8. COMMIT transaction
         {
             self.black_groups = black_groups;
             self.black_score = black_score;
