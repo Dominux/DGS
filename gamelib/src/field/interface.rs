@@ -8,3 +8,5 @@ pub trait Field: Debug + Clone {
     fn get_point(&self, point_id: &PointID) -> Rc<RefCell<PointWrapper>>;
     fn get_neighbor_points(&self, point_id: &PointID) -> [Option<Rc<RefCell<PointWrapper>>>; 4];
 }
+
+pub type PointOwner = Rc<RefCell<PointWrapper>>;

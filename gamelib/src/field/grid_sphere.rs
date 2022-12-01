@@ -8,9 +8,7 @@ use crate::{
     SizeType,
 };
 
-use super::Field;
-
-pub type PointOwner = Rc<RefCell<PointWrapper>>;
+use super::{Field, PointOwner};
 
 #[derive(Debug)]
 pub struct GridSphereField {

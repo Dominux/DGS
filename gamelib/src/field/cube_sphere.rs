@@ -8,9 +8,7 @@ use crate::{
     point::{Point, PointWrapper},
 };
 
-use super::interface::Field;
-
-pub type PointOwner = Rc<RefCell<PointWrapper>>;
+use super::{Field, PointOwner};
 
 #[derive(Debug, Clone)]
 pub struct CubicSphereField {
