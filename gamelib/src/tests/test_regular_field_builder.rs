@@ -35,7 +35,7 @@ const COMPRESSED_FIELD: [[Option<usize>; 4]; 25] = [
 ];
 
 #[test]
-fn test_grid_sphere_builder_with_size_5() {
+fn test_regular_field_builder_with_size_5() {
     let expected_field = {
         let points = COMPRESSED_FIELD
             .iter()
