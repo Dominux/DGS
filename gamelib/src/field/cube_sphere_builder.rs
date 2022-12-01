@@ -3,31 +3,12 @@ use std::{cell::RefCell, rc::Rc};
 use itertools::Itertools;
 
 use crate::{
-    aliases::{PointID, SizeType},
+    aliases::SizeType,
     errors::{GameError, GameResult},
     point::{Point, PointWrapper},
 };
 
-use super::{Field, PointOwner};
-
-#[derive(Debug, Clone)]
-pub struct CubicSphereField {
-    points: Vec<PointOwner>,
-    // size: SizeType,
-}
-
-#[allow(dead_code)]
-const MIN_SIZE: SizeType = 4;
-
-impl CubicSphereField {
-    #[allow(dead_code)]
-    pub(crate) fn new(points: Vec<PointOwner>) -> Self {
-        Self {
-            points,
-            // size: *size,
-        }
-    }
-}
+use super::{field::FieldType, Field};
 
 /// Struct to build CubicSphereField
 pub struct CubicSphereFieldBuilder;
@@ -38,9 +19,11 @@ impl Default for CubicSphereFieldBuilder {
     }
 }
 
+const MIN_SIZE: SizeType = 4;
+
 impl CubicSphereFieldBuilder {
     #[allow(dead_code)]
-    pub fn with_size(&self, size: &SizeType) -> GameResult<CubicSphereField> {
+    pub fn with_size(&self, size: &SizeType) -> GameResult<Field> {
         // Validating
         self.validate_size(size)?;
 
@@ -50,7 +33,7 @@ impl CubicSphereFieldBuilder {
     }
 
     #[allow(dead_code)]
-    fn construct(&self, size: &SizeType) -> CubicSphereField {
+    fn construct(&self, size: &SizeType) -> Field {
         let size = *size as usize;
         let inner_size = size - 2;
 
@@ -240,10 +223,10 @@ impl CubicSphereFieldBuilder {
             }
         }
 
-        CubicSphereField {
+        Field::new(
             points,
-            // size: size as SizeType,
-        }
+            FieldType::CubicSphere, // size: size as SizeType,
+        )
     }
 
     fn validate_size(&self, size: &SizeType) -> GameResult<()> {
@@ -255,22 +238,5 @@ impl CubicSphereFieldBuilder {
                 "size must be {MIN_SIZE} or higher"
             )))
         }
-    }
-}
-
-impl Field for CubicSphereField {
-    #[inline]
-    fn len(&self) -> usize {
-        self.points.len()
-    }
-
-    fn get_point(&self, point_id: &PointID) -> Rc<RefCell<PointWrapper>> {
-        self.points[*point_id].clone()
-    }
-
-    fn get_neighbor_points(&self, point_id: &PointID) -> [Option<Rc<RefCell<PointWrapper>>>; 4] {
-        let point = self.get_point(point_id);
-        let p = point.borrow();
-        [p.top, p.right, p.bottom, p.left].map(|id| id.map(|id| self.get_point(&id)))
     }
 }

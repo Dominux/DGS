@@ -3,36 +3,11 @@ use std::{cell::RefCell, rc::Rc};
 use itertools::Itertools;
 
 use crate::{
-    aliases::PointID,
     point::{Point, PointWrapper},
     SizeType,
 };
 
-use super::{Field, PointOwner};
-
-#[derive(Debug)]
-pub struct GridSphereField {
-    points: Vec<PointOwner>,
-}
-
-impl GridSphereField {
-    #[allow(dead_code)]
-    pub(crate) fn new(points: Vec<PointOwner>) -> Self {
-        Self { points }
-    }
-}
-
-// Custom implementation cause Rc<RefCell<_>> does not create completely new object in memory on .clone()
-impl Clone for GridSphereField {
-    fn clone(&self) -> Self {
-        let points = self
-            .points
-            .iter()
-            .map(|point| Rc::new(RefCell::new(point.borrow().clone())))
-            .collect();
-        Self { points }
-    }
-}
+use super::{field::FieldType, Field};
 
 /// Struct to build GridSphereField
 pub struct GridSphereFieldBuilder;
@@ -45,12 +20,12 @@ impl Default for GridSphereFieldBuilder {
 
 impl GridSphereFieldBuilder {
     #[allow(dead_code)]
-    pub fn with_size(&self, size: &SizeType) -> GridSphereField {
+    pub fn with_size(&self, size: &SizeType) -> Field {
         self.construct(size)
     }
 
     #[allow(dead_code)]
-    fn construct(&self, size: &SizeType) -> GridSphereField {
+    fn construct(&self, size: &SizeType) -> Field {
         let size = *size as usize;
 
         // Creating points
@@ -230,23 +205,6 @@ impl GridSphereFieldBuilder {
             }
         }
 
-        GridSphereField { points }
-    }
-}
-
-impl Field for GridSphereField {
-    #[inline]
-    fn len(&self) -> usize {
-        self.points.len()
-    }
-
-    fn get_point(&self, point_id: &PointID) -> Rc<RefCell<PointWrapper>> {
-        self.points[*point_id].clone()
-    }
-
-    fn get_neighbor_points(&self, point_id: &PointID) -> [Option<Rc<RefCell<PointWrapper>>>; 4] {
-        let point = self.get_point(point_id);
-        let p = point.borrow();
-        [p.top, p.right, p.bottom, p.left].map(|id| id.map(|id| self.get_point(&id)))
+        Field::new(points, FieldType::GridSphere)
     }
 }

@@ -14,10 +14,7 @@ pub struct Group {
 
 impl Group {
     /// Consider making any new point a group
-    pub fn new<T>(point_id: &PointID, field: &T, color: &PlayerColor) -> Self
-    where
-        T: Field,
-    {
+    pub fn new(point_id: &PointID, field: &Field, color: &PlayerColor) -> Self {
         let mut points_ids = HashSet::new();
         points_ids.insert(*point_id);
         Self {
@@ -48,10 +45,7 @@ impl Group {
         self.liberties = &self.liberties | &other.liberties;
     }
 
-    pub fn refresh_liberties<T>(&mut self, field: &T)
-    where
-        T: Field,
-    {
+    pub fn refresh_liberties(&mut self, field: &Field) {
         self.liberties = self
             .points_ids
             .iter()
@@ -70,10 +64,7 @@ impl Group {
             .collect()
     }
 
-    pub fn delete<T>(self, field: &T)
-    where
-        T: Field,
-    {
+    pub fn delete(self, field: &Field) {
         for id in self.points_ids {
             field.get_point(&id).borrow_mut().inner.status = PointStatus::Empty;
         }

@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    field::{Field, RegularField, RegularFieldBuilder},
+    field::{Field, FieldType, RegularFieldBuilder},
     point::{Point, PointWrapper},
 };
 
@@ -50,7 +50,7 @@ fn test_regular_field_builder_with_size_5() {
                 )))
             })
             .collect();
-        RegularField::new(points)
+        Field::new(points, FieldType::Regular)
     };
 
     let real = RegularFieldBuilder::default().with_size(&5);

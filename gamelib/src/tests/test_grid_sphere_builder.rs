@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    field::{Field, GridSphereField, GridSphereFieldBuilder},
+    field::{Field, FieldType, GridSphereFieldBuilder},
     point::{Point, PointWrapper},
 };
 
@@ -79,7 +79,7 @@ fn test_grid_sphere_builder_with_size_3() {
                 )))
             })
             .collect();
-        GridSphereField::new(points)
+        Field::new(points, FieldType::GridSphere)
     };
 
     let real = GridSphereFieldBuilder::default().with_size(&3);

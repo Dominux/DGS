@@ -1,9 +1,9 @@
-mod cube_sphere;
-mod grid_sphere;
-mod interface;
-mod regular_field;
+mod cube_sphere_builder;
+mod field;
+mod grid_sphere_builder;
+mod regular_field_builder;
 
-pub use cube_sphere::{CubicSphereField, CubicSphereFieldBuilder};
-pub use grid_sphere::{GridSphereField, GridSphereFieldBuilder};
-pub use interface::{Field, PointOwner};
-pub use regular_field::{RegularField, RegularFieldBuilder};
+pub use cube_sphere_builder::CubicSphereFieldBuilder;
+pub use field::{Field, FieldType, PointOwner};
+pub use grid_sphere_builder::GridSphereFieldBuilder;
+pub use regular_field_builder::RegularFieldBuilder;
