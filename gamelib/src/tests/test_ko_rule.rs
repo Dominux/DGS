@@ -1,11 +1,11 @@
-use crate::errors::GameError;
+use crate::{errors::GameError, FieldType};
 
 use super::fixtures::game::create_and_start_game;
 
 #[test]
 fn test_get_blocking_error() {
     // Creating and starting game
-    let mut game = create_and_start_game(&5);
+    let mut game = create_and_start_game(FieldType::GridSphere, &5);
 
     /*
     Starting creating

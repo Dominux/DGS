@@ -2,6 +2,7 @@
 #![feature(slice_flatten)]
 
 pub use aliases::{PointID, SizeType};
+pub use field::FieldType;
 pub use point::PlayerColor;
 
 mod aliases;
@@ -23,8 +24,14 @@ pub struct Game {
 
 impl Game {
     /// Create the game
-    pub fn new(size: &SizeType) -> errors::GameResult<Self> {
-        let field = field::GridSphereFieldBuilder::default().with_size(size);
+    pub fn new(field_type: FieldType, size: &SizeType) -> errors::GameResult<Self> {
+        // Creating a field by it's field_type
+        let field = match field_type {
+            FieldType::CubicSphere => field::CubicSphereFieldBuilder::default().with_size(size)?,
+            FieldType::GridSphere => field::GridSphereFieldBuilder::default().with_size(size),
+            FieldType::Regular => field::RegularFieldBuilder::default().with_size(size),
+        };
+
         let rules = rules::JapaneseRules::new();
         let game = Self {
             inner: game::Game::new(field, rules),
@@ -77,6 +84,11 @@ impl Game {
     #[inline]
     pub fn player_turn(&self) -> Option<PlayerColor> {
         self.inner.player_turn()
+    }
+
+    #[inline]
+    pub fn field_type(&self) -> FieldType {
+        self.inner.field.field_type
     }
 }
 

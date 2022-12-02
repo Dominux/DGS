@@ -1,11 +1,8 @@
 use wasm_bindgen::prelude::*;
 
-use spherical_go_game_lib::{Game as InnerGame, PlayerColor, PointID, SizeType};
-
-#[wasm_bindgen]
-pub struct Game {
-    inner: InnerGame,
-}
+use spherical_go_game_lib::{
+    FieldType as InnerFieldType, Game as InnerGame, PlayerColor, PointID, SizeType,
+};
 
 type GameResult<T> = Result<T, JsError>;
 
@@ -26,11 +23,45 @@ impl From<PlayerColor> for Player {
 }
 
 #[wasm_bindgen]
+#[derive(Debug, Clone, Copy)]
+pub enum FieldType {
+    Regular = "Regular",
+    CubicSphere = "CubicSphere ",
+    GridSphere = "GridSphere",
+}
+
+impl From<FieldType> for InnerFieldType {
+    fn from(f: FieldType) -> Self {
+        match f {
+            FieldType::Regular => Self::Regular,
+            FieldType::GridSphere => Self::GridSphere,
+            FieldType::CubicSphere => Self::CubicSphere,
+            _ => unreachable!(),
+        }
+    }
+}
+
+impl From<InnerFieldType> for FieldType {
+    fn from(f: InnerFieldType) -> Self {
+        match f {
+            InnerFieldType::Regular => Self::Regular,
+            InnerFieldType::GridSphere => Self::GridSphere,
+            InnerFieldType::CubicSphere => Self::CubicSphere,
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub struct Game {
+    inner: InnerGame,
+}
+
+#[wasm_bindgen]
 impl Game {
     /// Create the game
     #[wasm_bindgen(constructor)]
-    pub fn new(size: SizeType) -> GameResult<Game> {
-        let inner = InnerGame::new(&size)?;
+    pub fn new(field_type: FieldType, size: SizeType) -> GameResult<Game> {
+        let inner = InnerGame::new(field_type.into(), &size)?;
         Ok(Self { inner })
     }
 
@@ -74,5 +105,9 @@ impl Game {
 
     pub fn player_turn(&self) -> Option<Player> {
         self.inner.player_turn().map(|p| Player::from(p))
+    }
+
+    pub fn field_type(&self) -> FieldType {
+        self.inner.field_type().into()
     }
 }
