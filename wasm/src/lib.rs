@@ -36,7 +36,7 @@ impl From<FieldType> for InnerFieldType {
             FieldType::Regular => Self::Regular,
             FieldType::GridSphere => Self::GridSphere,
             FieldType::CubicSphere => Self::CubicSphere,
-            _ => unreachable!(),
+            _ => panic!("Wrong variant for a field"),
         }
     }
 }

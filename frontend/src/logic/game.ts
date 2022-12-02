@@ -6,7 +6,7 @@ export default class Game {
 	protected inner: GameLib
 
 	constructor(size: number) {
-		this.inner = new GameLib(size)
+		this.inner = new GameLib('GridSphere', size)
 	}
 
 	start() {

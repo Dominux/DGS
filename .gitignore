@@ -1,5 +1,7 @@
 target/
 
+*.log
+
 frontend/node_modules/
 frontend/public/build/
 

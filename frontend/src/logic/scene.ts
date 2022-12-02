@@ -4,11 +4,25 @@ import { ENV_TEXTURE } from '../constants'
 
 export default class Scene {
 	readonly _scene: BABYLON.Scene
+	readonly _ground: BABYLON.GroundMesh
+	protected _XRHelper: BABYLON.WebXRDefaultExperience | undefined
 
 	constructor(canvas: HTMLCanvasElement, sphereRadius: number) {
 		const engine = new BABYLON.Engine(canvas, true)
 
 		this._scene = new BABYLON.Scene(engine)
+
+		// Creating ground
+		this._ground = BABYLON.MeshBuilder.CreateGround('ground', {
+			height: 50,
+			width: 50,
+		})
+		this._ground.position.y = -1.5
+		const groundMaterial = new BABYLON.PBRMaterial('ground_material')
+		groundMaterial.roughness = 0.4
+		groundMaterial.metallic = 0.4
+		groundMaterial.albedoColor = BABYLON.Color3.Magenta()
+		this._ground.material = groundMaterial
 
 		// Loading environment
 		this.loadEnv()
@@ -25,6 +39,9 @@ export default class Scene {
 		camera.lowerRadiusLimit = sphereRadius * 2.2
 		camera.upperRadiusLimit = sphereRadius * 10
 		camera.wheelPrecision = 50
+
+		// Loading VR
+		this.loadVR()
 
 		engine.runRenderLoop(() => {
 			this._scene.render()
@@ -59,5 +76,11 @@ export default class Scene {
 			hdrSkybox.material = hdrSkyboxMaterial
 			hdrSkybox.infiniteDistance = true
 		}, 0)
+	}
+
+	protected async loadVR() {
+		this._XRHelper = await this._scene.createDefaultXRExperienceAsync({
+			floorMeshes: [this._ground],
+		})
 	}
 }
