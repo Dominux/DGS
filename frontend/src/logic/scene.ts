@@ -17,11 +17,10 @@ export default class Scene {
 			height: 50,
 			width: 50,
 		})
-		this._ground.position.y = -1.5
+		this._ground.position.y = -1
 		const groundMaterial = new BABYLON.PBRMaterial('ground_material')
 		groundMaterial.roughness = 0.4
 		groundMaterial.metallic = 0.4
-		groundMaterial.albedoColor = BABYLON.Color3.Magenta()
 		this._ground.material = groundMaterial
 
 		// Loading environment
@@ -36,7 +35,7 @@ export default class Scene {
 			this._scene
 		)
 		camera.attachControl(canvas, true)
-		camera.lowerRadiusLimit = sphereRadius * 2.2
+		camera.lowerRadiusLimit = sphereRadius * 3
 		camera.upperRadiusLimit = sphereRadius * 10
 		camera.wheelPrecision = 50
 
