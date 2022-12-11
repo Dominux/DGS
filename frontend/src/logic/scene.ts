@@ -14,14 +14,14 @@ export default class Scene {
 
 		// Creating ground
 		this._ground = BABYLON.MeshBuilder.CreateGround('ground', {
-			height: 50,
-			width: 50,
+			height: 30,
+			width: 30,
 		})
-		this._ground.position.y = -1
-		const groundMaterial = new BABYLON.PBRMaterial('ground_material')
-		groundMaterial.roughness = 0.4
-		groundMaterial.metallic = 0.4
-		this._ground.material = groundMaterial
+		// const groundMaterial = new BABYLON.PBRMaterial('ground_material')
+		// groundMaterial.roughness = 0.4
+		// groundMaterial.metallic = 0.4
+		// this._ground.material = groundMaterial
+		this._ground.setEnabled(false)
 
 		// Loading environment
 		this.loadEnv()

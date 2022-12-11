@@ -19,7 +19,7 @@ export type GameCreationFormProps = {
 const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 	const [isValid, setIsValid] = createSignal(false)
 	const [isStarted, setIsStarted] = createSignal(false)
-	const [isShowed, setIsShowed] = createSignal(true)
+	const [isShowed, setIsShowed] = createSignal(false)
 	const [errorMessage, setErrorMessage] = createSignal('')
 
 	function onInput(e) {
@@ -31,7 +31,6 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 	}
 
 	function validateGridSize(value: number) {
-		// Now numbers must be between 5 and ...100, and also to be only odd
 		const oddRangeStr = [MIN_GRIDSIZE, MIN_GRIDSIZE + 2, MIN_GRIDSIZE + 4].join(
 			','
 		)

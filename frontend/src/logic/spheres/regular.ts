@@ -1,30 +1,24 @@
 import * as BABYLON from 'babylonjs'
 
-import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
+import { SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager from '../stone_manager'
 import { Field } from './interface'
 
-export enum Pole {
-	POSITIVE = 'POSITIVE',
-	NEGATIVE = 'NEGATIVE',
-}
-
 export type Coordinates = {
-	x: number | Pole
-	y: number | Pole
-	z: number | Pole
+	x: number
+	y: number
 }
 
-export default class GridSphere implements Field {
-	readonly _sphere: BABYLON.Mesh
+export default class RegularField implements Field {
+	readonly _field: BABYLON.Mesh
+	protected pointsManager: PointsCoordinatesManager
 	protected stoneManager: StoneManager
 	protected game: Game | undefined
 	protected sphereRadius = SPHERE_RADIUS
 	private onEnvMove: Function | undefined
 	private onDeath: Function | undefined
 	private onError: Function | undefined
-	private points: Array<Coordinates> = []
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
@@ -32,65 +26,69 @@ export default class GridSphere implements Field {
 	private circleAmount
 	private circlePosition
 	private gridRatio
-	private majorUnitFrequency
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
-		gridSize--
+		const fieldSize = 1
+		const textureSize = 512
+		this.pointsManager = new PointsCoordinatesManager(gridSize, 0.1)
 
-		this._sphere = BABYLON.MeshBuilder.CreateSphere(
-			'sphere',
-			{ diameter: this.sphereRadius * 2, segments: 32 },
+		// Creating a texture
+		const textureGrid = new BABYLON.DynamicTexture(
+			'regular grid texture',
+			textureSize,
 			scene
 		)
+		const textureContext = textureGrid.getContext()
+
+		textureContext.fillStyle = 'white'
+		textureContext.fillRect(0, 0, textureSize, textureSize)
+		textureGrid.update()
+
+		textureContext.strokeStyle = 'black'
+		textureContext.fillStyle = 'black'
+
+		const textureSizedPoints = this.pointsManager.getMultipliedOn(textureSize)
+		for (const row of textureSizedPoints) {
+			// rows
+			textureContext.beginPath()
+			textureContext.moveTo(row[0].x, row[0].y)
+
+			const [lastCol] = row.slice(-1)
+			textureContext.lineTo(lastCol.x, lastCol.y)
+			textureContext.stroke()
+
+			// cols
+			textureContext.beginPath()
+			textureContext.moveTo(row[0].y, row[0].x)
+
+			textureContext.lineTo(lastCol.y, lastCol.x)
+			textureContext.stroke()
+		}
+
+		textureGrid.update()
+
+		const mat = new BABYLON.PBRMaterial('Mat', scene)
+		mat.albedoTexture = textureGrid
+		mat.roughness = 0.15
+		mat.metallic = 0
+
+		// Placing the drawed texture at only one face
+		const faceUV = new Array(6)
+		for (let i = 0; i < 6; i++) {
+			faceUV[i] = new BABYLON.Vector4(0, 0, 0, 0)
+		}
+		faceUV[4] = new BABYLON.Vector4(0, 0, 1, 1)
+
+		this._field = BABYLON.MeshBuilder.CreateBox('regular_field', {
+			height: fieldSize * 0.05,
+			width: fieldSize,
+			depth: fieldSize,
+			faceUV: faceUV,
+		})
+		this._field.position.y = 0.05
+		this._field.material = mat
 
 		this.stoneManager = new StoneManager(scene, gridSize)
-
-		BABYLON.NodeMaterial.ParseFromFileAsync(
-			'gridMaterial',
-			GRID_MATERIAL,
-			scene
-		).then((gridMaterial) => {
-			this.gridRatio = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'gridRatio'
-			)
-			this.majorUnitFrequency = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'majorUnitFrequency'
-			)
-			const minorUnitVisibility = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'minorUnitVisibility'
-			)
-			this.circleRadius = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleRadius'
-			)
-			this.circleAmount = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleAmount'
-			)
-			this.circlePosition = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circlePosition'
-			)
-			const circleSmoothness = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleSmoothness'
-			)
-			const bgColor = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'bgDiffuseColor'
-			)
-			const lineColor = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'lineColor'
-			)
-			const circleColor = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleColor'
-			)
-
-			lineColor.value = BABYLON.Color3.Black()
-			circleColor.value = BABYLON.Color3.Green()
-			this.gridRatio.value = 1 / gridSize
-			this.majorUnitFrequency.value = 1
-			minorUnitVisibility.value = 0
-			this.circleRadius.value = 0.4 / gridSize
-			circleSmoothness.value = 0.005
-
-			this._sphere.material = gridMaterial
-		})
 	}
 
 	start(
@@ -104,13 +102,11 @@ export default class GridSphere implements Field {
 		this.onEnvMove = onEndMove
 		this.onError = onError
 
-		this._sphere.enablePointerMoveEvents = true
+		this._field.enablePointerMoveEvents = true
 
 		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
 		const gridFactor =
 			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
-
-		console.log(gridFactor)
 
 		this.scene.onPointerMove = (
 			_event: BABYLON.IPointerEvent,
@@ -175,9 +171,6 @@ export default class GridSphere implements Field {
 			}
 		}
 
-		// Calculating points
-		this.points = this.generatePoints(0.5)
-
 		// Starting the game process
 		this.game?.start()
 
@@ -189,7 +182,7 @@ export default class GridSphere implements Field {
 	 * Delete sphere
 	 */
 	delete() {
-		this._sphere.dispose()
+		this._field.dispose()
 	}
 
 	get playerTurn() {
@@ -215,7 +208,7 @@ export default class GridSphere implements Field {
 					if (
 						this.canPutStone &&
 						pointerInfo.pickInfo?.hit &&
-						pointerInfo.pickInfo?.pickedMesh === this._sphere &&
+						pointerInfo.pickInfo?.pickedMesh === this._field &&
 						this.activePointID !== null
 					) {
 						this.putStone()
@@ -278,50 +271,41 @@ export default class GridSphere implements Field {
 			}
 		}
 	}
+}
 
-	/**
-	 * Generates ids for all points
-	 *
-	 * Since ids are integers starting from 0,
-	 * array of points coordinates are returns
-	 */
-	protected generatePoints(min: number): Array<Coordinates> {
-		const result: Array<Coordinates> = []
+class PointsCoordinatesManager {
+	readonly pointsCoords: Array<Array<Coordinates>>
 
-		const points = [...Array(this.gridSize).keys()].map(
-			(p) => p / (this.gridSize - 1) - min
+	constructor(size: number, paddingFraction: number) {
+		this.pointsCoords = PointsCoordinatesManager.genPointsCoords(
+			size,
+			paddingFraction
 		)
+	}
 
-		// Starting from the top
-		for (const y of [...points].reverse()) {
-			for (const x of [...points].reverse()) {
-				result.push({ x, y, z: Pole.POSITIVE })
-			}
-		}
+	static genPointsCoords(
+		size: number,
+		paddingFraction: number
+	): Array<Array<Coordinates>> {
+		const size_minus_1 = size - 1
+		const contextFraction = 1 - paddingFraction * 2
 
-		// Filling sides
-		for (const z of [...points].reverse()) {
-			for (const y of [...points].reverse()) {
-				result.push({ x: Pole.POSITIVE, y, z })
-			}
-			for (const x of [...points].reverse()) {
-				result.push({ x, y: Pole.NEGATIVE, z })
-			}
-			for (const y of points) {
-				result.push({ x: Pole.NEGATIVE, y, z })
-			}
-			for (const x of points) {
-				result.push({ x, y: Pole.POSITIVE, z })
-			}
-		}
+		return [...Array(size).keys()].map((row) => {
+			const x = (row / size_minus_1 - 0.5) * contextFraction + 0.5
 
-		// Filling the bottom
-		for (const x of points) {
-			for (const y of points) {
-				result.push({ x, y, z: Pole.NEGATIVE })
-			}
-		}
+			return [...Array(size).keys()].map((col) => {
+				const y = (col / size_minus_1 - 0.5) * contextFraction + 0.5
 
-		return result
+				return { x, y }
+			})
+		})
+	}
+
+	getMultipliedOn(multiplier: number): Array<Array<Coordinates>> {
+		return this.pointsCoords.map((row) =>
+			row.map((col) => {
+				return { x: col.x * multiplier, y: col.y * multiplier }
+			})
+		)
 	}
 }

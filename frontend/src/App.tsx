@@ -9,6 +9,8 @@ import { ERROR_MSG_TIMEOUT, SPHERE_RADIUS } from './constants'
 import Game from './logic/game'
 import Scene from './logic/scene'
 import GridSphere from './logic/spheres/grid_sphere'
+import RegularField from './logic/spheres/regular'
+import { Field } from './logic/spheres/interface'
 
 const App: Component = () => {
 	// TODO: bind changing grid size
@@ -18,7 +20,7 @@ const App: Component = () => {
 	const [blackScore, setBlackScore] = createSignal(0)
 	const [whiteScore, setWhiteScore] = createSignal(0)
 	const [scene, setScene] = createSignal<Scene | undefined>()
-	const [field, setField] = createSignal<GridSphere | undefined>()
+	const [field, setField] = createSignal<Field | undefined>()
 	const [errorMessage, setErrorMessage] = createSignal('')
 
 	function onChangeGridSize(newVal: number) {
