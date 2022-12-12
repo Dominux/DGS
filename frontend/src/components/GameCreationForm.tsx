@@ -3,6 +3,7 @@ import { Component, createSignal, Show } from 'solid-js'
 import Drawer from '@suid/material/Drawer'
 import Box from '@suid/material/Box'
 import TextField from '@suid/material/TextField'
+import NativeSelect from '@suid/material/NativeSelect'
 import List from '@suid/material/List'
 import ListItem from '@suid/material/ListItem'
 import Button from '@suid/material/Button'
@@ -10,9 +11,11 @@ import Button from '@suid/material/Button'
 import { MAX_GRIDSIZE, MIN_GRIDSIZE } from '../constants'
 import ShowHideButton from './ShowHideButton'
 import styles from '../App.module.css'
+import FieldType from '../logic/fields/enum'
 
 export type GameCreationFormProps = {
-	onChange: Function
+	onSelectFieldType: Function
+	onInputGridSize: Function
 	onStart: Function
 }
 
@@ -21,17 +24,23 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 	const [isStarted, setIsStarted] = createSignal(false)
 	const [isShowed, setIsShowed] = createSignal(true)
 	const [errorMessage, setErrorMessage] = createSignal('')
+	const [fieldType, setFieldType] = createSignal(FieldType.GridSphere)
 
 	function onInput(e) {
 		const n = parseInt(e.target.value)
 
 		if (validateGridSize(n)) {
-			props.onChange(n)
+			props.onInputGridSize(n)
 		}
 	}
 
+	function onSelect(e) {
+		const value: FieldType = FieldType[e.target.value]
+		setFieldType(value)
+		props.onSelectFieldType(value)
+	}
+
 	function validateGridSize(value: number) {
-		// Now numbers must be between 5 and ...100, and also to be only odd
 		const oddRangeStr = [MIN_GRIDSIZE, MIN_GRIDSIZE + 2, MIN_GRIDSIZE + 4].join(
 			','
 		)
@@ -46,7 +55,7 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 			setIsValid(false)
 			return false
 		}
-		if (value % 2 == 0) {
+		if (fieldType() === FieldType.GridSphere && value % 2 == 0) {
 			setErrorMessage(`Number must be odd (${oddRangeStr}, ...)`)
 			setIsValid(false)
 			return false
@@ -88,11 +97,23 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 
 				<Box sx={{ marginTop: '100%' }} role="form">
 					<List>
-						<ListItem sx={{ paddingBottom: 2 }}>
+						<ListItem>
+							<NativeSelect
+								sx={{ minWidth: '100%' }}
+								id="field-type"
+								variant="standard"
+								onChange={onSelect}
+							>
+								{Object.values(FieldType).map((fieldType) => (
+									<option>{fieldType}</option>
+								))}
+							</NativeSelect>
+						</ListItem>
+						<ListItem sx={{ paddingBottom: 4 }}>
 							<TextField
 								error={!isValid()}
 								sx={{ margin: '0 auto' }}
-								id="standard-basic"
+								id="grid-size"
 								label="Grid size"
 								variant="standard"
 								type="number"

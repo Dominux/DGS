@@ -1,7 +1,9 @@
 import * as BABYLON from 'babylonjs'
+
 import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager from '../stone_manager'
+import { Field } from './interface'
 
 export enum Pole {
 	POSITIVE = 'POSITIVE',
@@ -14,7 +16,7 @@ export type Coordinates = {
 	z: number | Pole
 }
 
-export default class GridSphere {
+export default class GridSphere implements Field {
 	readonly _sphere: BABYLON.Mesh
 	protected stoneManager: StoneManager
 	protected game: Game | undefined
@@ -91,7 +93,12 @@ export default class GridSphere {
 		})
 	}
 
-	start(game: Game, onEndMove: Function, onDeath: Function, onError: Function) {
+	start(
+		game: Game,
+		onEndMove: Function,
+		onDeath: Function,
+		onError: Function
+	): void {
 		this.game = game
 		this.onDeath = onDeath
 		this.onEnvMove = onEndMove
@@ -229,11 +236,25 @@ export default class GridSphere {
 			throw error
 		}
 
-		this.stoneManager.create(this.activePointID, this.activePoint, color)
+		this.stoneManager.create(
+			this.activePointID,
+			this.activePoint,
+			color,
+			this.getStoneRotation(this.activePoint)
+		)
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
 		this.onEnvMove()
+	}
+
+	protected getStoneRotation(position: BABYLON.Vector3): BABYLON.Vector3 {
+		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 0, 0), position])
+		return BABYLON.Vector3.RotationFromAxis(
+			path.getBinormalAt(0),
+			path.getTangentAt(0),
+			path.getNormalAt(0)
+		)
 	}
 
 	protected getPointID(coords: BABYLON.Vector3): number {
