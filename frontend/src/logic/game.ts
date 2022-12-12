@@ -1,12 +1,13 @@
 import init, { Game as GameLib } from '../pkg/wasm_gamelib'
+import FieldType from './fields/enum'
 
 await init()
 
 export default class Game {
 	protected inner: GameLib
 
-	constructor(size: number) {
-		this.inner = new GameLib('GridSphere', size)
+	constructor(size: number, fieldType: FieldType) {
+		this.inner = new GameLib(fieldType, size)
 	}
 
 	start() {

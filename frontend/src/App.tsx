@@ -8,14 +8,14 @@ import PlayersBar from './components/PlayersBar'
 import { ERROR_MSG_TIMEOUT, SPHERE_RADIUS } from './constants'
 import Game from './logic/game'
 import Scene from './logic/scene'
-import GridSphere from './logic/spheres/grid_sphere'
-import RegularField from './logic/spheres/regular'
-import { Field } from './logic/spheres/interface'
+import { Field } from './logic/fields/interface'
+import FieldType, { getFieldFromType } from './logic/fields/enum'
 
 const App: Component = () => {
 	// TODO: bind changing grid size
 	const [isStarted, setIsStarted] = createSignal(false)
 	const [gridSize, setGridSize] = createSignal(9)
+	const [fieldType, setFieldType] = createSignal(FieldType.GridSphere)
 	const [playerTurn, setPlayerTurn] = createSignal('Black')
 	const [blackScore, setBlackScore] = createSignal(0)
 	const [whiteScore, setWhiteScore] = createSignal(0)
@@ -25,12 +25,12 @@ const App: Component = () => {
 
 	function onChangeGridSize(newVal: number) {
 		setGridSize(newVal)
+		setCurrentField()
+	}
 
-		// Replacing old sphere with a new one
-		const newField = new RegularField(scene()._scene, gridSize())
-		field()?.delete()
-
-		setField(newField)
+	function onSelectFieldType(newVal: FieldType) {
+		setFieldType(newVal)
+		setCurrentField()
 	}
 
 	function onStart() {
@@ -38,8 +38,9 @@ const App: Component = () => {
 
 		// Starting game
 		const game_field = field()
-		const game = new Game(gridSize())
+		const game = new Game(gridSize(), fieldType())
 		game_field?.start(game, onEndMove, onDeath, onError)
+
 		setField(game_field)
 	}
 
@@ -62,13 +63,19 @@ const App: Component = () => {
 		}, ERROR_MSG_TIMEOUT * 1000)
 	}
 
+	/** Replacing old field with a new one*/
+	function setCurrentField() {
+		const klass = getFieldFromType(fieldType())
+		const newField = new klass(scene()?._scene, gridSize())
+		field()?.delete()
+		setField(newField)
+	}
+
 	onMount(() => {
 		// Creating game
 		const _scene = new Scene(canvas, SPHERE_RADIUS)
 		setScene(_scene)
-		setField(new RegularField(_scene._scene, gridSize()))
-
-		setTimeout(onStart, 1000)
+		setTimeout(setCurrentField, 0)
 	})
 
 	let canvas: HTMLCanvasElement
@@ -80,7 +87,8 @@ const App: Component = () => {
 
 			<div class={styles.ux}>
 				<GameCreationForm
-					onChange={onChangeGridSize}
+					onInputGridSize={onChangeGridSize}
+					onSelectFieldType={onSelectFieldType}
 					onStart={onStart}
 				></GameCreationForm>
 				<Show when={isStarted()}>
