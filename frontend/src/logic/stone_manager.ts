@@ -14,7 +14,12 @@ export default class StoneManager {
 		this.height = (0.2 * this.stoneSize) / gridSize
 	}
 
-	create(id: number, position: BABYLON.Vector3, color: BABYLON.Color3) {
+	create(
+		id: number,
+		position: BABYLON.Vector3,
+		color: BABYLON.Color3,
+		rotation: BABYLON.Vector3
+	) {
 		const diameter = this.height * 3
 
 		// Creating stone
@@ -34,13 +39,7 @@ export default class StoneManager {
 		stone.material = material
 
 		// Setting stone's rotation
-		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 0, 0), position])
-		const orientation = BABYLON.Vector3.RotationFromAxis(
-			path.getBinormalAt(0),
-			path.getTangentAt(0),
-			path.getNormalAt(0)
-		)
-		stone.rotation = orientation
+		stone.rotation = rotation
 
 		this.stones.push({ id, stone })
 	}

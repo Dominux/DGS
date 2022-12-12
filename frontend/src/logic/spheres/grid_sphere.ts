@@ -110,8 +110,6 @@ export default class GridSphere implements Field {
 		const gridFactor =
 			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
 
-		console.log(gridFactor)
-
 		this.scene.onPointerMove = (
 			_event: BABYLON.IPointerEvent,
 			pickInfo: BABYLON.PickingInfo
@@ -238,11 +236,25 @@ export default class GridSphere implements Field {
 			throw error
 		}
 
-		this.stoneManager.create(this.activePointID, this.activePoint, color)
+		this.stoneManager.create(
+			this.activePointID,
+			this.activePoint,
+			color,
+			this.getStoneRotation(this.activePoint)
+		)
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
 		this.onEnvMove()
+	}
+
+	protected getStoneRotation(position: BABYLON.Vector3): BABYLON.Vector3 {
+		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 0, 0), position])
+		return BABYLON.Vector3.RotationFromAxis(
+			path.getBinormalAt(0),
+			path.getTangentAt(0),
+			path.getNormalAt(0)
+		)
 	}
 
 	protected getPointID(coords: BABYLON.Vector3): number {

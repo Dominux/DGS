@@ -7,30 +7,33 @@ import { Field } from './interface'
 
 export type Coordinates = {
 	x: number
-	y: number
+	z: number
 }
 
 export default class RegularField implements Field {
+	readonly fieldSize = 1
+	readonly fieldHeight = 0.05
 	readonly _field: BABYLON.Mesh
-	protected pointsManager: PointsCoordinatesManager
+	readonly clickableRadius: number
+	readonly stoneY: number
+	protected points: Array<Coordinates>
 	protected stoneManager: StoneManager
 	protected game: Game | undefined
 	protected sphereRadius = SPHERE_RADIUS
-	private onEnvMove: Function | undefined
+	private onEndMove: Function | undefined
 	private onDeath: Function | undefined
 	private onError: Function | undefined
-	private activePointID: number | null = null
-	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
-	private circleRadius
-	private circleAmount
-	private circlePosition
-	private gridRatio
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
-		const fieldSize = 1
 		const textureSize = 512
-		this.pointsManager = new PointsCoordinatesManager(gridSize, 0.1)
+		const paddingFraction = 0.05
+		const pointsManager = new PointsCoordinatesManager(
+			gridSize,
+			paddingFraction
+		)
+
+		this.clickableRadius = ((1 - paddingFraction * 2) / gridSize) * 0.8
 
 		// Creating a texture
 		const textureGrid = new BABYLON.DynamicTexture(
@@ -47,21 +50,21 @@ export default class RegularField implements Field {
 		textureContext.strokeStyle = 'black'
 		textureContext.fillStyle = 'black'
 
-		const textureSizedPoints = this.pointsManager.getMultipliedOn(textureSize)
+		const textureSizedPoints = pointsManager.getMultipliedOn(textureSize)
 		for (const row of textureSizedPoints) {
 			// rows
 			textureContext.beginPath()
-			textureContext.moveTo(row[0].x, row[0].y)
+			textureContext.moveTo(row[0].x, row[0].z)
 
 			const [lastCol] = row.slice(-1)
-			textureContext.lineTo(lastCol.x, lastCol.y)
+			textureContext.lineTo(lastCol.x, lastCol.z)
 			textureContext.stroke()
 
 			// cols
 			textureContext.beginPath()
-			textureContext.moveTo(row[0].y, row[0].x)
+			textureContext.moveTo(row[0].z, row[0].x)
 
-			textureContext.lineTo(lastCol.y, lastCol.x)
+			textureContext.lineTo(lastCol.z, lastCol.x)
 			textureContext.stroke()
 		}
 
@@ -80,15 +83,32 @@ export default class RegularField implements Field {
 		faceUV[4] = new BABYLON.Vector4(0, 0, 1, 1)
 
 		this._field = BABYLON.MeshBuilder.CreateBox('regular_field', {
-			height: fieldSize * 0.05,
-			width: fieldSize,
-			depth: fieldSize,
+			height: this.fieldSize * this.fieldHeight,
+			width: this.fieldSize,
+			depth: this.fieldSize,
 			faceUV: faceUV,
 		})
-		this._field.position.y = 0.05
+		this._field.position.y = this.fieldHeight
 		this._field.material = mat
 
 		this.stoneManager = new StoneManager(scene, gridSize)
+
+		this.stoneY =
+			this._field.position.y +
+			(this.fieldSize * this.fieldHeight) / 2 +
+			this.stoneManager.height / 2
+
+		// Getting points
+		const subtrehand = 0.5
+		this.points = pointsManager
+			.getMultipliedOn(this.fieldSize)
+			.flat()
+			.map((p) => {
+				return {
+					x: p.x - subtrehand,
+					z: p.z - subtrehand,
+				}
+			})
 	}
 
 	start(
@@ -99,77 +119,10 @@ export default class RegularField implements Field {
 	): void {
 		this.game = game
 		this.onDeath = onDeath
-		this.onEnvMove = onEndMove
+		this.onEndMove = onEndMove
 		this.onError = onError
 
 		this._field.enablePointerMoveEvents = true
-
-		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
-		const gridFactor =
-			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
-
-		this.scene.onPointerMove = (
-			_event: BABYLON.IPointerEvent,
-			pickInfo: BABYLON.PickingInfo
-		) => {
-			if (pickInfo.pickedMesh !== this._sphere) {
-				this.circleAmount.value = 0
-				this.activePointID = null
-				return
-			}
-
-			const pointerPosition = pickInfo.pickedPoint.subtract(
-				this._sphere.position
-			)
-			const jointPosition = pointerPosition.scale(gridFactor)
-			jointPosition.x = Math.round(jointPosition.x)
-			jointPosition.y = Math.round(jointPosition.y)
-			jointPosition.z = Math.round(jointPosition.z)
-			jointPosition.scaleInPlace(1 / gridFactor)
-
-			const jointPositionSqrd = jointPosition.multiply(jointPosition)
-
-			const cutoff = 0.5 * this.sphereRadius
-			const absX = Math.abs(jointPosition.x)
-			const absY = Math.abs(jointPosition.y)
-			const absZ = Math.abs(jointPosition.z)
-			const max = Math.max(Math.max(absX, absY, absZ))
-			if (max === absX) {
-				jointPosition.x =
-					Math.sign(jointPosition.x) *
-					Math.sqrt(
-						sphereRadiusSqrd - jointPositionSqrd.y - jointPositionSqrd.z
-					)
-				this.circleAmount.value = absY > cutoff || absZ > cutoff ? 0 : 1
-			} else if (max === absY) {
-				jointPosition.y =
-					Math.sign(jointPosition.y) *
-					Math.sqrt(
-						sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.z
-					)
-				this.circleAmount.value = absX > cutoff || absZ > cutoff ? 0 : 1
-			} else {
-				jointPosition.z =
-					Math.sign(jointPosition.z) *
-					Math.sqrt(
-						sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.y
-					)
-				this.circleAmount.value = absX > cutoff || absY > cutoff ? 0 : 1
-			}
-
-			this.circlePosition.value = jointPosition
-			if (
-				BABYLON.Vector3.Distance(pointerPosition, jointPosition) >
-				this.circleRadius.value
-			) {
-				this.circleAmount.value = 0
-				this.activePointID = null
-				this.activePoint = undefined
-			} else {
-				this.activePointID = this.getPointID(jointPosition)
-				this.activePoint = jointPosition
-			}
-		}
 
 		// Starting the game process
 		this.game?.start()
@@ -179,7 +132,7 @@ export default class RegularField implements Field {
 	}
 
 	/**
-	 * Delete sphere
+	 * Delete field
 	 */
 	delete() {
 		this._field.dispose()
@@ -208,67 +161,60 @@ export default class RegularField implements Field {
 					if (
 						this.canPutStone &&
 						pointerInfo.pickInfo?.hit &&
-						pointerInfo.pickInfo?.pickedMesh === this._field &&
-						this.activePointID !== null
+						pointerInfo.pickInfo?.pickedMesh === this._field
 					) {
-						this.putStone()
+						this.putStone(pointerInfo.pickInfo.pickedPoint)
 					}
 			}
 		})
 	}
 
-	private putStone() {
+	private putStone(point: BABYLON.Vector3) {
 		const color =
 			this.game?.playerTurn === 'Black'
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
 
+		const clickedPointID = this.getPointID(point)
+
+		if (clickedPointID === undefined) return
+
+		const clickedCoords = this.points[clickedPointID]
+
 		let deadlist = []
 		try {
-			deadlist = this.game?.makeMove(this.activePointID)
+			deadlist = this.game?.makeMove(clickedPointID)
 		} catch (error) {
 			this.onError(error.message)
 			throw error
 		}
 
-		this.stoneManager.create(this.activePointID, this.activePoint, color)
+		// Placing a stone
+		const clickedPoint = new BABYLON.Vector3(
+			clickedCoords.x,
+			this.stoneY,
+			clickedCoords.z
+		)
+		this.stoneManager.create(
+			clickedPointID,
+			clickedPoint,
+			color,
+			new BABYLON.Vector3()
+		)
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
-		this.onEnvMove()
+		this.onEndMove()
 	}
 
-	protected getPointID(coords: BABYLON.Vector3): number {
-		const roundK = 10e6
-		const round = (n: number) =>
-			Math.round((n + Number.EPSILON) * roundK) / roundK
-
-		const failCheck = (
-			key: string,
-			p: Coordinates,
-			coords: BABYLON.Vector3
-		) => {
-			switch (typeof p[key]) {
-				case 'number':
-					if (round(p[key]) !== round(coords[key])) return false
-					break
-				default:
-					switch (p[key]) {
-						case Pole.POSITIVE:
-							if (coords[key] < 0) return false
-							break
-						case Pole.NEGATIVE:
-							if (coords[key] > 0) return false
-					}
-			}
-
-			return true
-		}
+	protected getPointID(coords: BABYLON.Vector3): number | void {
+		const maxX = coords.x + this.clickableRadius
+		const minX = coords.x - this.clickableRadius
+		const maxZ = coords.z + this.clickableRadius
+		const minZ = coords.z - this.clickableRadius
 
 		for (const [i, p] of this.points.entries()) {
-			if (['x', 'y', 'z'].every((key) => failCheck(key, p, coords))) {
-				return i
-			}
+			if (p.x < maxX && p.x > minX && p.z < maxZ && p.z > minZ) return i
 		}
 	}
 }
@@ -294,9 +240,9 @@ class PointsCoordinatesManager {
 			const x = (row / size_minus_1 - 0.5) * contextFraction + 0.5
 
 			return [...Array(size).keys()].map((col) => {
-				const y = (col / size_minus_1 - 0.5) * contextFraction + 0.5
+				const z = (col / size_minus_1 - 0.5) * contextFraction + 0.5
 
-				return { x, y }
+				return { x, z }
 			})
 		})
 	}
@@ -304,7 +250,7 @@ class PointsCoordinatesManager {
 	getMultipliedOn(multiplier: number): Array<Array<Coordinates>> {
 		return this.pointsCoords.map((row) =>
 			row.map((col) => {
-				return { x: col.x * multiplier, y: col.y * multiplier }
+				return { x: col.x * multiplier, z: col.z * multiplier }
 			})
 		)
 	}

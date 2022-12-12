@@ -27,10 +27,10 @@ const App: Component = () => {
 		setGridSize(newVal)
 
 		// Replacing old sphere with a new one
-		const newSphere = new GridSphere(scene()._scene, gridSize())
+		const newField = new RegularField(scene()._scene, gridSize())
 		field()?.delete()
 
-		setField(newSphere)
+		setField(newField)
 	}
 
 	function onStart() {
@@ -66,7 +66,9 @@ const App: Component = () => {
 		// Creating game
 		const _scene = new Scene(canvas, SPHERE_RADIUS)
 		setScene(_scene)
-		setField(new GridSphere(_scene._scene, gridSize()))
+		setField(new RegularField(_scene._scene, gridSize()))
+
+		setTimeout(onStart, 1000)
 	})
 
 	let canvas: HTMLCanvasElement
