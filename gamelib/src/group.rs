@@ -39,7 +39,37 @@ impl Group {
         field: &Field,
         color: &PlayerColor,
     ) -> Vec<Self> {
-        todo!()
+        let mut groups: Vec<_> = points_ids
+            .iter()
+            .map(|point_id| Self::new(point_id, field, color))
+            .collect();
+
+        // Going through all the groups until we have only unmergeable ones
+        let mut i = 0;
+        while i < groups.len() {
+            // Poping group
+            let mut group = groups.remove(i);
+
+            // Going through other groups to find if they have same liberties
+            // and merging them
+            groups
+                .drain_filter(|other| {
+                    group
+                        .liberties
+                        .iter()
+                        .any(|liberty| other.has_liberty(liberty))
+                })
+                .collect::<Vec<_>>()
+                .into_iter()
+                .for_each(|other| group |= other);
+
+            // Inserting group back
+            groups.insert(i, group);
+
+            i += 1;
+        }
+
+        groups
     }
 
     /// Merge another group into current
