@@ -34,6 +34,14 @@ impl Group {
         }
     }
 
+    pub fn new_from_points(
+        points_ids: HashSet<PointID>,
+        field: &Field,
+        color: &PlayerColor,
+    ) -> Vec<Self> {
+        todo!()
+    }
+
     /// Merge another group into current
     pub fn merge(&mut self, mut other: Group) {
         // Removing intersections between them

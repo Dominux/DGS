@@ -1,30 +1,24 @@
 use std::collections::HashSet;
 
 use crate::{
-    errors::{GameError, GameResult},
-    field::{build_field, Field},
-    game::Game,
-    group::Group,
-    state::GameState,
-    PlayerColor, PointID,
+    errors::GameResult, field::build_field, game::Game, group::Group, state::GameState, PlayerColor,
 };
 
 use super::{StoredGame, StoredGameMoveType};
 
 pub(crate) fn load_game(history: &StoredGame) -> GameResult<Game> {
     // Creating a field
-    let mut field = build_field(&history.meta.size, history.meta.field_type)?;
+    let field = build_field(&history.meta.size, history.meta.field_type)?;
     let mut black_stones = HashSet::new();
     let mut white_stones = HashSet::new();
     let mut black_score = 0;
     let mut white_score = 0;
-    let mut blocked = HashSet::new();
 
     let mut is_game_finished = false;
     let mut move_number = 1;
 
     // Going through the history
-    for record in history.moves {
+    for record in history.moves.iter() {
         move_number += 1;
 
         match record.move_type {
@@ -48,8 +42,10 @@ pub(crate) fn load_game(history: &StoredGame) -> GameResult<Game> {
             let point_id = record.point_id.expect("expected point ID");
             players_stones.insert(point_id);
 
-            blocked = record.blocked;
-            enemies_stones = &enemies_stones - &record.died;
+            if !record.died.is_empty() {
+                players_score += record.died.len();
+                enemies_stones = &enemies_stones - &record.died;
+            }
         }
 
         // Converting back
@@ -70,25 +66,17 @@ pub(crate) fn load_game(history: &StoredGame) -> GameResult<Game> {
         GameState::Started
     };
 
-    fn convert_stones_to_groups(
-        stones: HashSet<PointID>,
-        field: &Field,
-        color: &PlayerColor,
-    ) -> Vec<Group> {
-        let iter = stones.iter();
-        // TODO: create a way to easily create groups from points
-        // let first_stone = iter.next().ok_or(GameError::);
-
-        // let group = Group::new(, field, color);
-    }
+    // Creating groups
+    let black_groups = Group::new_from_points(black_stones, &field, &PlayerColor::Black);
+    let white_groups = Group::new_from_points(white_stones, &field, &PlayerColor::White);
 
     Ok(Game::new_with_all_fields(
         state,
         field,
         black_groups,
         white_groups,
-        move_number,
-        black_score,
-        white_score,
+        Some(move_number),
+        Some(black_score),
+        Some(white_score),
     ))
 }

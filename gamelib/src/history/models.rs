@@ -16,20 +16,15 @@ use crate::{aliases::PointID, FieldType, SizeType};
 /// 	"moves": [
 /// 		{
 /// 			"moveType": "Move",
-///             "pointID": 69420,
+///             "pointID": 228,
 ///             "died": [5, 78]
 /// 		},
 /// 		{
 /// 			"moveType": "Move",
-///             "pointID": 228,
-///             "blocked": [34]
+///             "pointID": 1337,
 /// 		},
 /// 		{
 /// 			"moveType": "Pass",
-/// 		},
-/// 		{
-/// 			"moveType": "Move",
-///             "pointID": 1337,
 /// 		},
 ///         ...
 /// 	]
@@ -58,9 +53,6 @@ pub struct StoredGameMove {
 
     #[serde(default = "HashSet::default")]
     pub died: HashSet<PointID>,
-
-    #[serde(default = "HashSet::default")]
-    pub blocked: HashSet<PointID>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

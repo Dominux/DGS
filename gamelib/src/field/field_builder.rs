@@ -3,6 +3,7 @@ use crate::{errors, FieldType, SizeType};
 use super::{CubicSphereFieldBuilder, Field, GridSphereFieldBuilder, RegularFieldBuilder};
 
 /// Build field accordingly to given size and field type
+#[inline]
 pub(crate) fn build_field(size: &SizeType, field_type: FieldType) -> errors::GameResult<Field> {
     let field = match field_type {
         FieldType::CubicSphere => CubicSphereFieldBuilder::default().with_size(size)?,
