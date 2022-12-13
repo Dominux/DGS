@@ -2,39 +2,33 @@
 #![feature(slice_flatten)]
 
 pub use aliases::{PointID, SizeType};
+use field::build_field;
 pub use field::FieldType;
 pub use point::PlayerColor;
 
 mod aliases;
 pub mod errors;
 mod field;
+mod file_converters;
 mod game;
 mod group;
+mod history;
 mod ko_guard;
 mod point;
-mod rules;
 mod state;
 
-#[cfg(feature = "json")]
-mod file_converters;
-
 pub struct Game {
-    pub(crate) inner: game::Game<rules::JapaneseRules>,
+    pub(crate) inner: game::Game,
 }
 
 impl Game {
     /// Create the game
     pub fn new(field_type: FieldType, size: &SizeType) -> errors::GameResult<Self> {
         // Creating a field by it's field_type
-        let field = match field_type {
-            FieldType::CubicSphere => field::CubicSphereFieldBuilder::default().with_size(size)?,
-            FieldType::GridSphere => field::GridSphereFieldBuilder::default().with_size(size),
-            FieldType::Regular => field::RegularFieldBuilder::default().with_size(size),
-        };
+        let field = build_field(size, field_type)?;
 
-        let rules = rules::JapaneseRules::new();
         let game = Self {
-            inner: game::Game::new(field, rules),
+            inner: game::Game::new(field),
         };
         Ok(game)
     }

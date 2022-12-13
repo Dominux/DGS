@@ -1,6 +1,8 @@
+use std::collections::HashSet;
+
 use serde::{Deserialize, Serialize};
 
-use crate::aliases::PointID;
+use crate::{aliases::PointID, FieldType, SizeType};
 
 ///
 /// Consider a stored game to be like this:
@@ -8,20 +10,26 @@ use crate::aliases::PointID;
 /// ```jsonc
 /// {
 /// 	"meta": {
-/// 		"field": "cube_sphere",
+/// 		"field_type": "GridSphere",
 /// 		"size": 9
 /// 	},
 /// 	"moves": [
 /// 		{
 /// 			"moveType": "Move",
 ///             "pointID": 69420,
+///             "died": [5, 78]
 /// 		},
 /// 		{
 /// 			"moveType": "Move",
 ///             "pointID": 228,
+///             "blocked": [34]
 /// 		},
 /// 		{
 /// 			"moveType": "Pass",
+/// 		},
+/// 		{
+/// 			"moveType": "Move",
+///             "pointID": 1337,
 /// 		},
 ///         ...
 /// 	]
@@ -36,8 +44,8 @@ pub struct StoredGame {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct StoredGameMeta {
-    pub field: String,
-    pub size: usize,
+    pub field_type: FieldType,
+    pub size: SizeType,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -46,7 +54,13 @@ pub struct StoredGameMove {
     pub move_type: StoredGameMoveType,
 
     #[serde(default = "Option::default")]
-    pub pointID: Option<PointID>,
+    pub point_id: Option<PointID>,
+
+    #[serde(default = "HashSet::default")]
+    pub died: HashSet<PointID>,
+
+    #[serde(default = "HashSet::default")]
+    pub blocked: HashSet<PointID>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

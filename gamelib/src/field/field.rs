@@ -1,10 +1,12 @@
-use std::{cell::RefCell, fmt::Debug, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
+
+use serde::{Deserialize, Serialize};
 
 use crate::{aliases::PointID, point::PointWrapper};
 
 pub type PointOwner = Rc<RefCell<PointWrapper>>;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum FieldType {
     Regular,
     CubicSphere,

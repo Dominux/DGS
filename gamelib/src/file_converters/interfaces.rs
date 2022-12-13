@@ -1,9 +1,10 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use crate::errors::GameLoadingResult;
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 
-use super::models::StoredGame;
+use crate::errors::GameLoadingResult;
 
 /// This logic just reads/writes to/from file
 pub trait FileConverter {
@@ -21,12 +22,15 @@ pub trait FileConverter {
     }
 }
 
-pub trait JSONizer {
-    fn deserialize(json: &str) -> serde_json::Result<StoredGame> {
+pub trait JSONizer<T>
+where
+    T: Serialize + DeserializeOwned,
+{
+    fn deserialize(json: &str) -> serde_json::Result<T> {
         serde_json::from_str(json)
     }
 
-    fn serialize(game: &StoredGame) -> serde_json::Result<String> {
+    fn serialize(game: &T) -> serde_json::Result<String> {
         serde_json::to_string(game)
     }
 }

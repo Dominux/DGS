@@ -7,18 +7,13 @@ use crate::{
     group::Group,
     ko_guard::KoGuard,
     point::{PlayerColor, PointStatus},
-    rules::GameRules,
     state::GameState,
 };
 
 /// Lib level game struct
 #[derive(Debug)]
-pub struct Game<R>
-where
-    R: GameRules,
-{
+pub struct Game {
     state: GameState,
-    rules: R,
     pub(crate) field: Field,
     move_number: Option<usize>,
     pub(crate) black_groups: Vec<Group>,
@@ -28,20 +23,37 @@ where
     ko_guard: KoGuard,
 }
 
-impl<R> Game<R>
-where
-    R: GameRules,
-{
-    pub fn new(field: Field, rules: R) -> Self {
+impl Game {
+    pub fn new(field: Field) -> Self {
         Self {
             state: GameState::default(),
             field,
-            rules,
             black_groups: vec![],
             white_groups: vec![],
             move_number: None,
             black_score: None,
             white_score: None,
+            ko_guard: KoGuard::new(),
+        }
+    }
+
+    pub fn new_with_all_fields(
+        state: GameState,
+        field: Field,
+        black_groups: Vec<Group>,
+        white_groups: Vec<Group>,
+        move_number: Option<usize>,
+        black_score: Option<usize>,
+        white_score: Option<usize>,
+    ) -> Self {
+        Self {
+            state,
+            field,
+            black_groups,
+            white_groups,
+            move_number,
+            black_score,
+            white_score,
             ko_guard: KoGuard::new(),
         }
     }
@@ -152,15 +164,8 @@ where
                 // Checking if this move is suicidal
                 group.refresh_liberties(&cloned_field);
                 if group.liberties_amount() == 0 {
-                    // Checking if suicide is permitted
-                    if self.rules.can_commit_suicide() {
-                        // TODO: add recalculating deadlist
-
-                        // Increasing enemy's score
-                        enemies_score += group.points_amount();
-                    } else {
-                        return Err(GameError::SuicideMoveIsNotPermitted);
-                    }
+                    // Suicide movSuicide move
+                    return Err(GameError::SuicideMoveIsNotPermitted);
                 } else {
                     // Adding new group
                     players_groups.push(group);

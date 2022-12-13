@@ -9,8 +9,5 @@ edition = "2021"
 thiserror = "1.0.30"
 itertools = "0.10.3"
 
-serde = { version = "1.0.137", features = ["derive"], optional = true}
-serde_json = { version = "1.0.81", optional = true }
-
-[features]
-json = ["dep:serde", "dep:serde_json"]
+serde = { version = "1.0.137", features = ["derive"]}
+serde_json = { version = "1.0.81"}
