@@ -5,6 +5,7 @@ use crate::{
     field::build_field,
     game::Game,
     group::Group,
+    point::PointStatus,
     state::GameState,
     PlayerColor,
 };
@@ -30,7 +31,7 @@ impl HistoryManager {
         let mut white_score = 0;
 
         let mut is_game_finished = false;
-        let mut move_number = 1;
+        let mut move_number = 0;
 
         // Going through the history
         for record in self.history.moves.iter() {
@@ -47,17 +48,25 @@ impl HistoryManager {
 
             // Converting to players/enemies context
             let reminder = move_number % 2;
-            let (mut players_stones, mut enemies_stones, mut players_score) = match reminder {
-                0 => (white_stones, black_stones, white_score),
-                _ => (black_stones, white_stones, black_score),
+            let (mut players_stones, mut enemies_stones, mut players_score, color) = match reminder
+            {
+                0 => (white_stones, black_stones, white_score, PlayerColor::White),
+                _ => (black_stones, white_stones, black_score, PlayerColor::Black),
             };
 
             // Main move processing
             {
-                let point_id = record.point_id.expect("expected point ID");
+                let point_id = record.point_id.ok_or(GameError::GameLoadingError(
+                    format!("expected point ID in move with number {move_number}").to_string(),
+                ))?;
+                field.get_point(&point_id).borrow_mut().inner.status = PointStatus::Occupied(color);
                 players_stones.insert(point_id);
 
                 if !record.died.is_empty() {
+                    for dead_stone in &record.died {
+                        field.get_point(dead_stone).borrow_mut().inner.status = PointStatus::Empty;
+                    }
+
                     players_score += record.died.len();
                     enemies_stones = &enemies_stones - &record.died;
                 }
@@ -82,8 +91,16 @@ impl HistoryManager {
         };
 
         // Creating groups
-        let black_groups = Group::new_from_points(black_stones, &field, &PlayerColor::Black);
-        let white_groups = Group::new_from_points(white_stones, &field, &PlayerColor::White);
+        let mut black_groups = Group::new_from_points(black_stones, &field, &PlayerColor::Black);
+        let mut white_groups = Group::new_from_points(white_stones, &field, &PlayerColor::White);
+
+        // Refreshing their liberties
+        black_groups
+            .iter_mut()
+            .for_each(|g| g.refresh_liberties(&field));
+        white_groups
+            .iter_mut()
+            .for_each(|g| g.refresh_liberties(&field));
 
         Ok(Game::new_with_all_fields(
             state,

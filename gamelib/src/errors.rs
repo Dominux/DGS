@@ -23,6 +23,9 @@ pub enum GameError {
     PointOccupied(PointID),
     #[error("Suicide move is not permitted")]
     SuicideMoveIsNotPermitted,
+
+    #[error("Error during game loading: \"{0}\"")]
+    GameLoadingError(String),
     #[error("Game history is clear, you have nothing to undo")]
     UndoOnClearHistory,
 }

@@ -6,14 +6,14 @@ use crate::{aliases::PointID, point::PointWrapper};
 
 pub type PointOwner = Rc<RefCell<PointWrapper>>;
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum FieldType {
     Regular,
     CubicSphere,
     GridSphere,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Field {
     points: Vec<PointOwner>,
     pub field_type: FieldType,

@@ -5,7 +5,7 @@ use super::fixtures::game::create_and_start_game;
 #[test]
 fn test_remove_one_stone() {
     // Creating and starting game
-    let mut game = create_and_start_game(FieldType::GridSphere, &10);
+    let mut game = create_and_start_game(FieldType::GridSphere, &10, false);
 
     /*
     Starting creating
@@ -43,7 +43,7 @@ fn test_remove_one_stone() {
 #[test]
 fn test_remove_one_stone_at_border() {
     // Creating and starting game
-    let mut game = create_and_start_game(FieldType::GridSphere, &5);
+    let mut game = create_and_start_game(FieldType::GridSphere, &5, false);
 
     /*
     Starting creating
@@ -72,7 +72,7 @@ fn test_remove_one_stone_at_border() {
 #[test]
 fn test_refreshing_enemies_liberties_after_losing_group() {
     // Creating and starting game
-    let mut game = create_and_start_game(FieldType::GridSphere, &5);
+    let mut game = create_and_start_game(FieldType::GridSphere, &5, false);
 
     // Making moves
     let moves = [

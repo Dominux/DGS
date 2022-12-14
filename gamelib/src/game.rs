@@ -11,15 +11,15 @@ use crate::{
 };
 
 /// Lib level game struct
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Game {
     state: GameState,
     pub(crate) field: Field,
     move_number: Option<usize>,
     pub(crate) black_groups: Vec<Group>,
     pub(crate) white_groups: Vec<Group>,
-    black_score: Option<usize>,
-    white_score: Option<usize>,
+    pub(crate) black_score: Option<usize>,
+    pub(crate) white_score: Option<usize>,
     ko_guard: KoGuard,
 }
 
@@ -33,7 +33,7 @@ impl Game {
             move_number: None,
             black_score: None,
             white_score: None,
-            ko_guard: KoGuard::new(),
+            ko_guard: KoGuard::default(),
         }
     }
 
@@ -46,6 +46,16 @@ impl Game {
         black_score: Option<usize>,
         white_score: Option<usize>,
     ) -> Self {
+        let ko_guard = KoGuard::new(
+            black_groups
+                .iter()
+                .flat_map(|g| g.points_ids.clone())
+                .collect(),
+            white_groups
+                .iter()
+                .flat_map(|g| g.points_ids.clone())
+                .collect(),
+        );
         Self {
             state,
             field,
@@ -54,7 +64,7 @@ impl Game {
             move_number,
             black_score,
             white_score,
-            ko_guard: KoGuard::new(),
+            ko_guard,
         }
     }
 

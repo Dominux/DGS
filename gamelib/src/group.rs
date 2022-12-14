@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fmt::Debug, ops::BitOrAssign};
+use std::{collections::HashSet, ops::BitOrAssign};
 
 use crate::{
     aliases::PointID,
@@ -6,7 +6,7 @@ use crate::{
     point::{PlayerColor, PointStatus},
 };
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Group {
     pub(crate) points_ids: HashSet<PointID>,
     pub(crate) liberties: HashSet<PointID>,
@@ -51,22 +51,31 @@ impl Group {
             let mut group = groups.remove(i);
 
             // Going through other groups to find if they have same liberties
-            // and merging them
-            groups
+            let joints_groups = groups
                 .drain_filter(|other| {
                     group
-                        .liberties
+                        .points_ids
                         .iter()
-                        .any(|liberty| other.has_liberty(liberty))
+                        .any(|point_id| other.has_liberty(point_id))
                 })
-                .collect::<Vec<_>>()
-                .into_iter()
-                .for_each(|other| group |= other);
+                .collect::<Vec<_>>();
+
+            // Don't increment if we have groups to merge, cause in that case
+            // we miss checking liberties of those groups after merging them cause
+            // we won't check them anymore
+            let to_increment = joints_groups.is_empty();
+
+            // Merging joint groups
+            for other in joints_groups {
+                group |= other
+            }
 
             // Inserting group back
             groups.insert(i, group);
 
-            i += 1;
+            if to_increment {
+                i += 1
+            }
         }
 
         groups
@@ -128,14 +137,5 @@ impl Group {
 impl BitOrAssign for Group {
     fn bitor_assign(&mut self, rhs: Self) {
         self.merge(rhs)
-    }
-}
-
-impl Debug for Group {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_tuple("")
-            .field(&self.points_ids)
-            .field(&self.liberties)
-            .finish()
     }
 }

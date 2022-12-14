@@ -2,15 +2,18 @@ use std::collections::HashSet;
 
 use crate::PointID;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct KoGuard {
     black_points: HashSet<PointID>,
     white_points: HashSet<PointID>,
 }
 
 impl KoGuard {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(black_points: HashSet<PointID>, white_points: HashSet<PointID>) -> Self {
+        Self {
+            black_points,
+            white_points,
+        }
     }
 
     pub fn update(
