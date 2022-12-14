@@ -57,4 +57,9 @@ export default class StoneManager {
 
 		this.stones = newStones
 	}
+
+	clear() {
+		this.stones.forEach((stone) => stone.stone.dispose())
+		this.stones = []
+	}
 }

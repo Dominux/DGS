@@ -3,7 +3,7 @@ import * as BABYLON from 'babylonjs'
 import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager from '../stone_manager'
-import { Field } from './interface'
+import { Field, returnStonesBack } from './interface'
 
 export enum Pole {
 	POSITIVE = 'POSITIVE',
@@ -335,5 +335,13 @@ export default class GridSphere implements Field {
 		}
 
 		return result
+	}
+
+	undoMove(): void {
+		// Undoing move
+		this.game?.undoMove()
+
+		// Returning stones back
+		returnStonesBack(this.stoneManager)
 	}
 }

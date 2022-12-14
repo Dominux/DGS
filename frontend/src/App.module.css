@@ -15,6 +15,12 @@
 	z-index: 9999;
 }
 
+.playersBar {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
 .playersBarItem {
 	display: grid;
 	grid-template-columns: 2fr 1fr;

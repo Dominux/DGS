@@ -155,6 +155,11 @@ impl Game {
     pub fn field_type(&self) -> FieldType {
         self.inner.field.field_type
     }
+
+    #[inline]
+    pub fn get_move_number(&self) -> Option<usize> {
+        self.inner.get_move_number()
+    }
 }
 
 #[cfg(test)]

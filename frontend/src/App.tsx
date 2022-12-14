@@ -15,13 +15,14 @@ const App: Component = () => {
 	// TODO: bind changing grid size
 	const [isStarted, setIsStarted] = createSignal(false)
 	const [gridSize, setGridSize] = createSignal(9)
-	const [fieldType, setFieldType] = createSignal(FieldType.GridSphere)
+	const [fieldType, setFieldType] = createSignal(FieldType.Regular)
 	const [playerTurn, setPlayerTurn] = createSignal('Black')
 	const [blackScore, setBlackScore] = createSignal(0)
 	const [whiteScore, setWhiteScore] = createSignal(0)
 	const [scene, setScene] = createSignal<Scene | undefined>()
 	const [field, setField] = createSignal<Field | undefined>()
 	const [errorMessage, setErrorMessage] = createSignal('')
+	const [isUndoDisabled, setIsUndoDisabled] = createSignal(true)
 
 	function onChangeGridSize(newVal: number) {
 		setGridSize(newVal)
@@ -46,6 +47,8 @@ const App: Component = () => {
 
 	function onEndMove() {
 		setPlayerTurn(field()?.playerTurn)
+
+		setIsUndoDisabled(field()?.game?.moveNumber < 1)
 	}
 
 	function onDeath() {
@@ -69,6 +72,13 @@ const App: Component = () => {
 		const newField = new klass(scene()?._scene, gridSize())
 		field()?.delete()
 		setField(newField)
+	}
+
+	function undoMove() {
+		field()?.undoMove()
+
+		setBlackScore(field()?.blackScore)
+		setWhiteScore(field()?.whiteScore)
 	}
 
 	onMount(() => {
@@ -96,6 +106,8 @@ const App: Component = () => {
 						playersTurn={playerTurn()}
 						blackScore={blackScore()}
 						whiteScore={whiteScore()}
+						isUndoDisabled={isUndoDisabled()}
+						onUndoClicked={undoMove}
 					></PlayersBar>
 				</Show>
 				<Show when={errorMessage()}>

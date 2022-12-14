@@ -7,7 +7,7 @@ export default class Game {
 	protected inner: GameLib
 
 	constructor(size: number, fieldType: FieldType) {
-		this.inner = new GameLib(fieldType, size)
+		this.inner = new GameLib(fieldType, size, true)
 	}
 
 	start() {
@@ -16,6 +16,10 @@ export default class Game {
 
 	makeMove(pointID: number): Array<number> {
 		return [...this.inner.make_move(pointID)]
+	}
+
+	undoMove() {
+		return this.inner.undo_move()
 	}
 
 	get playerTurn() {
@@ -28,5 +32,9 @@ export default class Game {
 
 	get blackScore() {
 		return this.inner.get_black_score()
+	}
+
+	get moveNumber() {
+		return this.inner.get_move_number()
 	}
 }

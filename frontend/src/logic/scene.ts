@@ -30,7 +30,7 @@ export default class Scene {
 			'camera',
 			-Math.PI / 2,
 			Math.PI / 2,
-			sphereRadius * 6,
+			sphereRadius * 4,
 			new BABYLON.Vector3(0, 0, 0),
 			this._scene
 		)

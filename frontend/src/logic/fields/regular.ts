@@ -3,7 +3,7 @@ import * as BABYLON from 'babylonjs'
 import { SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager from '../stone_manager'
-import { Field } from './interface'
+import { Field, returnStonesBack } from './interface'
 
 export type Coordinates = {
 	x: number
@@ -216,6 +216,14 @@ export default class RegularField implements Field {
 		for (const [i, p] of this.points.entries()) {
 			if (p.x < maxX && p.x > minX && p.z < maxZ && p.z > minZ) return i
 		}
+	}
+
+	undoMove(): void {
+		// Undoing move
+		this.game?.undoMove()
+
+		// Returning stones back
+		returnStonesBack(this.stoneManager)
 	}
 }
 

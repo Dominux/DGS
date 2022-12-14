@@ -298,6 +298,11 @@ impl Game {
         self.white_score
     }
 
+    #[inline]
+    pub fn get_move_number(&self) -> Option<usize> {
+        self.move_number
+    }
+
     ///////////////////////////////////////////////////////////
     ///     Helpers
     ///////////////////////////////////////////////////////////

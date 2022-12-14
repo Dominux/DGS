@@ -1,4 +1,4 @@
-import { Component, createSignal, Show } from 'solid-js'
+import { Component, createSignal, onMount, Show } from 'solid-js'
 
 import Drawer from '@suid/material/Drawer'
 import Box from '@suid/material/Box'
@@ -70,6 +70,8 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 		setIsStarted(true)
 		props.onStart()
 	}
+
+	onMount(() => setTimeout(onSubmit, 500))
 
 	const toggleShowHide = () => setIsShowed(!isShowed())
 
