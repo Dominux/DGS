@@ -63,7 +63,9 @@ impl Game {
     ////////////////////////////////////////////////////////////////////
 
     /// Main function to perform moves
-    pub fn make_move(&mut self, point_id: &PointID) -> GameResult<Vec<PointID>> {
+    ///
+    /// Returns dead stones
+    pub fn make_move(&mut self, point_id: &PointID) -> GameResult<HashSet<PointID>> {
         // Validation
         if !self.is_started() {
             return Err(GameError::GameStateError {
@@ -77,7 +79,7 @@ impl Game {
         let player = self.player_turn().unwrap();
         let cloned_field = self.field.clone();
         let point = cloned_field.get_point(point_id);
-        let mut deadlist = vec![];
+        let mut deadlist = HashSet::new();
         let mut dead_groups = vec![];
 
         // 1. Checking if the point is empty and not blocked
@@ -94,7 +96,7 @@ impl Game {
         };
 
         // 3. Merging all the groups we got this move
-        let (mut players_groups, mut player_score, mut enemies_groups, mut enemies_score) = {
+        let (mut players_groups, mut player_score, mut enemies_groups, enemies_score) = {
             let (mut players_groups, player_score, enemies_groups, enemies_score) = match player {
                 PlayerColor::Black => (
                     self.black_groups.clone(),

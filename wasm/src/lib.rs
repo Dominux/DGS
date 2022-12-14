@@ -60,15 +60,21 @@ pub struct Game {
 impl Game {
     /// Create the game
     #[wasm_bindgen(constructor)]
-    pub fn new(field_type: FieldType, size: SizeType) -> GameResult<Game> {
-        let inner = InnerGame::new(field_type.into(), &size)?;
+    pub fn new(field_type: FieldType, size: SizeType, use_history: bool) -> GameResult<Game> {
+        let inner = InnerGame::new(field_type.into(), &size, use_history)?;
         Ok(Self { inner })
     }
 
     /// Make a move
     pub fn make_move(&mut self, point_id: PointID) -> GameResult<Vec<PointID>> {
         let deadlist = self.inner.make_move(&point_id)?;
-        Ok(deadlist)
+        Ok(deadlist.into_iter().collect())
+    }
+
+    // Undo previous move
+    pub fn undo_move(&mut self) -> GameResult<()> {
+        self.inner.undo_move()?;
+        Ok(())
     }
 
     /// Start game

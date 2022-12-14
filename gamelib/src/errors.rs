@@ -23,6 +23,8 @@ pub enum GameError {
     PointOccupied(PointID),
     #[error("Suicide move is not permitted")]
     SuicideMoveIsNotPermitted,
+    #[error("Game history is clear, you have nothing to undo")]
+    UndoOnClearHistory,
 }
 
 pub type GameResult<T> = Result<T, GameError>;
