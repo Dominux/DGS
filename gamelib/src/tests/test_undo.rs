@@ -1,6 +1,5 @@
-use crate::FieldType;
-
 use super::fixtures::game::create_and_start_game;
+use crate::FieldType;
 
 #[test]
 fn test_undo() {
@@ -32,11 +31,7 @@ fn test_undo() {
         assert!(game.undo_move().is_ok());
 
         // Comparing games
-        assert_eq!(
-            game.inner, freezed_game,
-            "\n\n{:?} != {:?}",
-            game.inner.black_groups, freezed_game.black_groups
-        )
+        assert_eq!(game.inner, freezed_game)
     }
 }
 

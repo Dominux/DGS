@@ -5,6 +5,7 @@ use crate::{
     field::build_field,
     game::Game,
     group::Group,
+    ko_guard::KoGuard,
     point::PointStatus,
     state::GameState,
     PlayerColor,
@@ -33,8 +34,10 @@ impl HistoryManager {
         let mut is_game_finished = false;
         let mut move_number = 0;
 
+        let mut ko_guard = KoGuard::default();
+
         // Going through the history
-        for record in self.history.moves.iter() {
+        for (i, record) in self.history.moves.iter().enumerate() {
             move_number += 1;
 
             match record.move_type {
@@ -82,6 +85,11 @@ impl HistoryManager {
                 white_stones = enemies_stones;
                 black_score = players_score;
             }
+
+            // If it's prelast iteration - setting ko guard
+            if i + 2 == self.history.moves.len() {
+                ko_guard = KoGuard::new(black_stones.clone(), white_stones.clone());
+            }
         }
 
         let state = if is_game_finished {
@@ -102,6 +110,9 @@ impl HistoryManager {
             .iter_mut()
             .for_each(|g| g.refresh_liberties(&field));
 
+        // Setting actually used (next) move_number
+        move_number += 1;
+
         Ok(Game::new_with_all_fields(
             state,
             field,
@@ -110,6 +121,7 @@ impl HistoryManager {
             Some(move_number),
             Some(black_score),
             Some(white_score),
+            ko_guard,
         ))
     }
 

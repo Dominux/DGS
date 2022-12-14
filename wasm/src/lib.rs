@@ -101,6 +101,14 @@ impl Game {
         self.inner.is_ended()
     }
 
+    pub fn get_black_stones(&self) -> Vec<PointID> {
+        self.inner.get_black_stones()
+    }
+
+    pub fn get_white_stones(&self) -> Vec<PointID> {
+        self.inner.get_white_stones()
+    }
+
     pub fn get_black_score(&self) -> Option<usize> {
         self.inner.get_black_score()
     }

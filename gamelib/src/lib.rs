@@ -1,4 +1,5 @@
 #![feature(drain_filter)]
+#![feature(hash_drain_filter)]
 #![feature(slice_flatten)]
 
 use std::collections::HashSet;
@@ -6,6 +7,7 @@ use std::collections::HashSet;
 pub use aliases::{PointID, SizeType};
 use field::build_field;
 pub use field::FieldType;
+use group::Group;
 use history::{HistoryManager, StoredGame, StoredGameMeta, StoredGameMove, StoredGameMoveType};
 pub use point::PlayerColor;
 
@@ -117,6 +119,21 @@ impl Game {
     #[inline]
     pub fn is_ended(&self) -> bool {
         self.inner.is_ended()
+    }
+
+    #[inline]
+    pub fn get_black_stones(&self) -> Vec<PointID> {
+        Self::get_points_ids_from_groups(&self.inner.black_groups)
+    }
+
+    #[inline]
+    pub fn get_white_stones(&self) -> Vec<PointID> {
+        Self::get_points_ids_from_groups(&self.inner.white_groups)
+    }
+
+    #[inline]
+    fn get_points_ids_from_groups(groups: &Vec<Group>) -> Vec<PointID> {
+        groups.iter().flat_map(|g| g.points_ids.clone()).collect()
     }
 
     #[inline]

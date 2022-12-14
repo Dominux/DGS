@@ -11,16 +11,16 @@ use crate::{
 };
 
 /// Lib level game struct
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Game {
     state: GameState,
-    pub(crate) field: Field,
     move_number: Option<usize>,
+    pub(crate) field: Field,
     pub(crate) black_groups: Vec<Group>,
     pub(crate) white_groups: Vec<Group>,
     pub(crate) black_score: Option<usize>,
     pub(crate) white_score: Option<usize>,
-    ko_guard: KoGuard,
+    pub(crate) ko_guard: KoGuard,
 }
 
 impl Game {
@@ -45,17 +45,8 @@ impl Game {
         move_number: Option<usize>,
         black_score: Option<usize>,
         white_score: Option<usize>,
+        ko_guard: KoGuard,
     ) -> Self {
-        let ko_guard = KoGuard::new(
-            black_groups
-                .iter()
-                .flat_map(|g| g.points_ids.clone())
-                .collect(),
-            white_groups
-                .iter()
-                .flat_map(|g| g.points_ids.clone())
-                .collect(),
-        );
         Self {
             state,
             field,
@@ -318,4 +309,41 @@ impl Game {
             .flatten()
             .collect()
     }
+}
+
+impl PartialEq for Game {
+    fn eq(&self, other: &Self) -> bool {
+        // First of all, checking values we already have
+        if !(self.state == other.state
+            && self.move_number == other.move_number
+            && self.field == other.field
+            && self.black_score == other.black_score
+            && self.white_score == other.white_score
+            && self.ko_guard == other.ko_guard)
+        {
+            return false;
+        }
+
+        // Then, checking calculated values
+        check_groups_equality(&self.black_groups, &other.black_groups)
+            && check_groups_equality(&self.white_groups, &other.white_groups)
+    }
+}
+
+fn check_groups_equality(a: &Vec<Group>, b: &Vec<Group>) -> bool {
+    let inner_a = a.clone();
+    let mut inner_b = b.clone();
+
+    for a_group in inner_a {
+        match inner_b.iter().position(|b_group| *b_group == a_group) {
+            Some(b_index) => {
+                inner_b.remove(b_index);
+            }
+            None => {
+                return false;
+            }
+        }
+    }
+
+    true
 }
