@@ -26,6 +26,8 @@ pub enum GameError {
 
     #[error("Error during game loading: \"{0}\"")]
     GameLoadingError(String),
+    #[error("Undo move is not possible because moves history is not used in this game")]
+    UndoIsImpossible,
     #[error("Game history is clear, you have nothing to undo")]
     UndoOnClearHistory,
 }

@@ -83,7 +83,7 @@ impl Game {
     /// Undo previous move
     pub fn undo_move(&mut self) -> errors::GameResult<()> {
         if self.history_manager.is_none() {
-            return Ok(());
+            return Err(errors::GameError::UndoIsImpossible);
         }
         let hm = self.history_manager.as_mut().unwrap();
 
