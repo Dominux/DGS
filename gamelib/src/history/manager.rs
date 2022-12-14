@@ -67,8 +67,8 @@ impl HistoryManager {
                         field.get_point(dead_stone).borrow_mut().inner.status = PointStatus::Empty;
                     }
 
-                    players_score += record.died.len();
                     enemies_stones = &enemies_stones - &record.died;
+                    players_score += record.died.len();
                 }
             }
 
