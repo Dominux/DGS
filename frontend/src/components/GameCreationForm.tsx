@@ -71,8 +71,6 @@ const GameCreationForm: Component<GameCreationFormProps> = (props) => {
 		props.onStart()
 	}
 
-	onMount(() => setTimeout(onSubmit, 500))
-
 	const toggleShowHide = () => setIsShowed(!isShowed())
 
 	return (

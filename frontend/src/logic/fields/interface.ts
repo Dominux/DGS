@@ -1,5 +1,5 @@
 import Game from '../game'
-import StoneManager from '../stone_manager'
+import StoneManager, { CreateStoneScheme } from '../stone_manager'
 
 export interface Field {
 	game: Game | undefined
@@ -12,12 +12,16 @@ export interface Field {
 	): void
 
 	undoMove(): void
+	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme
 }
 
 export function returnStonesBack(
-	stoneManager: StoneManager
-	// blackStones: Array<number>,
-	// whiteStones: Array<number>
+	stoneManager: StoneManager,
+	stones: Array<CreateStoneScheme>
 ): void {
 	stoneManager.clear()
+
+	for (const stone of stones) {
+		stoneManager.create(stone)
+	}
 }

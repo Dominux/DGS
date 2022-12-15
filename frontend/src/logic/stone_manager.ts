@@ -1,5 +1,12 @@
 import * as BABYLON from 'babylonjs'
 
+export type CreateStoneScheme = {
+	id: number
+	position: BABYLON.Vector3
+	color: BABYLON.Color3
+	rotation: BABYLON.Vector3
+}
+
 type Stone = {
 	id: number
 	stone: BABYLON.Mesh
@@ -14,12 +21,9 @@ export default class StoneManager {
 		this.height = (0.2 * this.stoneSize) / gridSize
 	}
 
-	create(
-		id: number,
-		position: BABYLON.Vector3,
-		color: BABYLON.Color3,
-		rotation: BABYLON.Vector3
-	) {
+	create(stoneSchema: CreateStoneScheme) {
+		const id = stoneSchema.id
+
 		const diameter = this.height * 3
 
 		// Creating stone
@@ -31,15 +35,16 @@ export default class StoneManager {
 
 		// Setting right position
 		const multiplier = 1 + this.height / 2 - this.height * 0.025
-		stone.position = position.scale(multiplier)
+		console.log(stoneSchema)
+		stone.position = stoneSchema.position.scale(multiplier)
 
 		// Creating stone's material
 		const material = new BABYLON.PBRMetallicRoughnessMaterial('stone')
-		material._albedoColor = color
+		material._albedoColor = stoneSchema.color
 		stone.material = material
 
 		// Setting stone's rotation
-		stone.rotation = rotation
+		stone.rotation = stoneSchema.rotation
 
 		this.stones.push({ id, stone })
 	}

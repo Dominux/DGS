@@ -2,7 +2,7 @@ import * as BABYLON from 'babylonjs'
 
 import { SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
-import StoneManager from '../stone_manager'
+import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
 
 export type Coordinates = {
@@ -195,12 +195,13 @@ export default class RegularField implements Field {
 			this.stoneY,
 			clickedCoords.z
 		)
-		this.stoneManager.create(
-			clickedPointID,
-			clickedPoint,
+		const schema = {
+			id: clickedPointID,
+			position: clickedPoint,
 			color,
-			new BABYLON.Vector3()
-		)
+			rotation: new BABYLON.Vector3(),
+		}
+		this.stoneManager.create(schema)
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
@@ -218,12 +219,29 @@ export default class RegularField implements Field {
 		}
 	}
 
+	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {
+		const coords = this.points[id]
+		return {
+			id,
+			position: new BABYLON.Vector3(coords.x, this.stoneY, coords.z),
+			rotation: new BABYLON.Vector3(),
+			color,
+		}
+	}
+
 	undoMove(): void {
 		// Undoing move
 		this.game?.undoMove()
 
+		const blackStones = this.game?.blackStones.map((id) =>
+			this.getCreateStoneSchema(id, BABYLON.Color3.Black())
+		)
+		const whiteStones = this.game?.whiteStones.map((id) =>
+			this.getCreateStoneSchema(id, BABYLON.Color3.White())
+		)
+
 		// Returning stones back
-		returnStonesBack(this.stoneManager)
+		returnStonesBack(this.stoneManager, [...blackStones, ...whiteStones])
 	}
 }
 

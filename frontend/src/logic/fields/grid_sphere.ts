@@ -2,29 +2,18 @@ import * as BABYLON from 'babylonjs'
 
 import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
-import StoneManager from '../stone_manager'
+import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
-
-export enum Pole {
-	POSITIVE = 'POSITIVE',
-	NEGATIVE = 'NEGATIVE',
-}
-
-export type Coordinates = {
-	x: number | Pole
-	y: number | Pole
-	z: number | Pole
-}
 
 export default class GridSphere implements Field {
 	readonly _sphere: BABYLON.Mesh
 	protected stoneManager: StoneManager
-	protected game: Game | undefined
+	game: Game | undefined
 	protected sphereRadius = SPHERE_RADIUS
 	private onEnvMove: Function | undefined
 	private onDeath: Function | undefined
 	private onError: Function | undefined
-	private points: Array<Coordinates> = []
+	private points: Array<BABYLON.Vector3> = []
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
@@ -236,16 +225,65 @@ export default class GridSphere implements Field {
 			throw error
 		}
 
-		this.stoneManager.create(
-			this.activePointID,
-			this.activePoint,
+		const stoneSchema = {
+			id: this.activePointID,
+			position: this.activePoint,
 			color,
-			this.getStoneRotation(this.activePoint)
-		)
+			rotation: this.getStoneRotation(this.activePoint),
+		}
+
+		this.stoneManager.create(stoneSchema)
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
 		this.onEnvMove()
+	}
+
+	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {
+		const position = this.points[id]
+		const rotation = this.getStoneRotation(position)
+		return {
+			id,
+			position,
+			rotation,
+			color,
+		}
+	}
+
+	protected getStonePosition(id: number): BABYLON.Vector3 {
+		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
+		const gridFactor =
+			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
+
+		const jointPosition = pointerPosition.scale(gridFactor)
+		jointPosition.x = Math.round(jointPosition.x)
+		jointPosition.y = Math.round(jointPosition.y)
+		jointPosition.z = Math.round(jointPosition.z)
+		jointPosition.scaleInPlace(1 / gridFactor)
+
+		const jointPositionSqrd = jointPosition.multiply(jointPosition)
+
+		const cutoff = 0.5 * this.sphereRadius
+		const absX = Math.abs(jointPosition.x)
+		const absY = Math.abs(jointPosition.y)
+		const absZ = Math.abs(jointPosition.z)
+		const max = Math.max(Math.max(absX, absY, absZ))
+		if (max === absX) {
+			jointPosition.x =
+				Math.sign(jointPosition.x) *
+				Math.sqrt(sphereRadiusSqrd - jointPositionSqrd.y - jointPositionSqrd.z)
+			this.circleAmount.value = absY > cutoff || absZ > cutoff ? 0 : 1
+		} else if (max === absY) {
+			jointPosition.y =
+				Math.sign(jointPosition.y) *
+				Math.sqrt(sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.z)
+			this.circleAmount.value = absX > cutoff || absZ > cutoff ? 0 : 1
+		} else {
+			jointPosition.z =
+				Math.sign(jointPosition.z) *
+				Math.sqrt(sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.y)
+			this.circleAmount.value = absX > cutoff || absY > cutoff ? 0 : 1
+		}
 	}
 
 	protected getStoneRotation(position: BABYLON.Vector3): BABYLON.Vector3 {
@@ -262,30 +300,12 @@ export default class GridSphere implements Field {
 		const round = (n: number) =>
 			Math.round((n + Number.EPSILON) * roundK) / roundK
 
-		const failCheck = (
-			key: string,
-			p: Coordinates,
-			coords: BABYLON.Vector3
-		) => {
-			switch (typeof p[key]) {
-				case 'number':
-					if (round(p[key]) !== round(coords[key])) return false
-					break
-				default:
-					switch (p[key]) {
-						case Pole.POSITIVE:
-							if (coords[key] < 0) return false
-							break
-						case Pole.NEGATIVE:
-							if (coords[key] > 0) return false
-					}
-			}
-
-			return true
-		}
-
 		for (const [i, p] of this.points.entries()) {
-			if (['x', 'y', 'z'].every((key) => failCheck(key, p, coords))) {
+			if (
+				round(p.x) === round(coords.x) &&
+				round(p.y) === round(coords.y) &&
+				round(p.z) === round(coords.z)
+			) {
 				return i
 			}
 		}
@@ -297,8 +317,8 @@ export default class GridSphere implements Field {
 	 * Since ids are integers starting from 0,
 	 * array of points coordinates are returns
 	 */
-	protected generatePoints(min: number): Array<Coordinates> {
-		const result: Array<Coordinates> = []
+	protected generatePoints(min: number): Array<BABYLON.Vector3> {
+		const result = []
 
 		const points = [...Array(this.gridSize).keys()].map(
 			(p) => p / (this.gridSize - 1) - min
@@ -307,41 +327,68 @@ export default class GridSphere implements Field {
 		// Starting from the top
 		for (const y of [...points].reverse()) {
 			for (const x of [...points].reverse()) {
-				result.push({ x, y, z: Pole.POSITIVE })
+				result.push(new BABYLON.Vector3(x, y, this.findThirdCoord(x, y, true)))
 			}
 		}
 
 		// Filling sides
 		for (const z of [...points].reverse()) {
 			for (const y of [...points].reverse()) {
-				result.push({ x: Pole.POSITIVE, y, z })
+				result.push(new BABYLON.Vector3(this.findThirdCoord(z, y, true), y, z))
 			}
 			for (const x of [...points].reverse()) {
-				result.push({ x, y: Pole.NEGATIVE, z })
+				result.push(new BABYLON.Vector3(x, this.findThirdCoord(x, z, false), z))
 			}
 			for (const y of points) {
-				result.push({ x: Pole.NEGATIVE, y, z })
+				result.push(new BABYLON.Vector3(this.findThirdCoord(y, z, false), y, z))
 			}
 			for (const x of points) {
-				result.push({ x, y: Pole.POSITIVE, z })
+				result.push(new BABYLON.Vector3(x, this.findThirdCoord(x, z, true), z))
 			}
 		}
 
 		// Filling the bottom
 		for (const x of points) {
 			for (const y of points) {
-				result.push({ x, y, z: Pole.NEGATIVE })
+				result.push(new BABYLON.Vector3(x, y, this.findThirdCoord(x, y, false)))
 			}
 		}
 
 		return result
 	}
 
+	findThirdCoord(a: number, b: number, isPositive: bool): number {
+		/*
+     Given a sphere equation: 
+     
+     (x - x0)^2 + (y - y0)^2 + (z - z0)^2 = r^2;
+
+     We know that x0, y0 and z0 are zeros, 
+     cause our sphere has it's center in (0;0;0) coordinates
+     So:
+
+     c = sqrt(r^2 - a^2 - b^2);
+     */
+
+		const c = Math.sqrt(
+			Math.abs(Math.pow(this.sphereRadius, 2) - Math.pow(a, 2) - Math.pow(b, 2))
+		)
+
+		return isPositive ? c : c * -1
+	}
+
 	undoMove(): void {
 		// Undoing move
 		this.game?.undoMove()
 
+		const blackStones = this.game?.blackStones.map((id) =>
+			this.getCreateStoneSchema(id, BABYLON.Color3.Black())
+		)
+		const whiteStones = this.game?.whiteStones.map((id) =>
+			this.getCreateStoneSchema(id, BABYLON.Color3.White())
+		)
+
 		// Returning stones back
-		returnStonesBack(this.stoneManager)
+		returnStonesBack(this.stoneManager, [...blackStones, ...whiteStones])
 	}
 }

@@ -37,4 +37,12 @@ export default class Game {
 	get moveNumber() {
 		return this.inner.get_move_number()
 	}
+
+	get blackStones() {
+		return [...this.inner.get_black_stones()]
+	}
+
+	get whiteStones() {
+		return [...this.inner.get_white_stones()]
+	}
 }

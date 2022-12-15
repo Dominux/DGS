@@ -1,4 +1,4 @@
-import { Component, createSignal } from 'solid-js'
+import { Component, createSignal, Show } from 'solid-js'
 
 import { Button } from '@suid/material'
 import List from '@suid/material/List'
@@ -10,7 +10,7 @@ export type PlayersBarProps = {
 	playersTurn: string
 	blackScore: number
 	whiteScore: number
-	isUndoDisabled: boolean
+	isUndoHidden: boolean
 	onUndoClicked: Function
 }
 
@@ -39,14 +39,15 @@ const PlayersBar: Component<PlayersBarProps> = (props) => {
 						class={styles.bottomPlayersBarItem}
 					></PlayersBarItem>
 				</List>
-				<Button
-					sx={{ marginTop: '1rem', backgroundColor: 'white' }}
-					size="large"
-					disabled={props.isUndoDisabled}
-					onClick={onUndoClicked}
-				>
-					Undo
-				</Button>
+				<Show when={!props.isUndoHidden}>
+					<Button
+						sx={{ marginTop: '1rem', backgroundColor: 'white' }}
+						size="large"
+						onClick={onUndoClicked}
+					>
+						Undo
+					</Button>
+				</Show>
 			</div>
 		</>
 	)
