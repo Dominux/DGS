@@ -9,3 +9,4 @@ export const MAX_GRIDSIZE = 255
 export const ERROR_MSG_TIMEOUT = 3
 
 export const SPHERE_RADIUS = 0.5
+export const CIRCLE_COLOR_ALPHA = 0.1

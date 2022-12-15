@@ -1,6 +1,10 @@
 import * as BABYLON from 'babylonjs'
 
-import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
+import {
+	CIRCLE_COLOR_ALPHA,
+	GRID_MATERIAL,
+	SPHERE_RADIUS,
+} from '../../constants'
 import Game from '../game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
@@ -20,6 +24,7 @@ export default class GridSphere implements Field {
 	private circleRadius
 	private circleAmount
 	private circlePosition
+	private circleColor
 	private gridRatio
 	private majorUnitFrequency
 
@@ -63,12 +68,12 @@ export default class GridSphere implements Field {
 			const lineColor = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'lineColor'
 			)
-			const circleColor = gridMaterial.getInputBlockByPredicate(
+			this.circleColor = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'circleColor'
 			)
 
 			lineColor.value = BABYLON.Color3.Black()
-			circleColor.value = BABYLON.Color3.Green()
+			// this.circleColor.value = BABYLON.Color3.Green()
 			this.gridRatio.value = this.sphereRadius / gridSize
 			this.majorUnitFrequency.value = 1
 			minorUnitVisibility.value = 0
@@ -165,6 +170,9 @@ export default class GridSphere implements Field {
 		// Starting the game process
 		this.game?.start()
 
+		// Setting circle color
+		this.setCircleColor()
+
 		// Allowing putting stones
 		this.allowPuttingStones()
 	}
@@ -176,7 +184,7 @@ export default class GridSphere implements Field {
 		this._sphere.dispose()
 	}
 
-	get playerTurn() {
+	get playerTurn(): string {
 		return this.game?.playerTurn
 	}
 
@@ -233,7 +241,16 @@ export default class GridSphere implements Field {
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
+		this.setCircleColor()
 		this.onEndMove()
+	}
+
+	private setCircleColor() {
+		const color =
+			this.playerTurn.toLowerCase() === 'black'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
+		this.circleColor.value = color.toColor4(CIRCLE_COLOR_ALPHA)
 	}
 
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {
@@ -350,5 +367,8 @@ export default class GridSphere implements Field {
 
 		// Returning stones back
 		returnStonesBack(this.stoneManager, [...blackStones, ...whiteStones])
+
+		// Setting circle color
+		this.setCircleColor()
 	}
 }
