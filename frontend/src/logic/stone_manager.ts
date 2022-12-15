@@ -17,8 +17,8 @@ export default class StoneManager {
 	readonly stoneSize = 1.6
 	readonly height: number
 
-	constructor(readonly scene: BABYLON.Scene, gridSize: number) {
-		this.height = (0.2 * this.stoneSize) / gridSize
+	constructor(readonly scene: BABYLON.Scene, gridSize: number, k: number) {
+		this.height = (0.2 * this.stoneSize * k) / gridSize
 	}
 
 	create(stoneSchema: CreateStoneScheme) {
@@ -35,7 +35,6 @@ export default class StoneManager {
 
 		// Setting right position
 		const multiplier = 1 + this.height / 2 - this.height * 0.025
-		console.log(stoneSchema)
 		stone.position = stoneSchema.position.scale(multiplier)
 
 		// Creating stone's material

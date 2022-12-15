@@ -35,9 +35,9 @@ export default class Scene {
 			this._scene
 		)
 		camera.attachControl(canvas, true)
-		camera.lowerRadiusLimit = sphereRadius * 3
+		camera.lowerRadiusLimit = sphereRadius * 3.1
 		camera.upperRadiusLimit = sphereRadius * 10
-		camera.wheelPrecision = 50
+		camera.wheelPrecision = 100
 
 		// Loading VR
 		this.loadVR()
