@@ -1,10 +1,6 @@
 import * as BABYLON from 'babylonjs'
 
-import {
-	CIRCLE_COLOR_ALPHA,
-	GRID_MATERIAL,
-	SPHERE_RADIUS,
-} from '../../constants'
+import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
@@ -246,11 +242,10 @@ export default class GridSphere implements Field {
 	}
 
 	private setCircleColor() {
-		const color =
+		this.circleColor.value =
 			this.playerTurn.toLowerCase() === 'black'
 				? BABYLON.Color3.Black()
 				: BABYLON.Color3.White()
-		this.circleColor.value = color.toColor4(CIRCLE_COLOR_ALPHA)
 	}
 
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {
