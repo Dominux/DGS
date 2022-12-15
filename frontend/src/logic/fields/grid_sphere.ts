@@ -5,6 +5,30 @@ import Game from '../game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
 
+type SignedNumber = {
+	n: number
+	sign: 'POSITIVE' | 'NEGATIVE'
+}
+
+type SignedNumberOrNumber = SignedNumber | number
+
+/** Special Vector, that contains not just numbers, but its sign */
+class SignedVector3 {
+	constructor(
+		public x: SignedNumberOrNumber,
+		public y: SignedNumberOrNumber,
+		public z: SignedNumberOrNumber
+	) {}
+
+	get babylon(): BABYLON.Vector3 {
+		return new BABYLON.Vector3(
+			typeof this.x === 'number' ? this.x : this.x.n,
+			typeof this.y === 'number' ? this.y : this.y.n,
+			typeof this.z === 'number' ? this.z : this.z.n
+		)
+	}
+}
+
 export default class GridSphere implements Field {
 	readonly _sphere: BABYLON.Mesh
 	protected stoneManager: StoneManager
@@ -13,7 +37,7 @@ export default class GridSphere implements Field {
 	private onEnvMove: Function | undefined
 	private onDeath: Function | undefined
 	private onError: Function | undefined
-	private points: Array<BABYLON.Vector3> = []
+	private points: Array<SignedVector3> = []
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
@@ -59,9 +83,6 @@ export default class GridSphere implements Field {
 			)
 			const circleSmoothness = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'circleSmoothness'
-			)
-			const bgColor = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'bgDiffuseColor'
 			)
 			const lineColor = gridMaterial.getInputBlockByPredicate(
 				(b) => b.name === 'lineColor'
@@ -165,6 +186,8 @@ export default class GridSphere implements Field {
 		// Calculating points
 		this.points = this.generatePoints(0.5)
 
+		console.log(this.points[373], this.points[445])
+
 		// Starting the game process
 		this.game?.start()
 
@@ -240,49 +263,13 @@ export default class GridSphere implements Field {
 	}
 
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {
-		const position = this.points[id]
+		const position = this.points[id].babylon
 		const rotation = this.getStoneRotation(position)
 		return {
 			id,
 			position,
 			rotation,
 			color,
-		}
-	}
-
-	protected getStonePosition(id: number): BABYLON.Vector3 {
-		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
-		const gridFactor =
-			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
-
-		const jointPosition = pointerPosition.scale(gridFactor)
-		jointPosition.x = Math.round(jointPosition.x)
-		jointPosition.y = Math.round(jointPosition.y)
-		jointPosition.z = Math.round(jointPosition.z)
-		jointPosition.scaleInPlace(1 / gridFactor)
-
-		const jointPositionSqrd = jointPosition.multiply(jointPosition)
-
-		const cutoff = 0.5 * this.sphereRadius
-		const absX = Math.abs(jointPosition.x)
-		const absY = Math.abs(jointPosition.y)
-		const absZ = Math.abs(jointPosition.z)
-		const max = Math.max(Math.max(absX, absY, absZ))
-		if (max === absX) {
-			jointPosition.x =
-				Math.sign(jointPosition.x) *
-				Math.sqrt(sphereRadiusSqrd - jointPositionSqrd.y - jointPositionSqrd.z)
-			this.circleAmount.value = absY > cutoff || absZ > cutoff ? 0 : 1
-		} else if (max === absY) {
-			jointPosition.y =
-				Math.sign(jointPosition.y) *
-				Math.sqrt(sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.z)
-			this.circleAmount.value = absX > cutoff || absZ > cutoff ? 0 : 1
-		} else {
-			jointPosition.z =
-				Math.sign(jointPosition.z) *
-				Math.sqrt(sphereRadiusSqrd - jointPositionSqrd.x - jointPositionSqrd.y)
-			this.circleAmount.value = absX > cutoff || absY > cutoff ? 0 : 1
 		}
 	}
 
@@ -295,17 +282,42 @@ export default class GridSphere implements Field {
 		)
 	}
 
-	protected getPointID(coords: BABYLON.Vector3): number {
+	protected getPointID(position: BABYLON.Vector3): number {
 		const roundK = 10e6
 		const round = (n: number) =>
 			Math.round((n + Number.EPSILON) * roundK) / roundK
 
+		const failCheck = (
+			attr: string,
+			p: SignedVector3,
+			other: BABYLON.Vector3
+		) => {
+			const pAttr: SignedNumberOrNumber = p[attr]
+			const otherAttr: number = other[attr]
+
+			switch (typeof pAttr) {
+				case 'number':
+					if (round(pAttr) !== round(otherAttr)) return false
+					break
+
+				default:
+					if (round(pAttr.n) !== round(otherAttr)) return false
+
+					switch (pAttr.sign) {
+						case 'POSITIVE':
+							if (otherAttr < 0) return false
+							break
+
+						case 'NEGATIVE':
+							if (otherAttr > 0) return false
+					}
+			}
+
+			return true
+		}
+
 		for (const [i, p] of this.points.entries()) {
-			if (
-				round(p.x) === round(coords.x) &&
-				round(p.y) === round(coords.y) &&
-				round(p.z) === round(coords.z)
-			) {
+			if (['x', 'y', 'z'].every((key) => failCheck(key, p, position))) {
 				return i
 			}
 		}
@@ -317,7 +329,7 @@ export default class GridSphere implements Field {
 	 * Since ids are integers starting from 0,
 	 * array of points coordinates are returns
 	 */
-	protected generatePoints(min: number): Array<BABYLON.Vector3> {
+	protected generatePoints(min: number): Array<SignedVector3> {
 		const result = []
 
 		const points = [...Array(this.gridSize).keys()].map(
@@ -327,37 +339,37 @@ export default class GridSphere implements Field {
 		// Starting from the top
 		for (const y of [...points].reverse()) {
 			for (const x of [...points].reverse()) {
-				result.push(new BABYLON.Vector3(x, y, this.findThirdCoord(x, y, true)))
+				result.push(new SignedVector3(x, y, this.findThirdCoord(x, y, true)))
 			}
 		}
 
 		// Filling sides
 		for (const z of [...points].reverse()) {
 			for (const y of [...points].reverse()) {
-				result.push(new BABYLON.Vector3(this.findThirdCoord(z, y, true), y, z))
+				result.push(new SignedVector3(this.findThirdCoord(z, y, true), y, z))
 			}
 			for (const x of [...points].reverse()) {
-				result.push(new BABYLON.Vector3(x, this.findThirdCoord(x, z, false), z))
+				result.push(new SignedVector3(x, this.findThirdCoord(x, z, false), z))
 			}
 			for (const y of points) {
-				result.push(new BABYLON.Vector3(this.findThirdCoord(y, z, false), y, z))
+				result.push(new SignedVector3(this.findThirdCoord(y, z, false), y, z))
 			}
 			for (const x of points) {
-				result.push(new BABYLON.Vector3(x, this.findThirdCoord(x, z, true), z))
+				result.push(new SignedVector3(x, this.findThirdCoord(x, z, true), z))
 			}
 		}
 
 		// Filling the bottom
 		for (const x of points) {
 			for (const y of points) {
-				result.push(new BABYLON.Vector3(x, y, this.findThirdCoord(x, y, false)))
+				result.push(new SignedVector3(x, y, this.findThirdCoord(x, y, false)))
 			}
 		}
 
 		return result
 	}
 
-	findThirdCoord(a: number, b: number, isPositive: bool): number {
+	findThirdCoord(a: number, b: number, isPositive: boolean): SignedNumber {
 		/*
      Given a sphere equation: 
      
@@ -370,11 +382,12 @@ export default class GridSphere implements Field {
      c = sqrt(r^2 - a^2 - b^2);
      */
 
-		const c = Math.sqrt(
+		const n = Math.sqrt(
 			Math.abs(Math.pow(this.sphereRadius, 2) - Math.pow(a, 2) - Math.pow(b, 2))
 		)
-
-		return isPositive ? c : c * -1
+		return isPositive
+			? { n, sign: 'POSITIVE' }
+			: { n: n * -1, sign: 'NEGATIVE' }
 	}
 
 	undoMove(): void {
