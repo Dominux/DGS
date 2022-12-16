@@ -3,7 +3,8 @@ lockfileVersion: 5.4
 specifiers:
   '@suid/icons-material': ^0.2.5
   '@suid/material': ^0.8.1
-  babylonjs: ^5.17.1
+  babylonjs: ^5.38.0
+  babylonjs-gui: ^5.38.0
   solid-js: ^1.4.7
   typescript: ^4.7.4
   vite: ^3.0.0
@@ -12,7 +13,8 @@ specifiers:
 dependencies:
   '@suid/icons-material': 0.2.5_solid-js@1.4.7
   '@suid/material': 0.8.1_solid-js@1.4.7
-  babylonjs: 5.17.1
+  babylonjs: 5.38.0
+  babylonjs-gui: 5.38.0
   solid-js: 1.4.7
 
 devDependencies:
@@ -566,8 +568,14 @@ packages:
       babel-plugin-jsx-dom-expressions: 0.33.12_@babel+core@7.18.6
     dev: true
 
-  /babylonjs/5.17.1:
-    resolution: {integrity: sha512-YzzIeR/dHKnAlax1ftq++61l2d1WuzDFnVlhUjmKtTdEcDQwHhsBVb9O4+D9PTXhW2iMclEFPEwwOYRv4UmCFA==}
+  /babylonjs-gui/5.38.0:
+    resolution: {integrity: sha512-HWM2C4F7Dz9ExBXsadChmcYj2ZIdRQeyeJ/csyIvtW1VSpZ3p3Hh81y4Q/jvKg0sx5e5MXLH95RHMFT5cf2xvA==}
+    dependencies:
+      babylonjs: 5.38.0
+    dev: false
+
+  /babylonjs/5.38.0:
+    resolution: {integrity: sha512-9I8++4lwuLBGPJSyp3CJ4tX6AjUuLO3/wUpUe7prpRx38/gw/5SSl9MYz+u/4bghM8b/xxPUixf41nyDoyfgJA==}
     requiresBuild: true
     dev: false
 

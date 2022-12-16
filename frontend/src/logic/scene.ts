@@ -1,11 +1,13 @@
 import * as BABYLON from 'babylonjs'
 
 import { ENV_TEXTURE } from '../constants'
+import GameGUI from '../gui'
 
 export default class Scene {
 	readonly _scene: BABYLON.Scene
 	readonly _ground: BABYLON.GroundMesh
 	protected _XRHelper: BABYLON.WebXRDefaultExperience | undefined
+	protected gui!: GameGUI
 
 	constructor(canvas: HTMLCanvasElement, sphereRadius: number) {
 		const engine = new BABYLON.Engine(canvas, true)
@@ -41,6 +43,9 @@ export default class Scene {
 
 		// Loading VR
 		this.loadVR()
+
+		// Loading GUI
+		this.loadGUI()
 
 		engine.runRenderLoop(() => {
 			this._scene.render()
@@ -81,5 +86,9 @@ export default class Scene {
 		this._XRHelper = await this._scene.createDefaultXRExperienceAsync({
 			floorMeshes: [this._ground],
 		})
+	}
+
+	protected loadGUI() {
+		this.gui = new GameGUI()
 	}
 }
