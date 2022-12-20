@@ -8,7 +8,7 @@ enum FieldType {
 
 export default FieldType
 
-export function getFieldFromType(fieldType: FieldType) {
+export function getFieldFromType(fieldType: FieldType): Field {
 	switch (fieldType) {
 		case FieldType.Regular:
 			return RegularField

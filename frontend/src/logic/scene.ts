@@ -45,9 +45,6 @@ export default class Scene {
 		// Loading VR
 		this.loadVR()
 
-		// Loading GUI
-		this.loadGUI()
-
 		engine.runRenderLoop(() => {
 			this._scene.render()
 		})
@@ -87,9 +84,5 @@ export default class Scene {
 		this._XRHelper = await this._scene.createDefaultXRExperienceAsync({
 			floorMeshes: [this._ground],
 		})
-	}
-
-	protected loadGUI() {
-		this.gui = new GameGUI(this._camera)
 	}
 }

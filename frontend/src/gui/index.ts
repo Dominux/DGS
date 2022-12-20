@@ -1,4 +1,5 @@
 import * as GUI from 'babylonjs-gui'
+import FieldType from '../logic/fields/enum'
 
 import GameCreationFormGUI from './game_creation_form'
 

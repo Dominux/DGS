@@ -10,6 +10,7 @@ import Game from './logic/game'
 import Scene from './logic/scene'
 import { Field } from './logic/fields/interface'
 import FieldType, { getFieldFromType } from './logic/fields/enum'
+import GameManager from './logic/game_manager'
 
 const App: Component = () => {
 	// TODO: bind changing grid size
@@ -66,7 +67,7 @@ const App: Component = () => {
 		}, ERROR_MSG_TIMEOUT * 1000)
 	}
 
-	/** Replacing old field with a new one*/
+	/** Replacing old field with a new one */
 	function setCurrentField() {
 		const klass = getFieldFromType(fieldType())
 		const newField = new klass(scene()?._scene, gridSize())
@@ -85,9 +86,7 @@ const App: Component = () => {
 
 	onMount(() => {
 		// Creating game
-		const _scene = new Scene(canvas, SPHERE_RADIUS)
-		setScene(_scene)
-		setTimeout(setCurrentField, 0)
+		setTimeout(() => new GameManager(canvas, SPHERE_RADIUS), 0)
 	})
 
 	let canvas: HTMLCanvasElement

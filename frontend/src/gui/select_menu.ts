@@ -12,10 +12,11 @@ export default class SelectComponent {
 	constructor(
 		protected height: string,
 		protected width: string,
-		protected color: string = 'black',
-		readonly fontSize: number = 24,
-		protected background: string = 'white',
-		selectText?: string
+		defaultValue: any,
+		readonly color: string = 'black',
+		readonly fontSize: number = 32,
+		readonly background: string = 'white',
+		readonly accentColor: string = '#e3f2fd'
 	) {
 		// Container
 		this.container = new GUI.Container()
@@ -26,7 +27,7 @@ export default class SelectComponent {
 		// Primary button
 		this.button = GUI.Button.CreateSimpleButton(
 			null,
-			selectText || 'Please Select'
+			defaultValue || 'Please Select'
 		)
 		this.button.height = this.height
 		this.button.background = this.background
@@ -59,7 +60,7 @@ export default class SelectComponent {
 
 		button.height = this.height
 		button.paddingTop = '-1px'
-		button.background = background || this.background
+		button.background = background || this.accentColor
 		button.color = color || this.color
 		button.fontSize = this.fontSize
 
@@ -69,7 +70,7 @@ export default class SelectComponent {
 			this.selected = button
 			this.selectedValue = value
 
-			if (this.onSelect !== undefined) this.onSelect()
+			if (this.onSelect !== undefined) this.onSelect(this.selectedValue)
 		})
 
 		this.options.addControl(button)

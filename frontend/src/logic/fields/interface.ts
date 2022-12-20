@@ -13,6 +13,7 @@ export interface Field {
 
 	undoMove(): void
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme
+	delete(): void
 }
 
 export function returnStonesBack(

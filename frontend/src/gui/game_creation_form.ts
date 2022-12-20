@@ -10,28 +10,21 @@ export default class GameCreationFormGUI {
 	constructor(
 		readonly camera: BABYLON.Camera,
 		onChangeFieldType: Function,
-		onChangeGridSize: Function
+		onChangeGridSize: Function,
+		defaultFieldType: FieldType = FieldType.GridSphere,
+		defaultGridSize: number = 9
 	) {
-		// this.formBlock = this.createFormBlock()
-		this.fieldTypeSelect = this.createFieldTypeSelect()
+		this.fieldTypeSelect = this.createFieldTypeSelect(defaultFieldType)
 
-		this.fieldTypeSelect.onSelectRegister(() => onChangeFieldType())
+		this.fieldTypeSelect.onSelectRegister(onChangeFieldType)
 	}
 
-	createFormBlock(): GUI.Container {
-		const formBlock = new GUI.Container('game creation form')
-		formBlock.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
-		formBlock.width = '20%'
-		formBlock.height = '100%'
-		formBlock.background = 'white'
-
-		this.advancedTexture.addControl(formBlock)
-
-		return formBlock
-	}
-
-	createFieldTypeSelect(): SelectComponent {
-		const fieldTypeSelect = new SelectComponent('80px', '360px')
+	createFieldTypeSelect(defaultFieldType?: any): SelectComponent {
+		const fieldTypeSelect = new SelectComponent(
+			'80px',
+			'360px',
+			defaultFieldType
+		)
 
 		fieldTypeSelect.shadowOffsetX = 10
 		fieldTypeSelect.shadowOffsetY = 10
@@ -41,12 +34,12 @@ export default class GameCreationFormGUI {
 		)
 
 		const plane = BABYLON.MeshBuilder.CreatePlane('plane', {
-			size: 1.5,
+			size: 1.2,
 		})
-		plane.parent = this.camera
-		plane.position.z = 2
-		plane.position.y = -0.5
-		plane.position.x = 0.7
+		// plane.parent = this.camera
+		plane.position.z = 0.2
+		plane.position.y = -0.1
+		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
 		advancedTexture.addControl(fieldTypeSelect.container)
