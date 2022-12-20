@@ -1,6 +1,9 @@
 import * as BABYLON from 'babylonjs'
 
-import { SPHERE_RADIUS } from '../../constants'
+import {
+	REGULAR_FIELD_PADDING_TO_CELL_FRACTION,
+	SPHERE_RADIUS,
+} from '../../constants'
 import Game from '../game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
@@ -27,7 +30,8 @@ export default class RegularField implements Field {
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		const textureSize = 512
-		const paddingFraction = 0.05
+		const paddingFraction =
+			REGULAR_FIELD_PADDING_TO_CELL_FRACTION / (gridSize + 1)
 		const pointsManager = new PointsCoordinatesManager(
 			gridSize,
 			paddingFraction
