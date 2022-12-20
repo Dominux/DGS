@@ -29,15 +29,13 @@ export default class GameManager {
 		this._GUI = new GameGUI(
 			this._scene._camera,
 			onChangeFieldType,
-			onChangeGridSize
+			onChangeGridSize,
+			this.fieldType,
+			this.gridSize
 		)
 
 		// Setting field
 		this.setField()
-	}
-
-	onChangeFieldType(newVal: FieldType) {
-		this.fieldType = newVal
 	}
 
 	setField() {

@@ -9,12 +9,16 @@ export default class GameGUI {
 	constructor(
 		camera: BABYLON.Camera,
 		onChangeFieldType: Function,
-		onChangeGridSize: Function
+		onChangeGridSize: Function,
+		defaultFieldType: FieldType,
+		defaultGridSize: number
 	) {
 		this.gameCreationForm = new GameCreationFormGUI(
 			camera,
 			onChangeFieldType,
-			onChangeGridSize
+			onChangeGridSize,
+			defaultFieldType,
+			defaultGridSize
 		)
 	}
 }

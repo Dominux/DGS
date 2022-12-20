@@ -1,4 +1,5 @@
 import * as GUI from 'babylonjs-gui'
+import { ACCENT_COLOR } from '../constants'
 
 // https://github.com/BabylonJS/Babylon.js/issues/3910
 export default class SelectComponent {
@@ -16,7 +17,7 @@ export default class SelectComponent {
 		readonly color: string = 'black',
 		readonly fontSize: number = 32,
 		readonly background: string = 'white',
-		readonly accentColor: string = '#e3f2fd'
+		readonly accentColor: string = ACCENT_COLOR
 	) {
 		// Container
 		this.container = new GUI.Container()
