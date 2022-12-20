@@ -91,7 +91,7 @@ export default class RegularField implements Field {
 		this._field.position.y = this.fieldHeight
 		this._field.material = mat
 
-		this.stoneManager = new StoneManager(scene, gridSize)
+		this.stoneManager = new StoneManager(scene, gridSize, 1)
 
 		this.stoneY =
 			this._field.position.y +
