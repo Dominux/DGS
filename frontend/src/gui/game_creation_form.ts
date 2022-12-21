@@ -5,26 +5,30 @@ import FieldType from '../logic/fields/enum'
 import SelectComponent from './select_menu'
 
 export default class GameCreationFormGUI {
-	protected fieldTypeSelect: SelectComponent
-	protected gridSizeInput: GUI.InputText
+	protected fieldTypeSelect: GUIComponent
+	protected gridSizeInput: GUIComponent
+	protected startButton: GUIComponent
 
 	constructor(
 		readonly camera: BABYLON.Camera,
 		onChangeFieldType: Function,
 		onChangeGridSize: Function,
 		defaultFieldType: FieldType,
-		defaultGridSize: number
+		defaultGridSize: number,
+		onSumbit: Function
 	) {
 		this.fieldTypeSelect = this.createFieldTypeSelect(defaultFieldType)
-		this.fieldTypeSelect.onSelectRegister(onChangeFieldType)
+		this.fieldTypeSelect.component.onSelectRegister(onChangeFieldType)
 
 		this.gridSizeInput = this.createGridSizeInput(
 			defaultGridSize,
 			onChangeGridSize
 		)
+
+		this.startButton = this.createStartButton(onSumbit)
 	}
 
-	createFieldTypeSelect(defaultFieldType?: FieldType): SelectComponent {
+	createFieldTypeSelect(defaultFieldType?: FieldType): GUIComponent {
 		const fieldTypeSelect = new SelectComponent(
 			'80px',
 			'360px',
@@ -49,14 +53,17 @@ export default class GameCreationFormGUI {
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
 		advancedTexture.addControl(fieldTypeSelect.container)
 
-		return fieldTypeSelect
+		return new GUIComponent(fieldTypeSelect, plane)
 	}
 
-	createGridSizeInput(defaultGridSize: number = 0, onChangeGridSize: Function) {
+	createGridSizeInput(
+		defaultGridSize: number = 0,
+		onChangeGridSize: Function
+	): GUIComponent {
 		const input = new GUI.InputText('grid-size', String(defaultGridSize))
-		input.width = 1
-		input.height = 0.4
-		input.fontSize = 300
+		input.height = '80px'
+		input.width = '360px'
+		input.fontSize = 50
 		input.color = 'black'
 		input.background = 'white'
 		input.focusedBackground = ACCENT_COLOR
@@ -76,7 +83,7 @@ export default class GameCreationFormGUI {
 		)
 
 		const plane = BABYLON.MeshBuilder.CreatePlane('grid-size-plane', {
-			size: 0.25,
+			size: 1,
 		})
 		// plane.parent = this.camera
 		plane.position.z = 0.2
@@ -86,6 +93,50 @@ export default class GameCreationFormGUI {
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
 		advancedTexture.addControl(input)
 
-		return input
+		return new GUIComponent(input, plane)
+	}
+
+	createStartButton(onSumbit: Function): GUIComponent {
+		const button = GUI.Button.CreateSimpleButton('start-button', 'Start')
+		button.height = '80px'
+		button.width = '360px'
+		button.fontSize = 36
+		button.background = ACCENT_COLOR
+
+		button.onPointerUpObservable.add(() => {
+			this.delete()
+
+			onSumbit()
+		})
+
+		const plane = BABYLON.MeshBuilder.CreatePlane('start-button-plane', {
+			size: 1,
+		})
+		// plane.parent = this.camera
+		plane.position.z = 0.2
+		plane.position.y = -0.1
+		plane.position.x = 0.8
+
+		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
+		advancedTexture.addControl(button)
+
+		return new GUIComponent(button, plane)
+	}
+
+	delete() {
+		this.fieldTypeSelect.delete()
+		this.gridSizeInput.delete()
+		this.startButton.delete()
+	}
+}
+
+class GUIComponent {
+	constructor(
+		readonly component: any,
+		readonly advancedTextureMesh: BABYLON.Mesh
+	) {}
+
+	delete() {
+		this.advancedTextureMesh.dispose()
 	}
 }

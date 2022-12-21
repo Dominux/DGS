@@ -3,7 +3,6 @@ import AlertTitle from '@suid/material/AlertTitle'
 import { Component, createSignal, onMount, Show } from 'solid-js'
 
 import styles from './App.module.css'
-import GameCreationForm from './components/GameCreationForm'
 import PlayersBar from './components/PlayersBar'
 import { ERROR_MSG_TIMEOUT, SPHERE_RADIUS } from './constants'
 import Game from './logic/game'
