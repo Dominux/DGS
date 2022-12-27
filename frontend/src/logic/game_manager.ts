@@ -55,10 +55,37 @@ export default class GameManager {
 
 		// Starting game
 		const game = new Game(this.gridSize, this.fieldType)
-		this.field?.start(game, this.onEndMove, this.onDeath, this.onError)
+		this.field?.start(
+			game,
+			() => this.onEndMove(),
+			() => this.onDeath(),
+			() => this.onError()
+		)
+
+		this._GUI.onStart()
+
+		// Setting initial score
+		this.setBlackScore(game.blackScore)
+		this.setWhiteScore(game.whiteScore)
+	}
+
+	setBlackScore(value: number) {
+		this._GUI.setBlackScore(value)
+	}
+
+	setWhiteScore(value: number) {
+		this._GUI.setWhiteScore(value)
 	}
 
 	onEndMove() {}
-	onDeath() {}
+
+	onDeath() {
+		if (this.field?.game?.playerTurn.toLowerCase() === 'white') {
+			this.setBlackScore(this.field?.blackScore)
+		} else {
+			this.setWhiteScore(this.field?.whiteScore)
+		}
+	}
+
 	onError() {}
 }

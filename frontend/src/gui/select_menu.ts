@@ -1,4 +1,5 @@
 import * as GUI from 'babylonjs-gui'
+
 import { ACCENT_COLOR } from '../constants'
 
 // https://github.com/BabylonJS/Babylon.js/issues/3910

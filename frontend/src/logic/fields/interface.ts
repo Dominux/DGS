@@ -11,6 +11,10 @@ export interface Field {
 		onError: Function
 	): void
 
+	get playerTurn(): string
+	get blackScore(): number
+	get whiteScore(): number
+
 	undoMove(): void
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme
 	delete(): void

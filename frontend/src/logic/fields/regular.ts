@@ -146,11 +146,11 @@ export default class RegularField implements Field {
 		return this.game?.playerTurn
 	}
 
-	get blackScore() {
+	get blackScore(): number {
 		return this.game?.blackScore
 	}
 
-	get whiteScore() {
+	get whiteScore(): number {
 		return this.game?.whiteScore
 	}
 

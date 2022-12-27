@@ -2,6 +2,7 @@ import * as GUI from 'babylonjs-gui'
 import { ACCENT_COLOR } from '../constants'
 
 import FieldType from '../logic/fields/enum'
+import GUIComponent from './gui_components'
 import SelectComponent from './select_menu'
 
 export default class GameCreationFormGUI {
@@ -72,7 +73,7 @@ export default class GameCreationFormGUI {
 		input.onBeforeKeyAddObservable.add((input) => {
 			let key = input.currentKey
 
-			input.addKey = key > '0' && key < '9'
+			input.addKey = key >= '0' && key <= '9'
 
 			// TODO: add validation
 		})
@@ -127,16 +128,5 @@ export default class GameCreationFormGUI {
 		this.fieldTypeSelect.delete()
 		this.gridSizeInput.delete()
 		this.startButton.delete()
-	}
-}
-
-class GUIComponent {
-	constructor(
-		readonly component: any,
-		readonly advancedTextureMesh: BABYLON.Mesh
-	) {}
-
-	delete() {
-		this.advancedTextureMesh.dispose()
 	}
 }
