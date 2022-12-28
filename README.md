@@ -1,26 +1,46 @@
-# Spherical Go
+# Dominux Go Server
 
-##### [The Go game's](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with variouty of spherical fields.
+##### [The Go game's](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with some brand new features.
 
 </br>
 
 <p align="center">
-    <a href="https://github.com/AstroNvim/AstroNvim/pulse">
-      <img src="https://img.shields.io/github/last-commit/Dominux/spherical-go?style=for-the-badge&logo=github&color=7dc4e4&logoColor=D9E0EE&labelColor=302D41"/>
-    </a>
-    <a href="https://github.com/catppuccin/catppuccin/stargazers">
-      <img src="https://img.shields.io/github/stars/Dominux/spherical-go?style=for-the-badge&logo=apachespark&color=eebebe&logoColor=D9E0EE&labelColor=302D41"/>
-    </a>
+  <a href="https://github.com/AstroNvim/AstroNvim/pulse">
+    <img src="https://img.shields.io/github/last-commit/Dominux/spherical-go?style=for-the-badge&logo=github&color=7dc4e4&logoColor=D9E0EE&labelColor=302D41"/>
+  </a>
+  <a href="https://github.com/catppuccin/catppuccin/stargazers">
+    <img src="https://img.shields.io/github/stars/Dominux/spherical-go?style=for-the-badge&logo=apachespark&color=eebebe&logoColor=D9E0EE&labelColor=302D41"/>
+  </a>
 </p>
 
-## TL/DR
-
-Try it [right here, right now](https://dominux.github.io/spherical-go/)
+</br>
 
 ![image](https://user-images.githubusercontent.com/55978340/193566975-8db1cf24-7a49-4e1f-ab57-27a404793b06.png)
 
+---
 
-# Idea and prerequesities
+# Table of contents
+
+- ##### [TL/DR](#tldr)
+- ##### [Idea and prerequesities](#idea-and-prerequesities)
+- ##### [Spherical fields design](#spherical-fields-design)
+- ##### [Algorithm](#algorithm)
+- ##### [Tech stack](#tech-stack)
+- ##### [Entities](#entities)
+- ##### [Future plans](#future-plans)
+
+---
+
+## :pinching_hand: TL/DR
+
+The brand new features this server offers are rather [UX](https://en.wikipedia.org/wiki/User_experience) ones and they neither break original rules nor add new ones in a game process. They contain at this moment:
+
+- Variouty of spherical game fields
+- [VR](https://en.wikipedia.org/wiki/Virtual_reality) game mode
+
+Without any other words, just try it [right here, right now](https://dominux.github.io/spherical-go/)
+
+# :bulb: Idea and prerequesities
 
 > The idea of Go is to be abstract as much as possible
 
@@ -38,7 +58,7 @@ But Go IMHO with it's original board has limitations of abstractness we can achi
 
 So, I've come up with the idea of using a spherical board as a solution of the problems that cause those limitations. The main point of replacing a square/rectangular boards with spherical ones are that spherical boards don't have this limitations because they simply don't have edges and corners. And the idea was following me all the years I'd played the original Go until I became able to finally implement it by using low-level programming language, such as [Rust](<https://en.wikipedia.org/wiki/Rust_(programming_language)>).
 
-# Spherical fields design
+# :paintbrush: Spherical fields design
 
 > It's logically that any perfect sphere has the same shape. The idea is to find spherical wireframe that suits us best
 
@@ -92,7 +112,7 @@ There's another fact. This field has completely different distances between neig
 <img src="/docs/images/grid_sphere.png" width="600" />
 <br/>
 
-# Algorithm
+# :abacus: Algorithm
 
 > Actually it's 2 algorithms. At least I consider them this way
 
@@ -109,7 +129,7 @@ Dead stone remover IMHO is to deside which stones have become dead and to remove
 <img src="https://i.imgflip.com/6olvmv.jpg" title="made at imgflip.com" width="500"/>
 <br/>
 
-# Tech stack
+# :desktop_computer: Tech stack
 
 > Only hyped techologies used
 
@@ -125,15 +145,23 @@ It also can be used as a library for any language it can compiled to. Like JS/TS
 
 For easy interactions and cause of my belief in a absolute superiority of web techologies over desktop/mobile natives apps the example of such a shell is implemented as a web app, but you can also use it to create native apps, why not. Simple idea is to show that to try the game you don't need specific system and hardware requirements and don't need to install something - **just follow the link and that's all**. So, I used the greatest 3D JS/TS lib - [BabylonJS](https://www.babylonjs.com/). As UI framework I used [SolidJS](https://www.solidjs.com/) and UI components lib - [SUID](https://suid.io/).
 
-# Entities
+# :dna: Entities
 
 > Creating abstractions for each entity and then implement just one for each as a lifestyle
 
 For now there are such entities as:
 
 - Fields
-- Rules
+- ~~Rulesets~~ _(temporaly removed)_
 
 The lib itself contains implementations of the Grid Sphere and the Quad Sphere, with tests for each of them. But the Quad Sphere doesn't yet have frontend implementation. So, you can touch only the Grid one.
 
-Since Go has many [rulesets](https://en.wikipedia.org/wiki/Rules_of_Go#Rulesets) we should implement them too. But for now the lib contains only the stone remover algorithm so the only rules difference among popular rules I know is that some of them (for example [Ing ruleset](https://en.wikipedia.org/wiki/Rules_of_Go#Ing_rules)) allow players to commit suicide moves when the majority of other rulesets ([Japanese](https://en.wikipedia.org/wiki/Rules_of_Go#Japanese_rules), [Chinese](https://en.wikipedia.org/wiki/Rules_of_Go#Chinese_rules), [American Go Association](https://en.wikipedia.org/wiki/Rules_of_Go#AGA_rules) and others) forbid such moves. The majority of other differencies among them are in score estimating so I'll need to implement all of them too when I will finally be ready to develop the score estimator algorithm. For now the game includes only Japanese ruleset.
+Since Go has many [rulesets](https://en.wikipedia.org/wiki/Rules_of_Go#Rulesets) we should implement them too. But for now the lib contains only the stone remover algorithm so the only rules difference among popular rulesets I know is that some of them (for example [Ing ruleset](https://en.wikipedia.org/wiki/Rules_of_Go#Ing_rules)) allow players to commit suicide moves when the majority of other rulesets ([Japanese](https://en.wikipedia.org/wiki/Rules_of_Go#Japanese_rules), [Chinese](https://en.wikipedia.org/wiki/Rules_of_Go#Chinese_rules), [American Go Association](https://en.wikipedia.org/wiki/Rules_of_Go#AGA_rules) and others) forbid such moves. The majority of other differencies among them are in score estimating so I'll need to implement all of them too once I finally am ready to develop the score estimator algorithm. For now the game uses Japanese ruleset.
+
+# :chart_with_upwards_trend: Future plans
+
+> When you are willing to create some new project full of killing features, you in 99% of cases have no idea what to do especially after implementing what you planned first. You just don't know what to go ahead with. But in this case it's not a simple project so there're clearly obvious plans that gotta be done next
+
+- Create a multiplier - finally creating a server, not just a webpage like now. It's definetely seems like a hardest feature to implement, but as I said before Imma a backand dev by a profession and not a gamedev, so I assume it to be not so hard for me as I already know the majority of steps to do to achieve this goal. This feature was requested by [people from reddit who tested it](https://www.reddit.com/r/rust_gamedev/comments/wmvx92/comment/ik1q10y/?utm_source=share&utm_medium=web2x&context=3) as a thing this game needs first.
+- Add settings to set background and it's resolution - in comparing with a previous plan this one looks like a kindergarden task
+- Add adequate scene and improve UI - this one is already harder than previous, but still not as hard as the first one
