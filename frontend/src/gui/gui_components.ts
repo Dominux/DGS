@@ -11,7 +11,9 @@ export default class GUIComponent<Type> {
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(
 			this.advancedTextureMesh
 		)
-		advancedTexture.addControl(this.component.container)
+		advancedTexture.addControl(
+			this.component.container ? this.component.container : this.component
+		)
 	}
 
 	delete() {

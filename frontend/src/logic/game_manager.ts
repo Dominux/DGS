@@ -26,6 +26,7 @@ export default class GameManager {
 			this.setField()
 		}
 		const onSumbit = () => this.gameStart()
+		const onUndo = () => this.undo()
 
 		this._GUI = new GameGUI(
 			this._scene._camera,
@@ -33,7 +34,8 @@ export default class GameManager {
 			onChangeGridSize,
 			this.fieldType,
 			this.gridSize,
-			onSumbit
+			onSumbit,
+			onUndo
 		)
 
 		// Setting field
@@ -59,7 +61,7 @@ export default class GameManager {
 			game,
 			() => this.onEndMove(),
 			() => this.onDeath(),
-			() => this.onError()
+			(errorMsg: string) => this._GUI.onError(errorMsg)
 		)
 
 		this._GUI.onStart()
@@ -67,6 +69,18 @@ export default class GameManager {
 		// Setting initial score
 		this.setBlackScore(game.blackScore)
 		this.setWhiteScore(game.whiteScore)
+	}
+
+	undo() {
+		this.field?.undoMove()
+
+		this.setBlackScore(this.field?.blackScore)
+		this.setWhiteScore(this.field?.whiteScore)
+		this.setIsUndoMoveDisabled()
+	}
+
+	setIsUndoMoveDisabled() {
+		this._GUI.isUndoButtonHidden = this.field?.game?.moveNumber <= 1
 	}
 
 	setBlackScore(value: number) {
@@ -77,7 +91,9 @@ export default class GameManager {
 		this._GUI.setWhiteScore(value)
 	}
 
-	onEndMove() {}
+	onEndMove() {
+		this.setIsUndoMoveDisabled()
+	}
 
 	onDeath() {
 		if (this.field?.game?.playerTurn.toLowerCase() === 'white') {
@@ -86,6 +102,4 @@ export default class GameManager {
 			this.setWhiteScore(this.field?.whiteScore)
 		}
 	}
-
-	onError() {}
 }
