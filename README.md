@@ -31,7 +31,7 @@
 
 ---
 
-## :pinching_hand: TL/DR
+# :pinching_hand: TL/DR
 
 The brand new features this server offers are rather [UX](https://en.wikipedia.org/wiki/User_experience) ones and they neither break original rules nor add new ones in a game process. They contain at this moment:
 
@@ -39,6 +39,8 @@ The brand new features this server offers are rather [UX](https://en.wikipedia.o
 - [VR](https://en.wikipedia.org/wiki/Virtual_reality) game mode
 
 Without any other words, just try it [right here, right now](https://dominux.github.io/spherical-go/)
+
+</br>
 
 # :bulb: Idea and prerequesities
 
