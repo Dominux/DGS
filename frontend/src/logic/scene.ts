@@ -1,11 +1,14 @@
 import * as BABYLON from 'babylonjs'
 
 import { ENV_TEXTURE } from '../constants'
+import GameGUI from '../gui'
 
 export default class Scene {
 	readonly _scene: BABYLON.Scene
+	readonly _camera: BABYLON.Camera
 	readonly _ground: BABYLON.GroundMesh
 	protected _XRHelper: BABYLON.WebXRDefaultExperience | undefined
+	protected gui!: GameGUI
 
 	constructor(canvas: HTMLCanvasElement, sphereRadius: number) {
 		const engine = new BABYLON.Engine(canvas, true)
@@ -26,7 +29,7 @@ export default class Scene {
 		// Loading environment
 		this.loadEnv()
 
-		const camera = new BABYLON.ArcRotateCamera(
+		this._camera = new BABYLON.ArcRotateCamera(
 			'camera',
 			-Math.PI / 2,
 			Math.PI / 2,
@@ -34,10 +37,10 @@ export default class Scene {
 			new BABYLON.Vector3(0, 0, 0),
 			this._scene
 		)
-		camera.attachControl(canvas, true)
-		camera.lowerRadiusLimit = sphereRadius * 3.1
-		camera.upperRadiusLimit = sphereRadius * 10
-		camera.wheelPrecision = 100
+		this._camera.attachControl(canvas, true)
+		this._camera.lowerRadiusLimit = sphereRadius * 3.1
+		this._camera.upperRadiusLimit = sphereRadius * 10
+		this._camera.wheelPrecision = 100
 
 		// Loading VR
 		this.loadVR()

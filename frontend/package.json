@@ -15,9 +15,8 @@
     "vite-plugin-solid": "^2.3.0"
   },
   "dependencies": {
-    "@suid/icons-material": "^0.2.5",
-    "@suid/material": "^0.8.1",
-    "babylonjs": "^5.17.1",
+    "babylonjs": "^5.38.0",
+    "babylonjs-gui": "^5.38.0",
     "solid-js": "^1.4.7"
   }
 }
