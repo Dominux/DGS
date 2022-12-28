@@ -1,14 +1,12 @@
 import * as BABYLON from 'babylonjs'
 
 import { ENV_TEXTURE } from '../constants'
-import GameGUI from '../gui'
 
 export default class Scene {
 	readonly _scene: BABYLON.Scene
 	readonly _camera: BABYLON.Camera
 	readonly _ground: BABYLON.GroundMesh
 	protected _XRHelper: BABYLON.WebXRDefaultExperience | undefined
-	protected gui!: GameGUI
 
 	constructor(canvas: HTMLCanvasElement, sphereRadius: number) {
 		const engine = new BABYLON.Engine(canvas, true)
@@ -20,10 +18,6 @@ export default class Scene {
 			height: 30,
 			width: 30,
 		})
-		// const groundMaterial = new BABYLON.PBRMaterial('ground_material')
-		// groundMaterial.roughness = 0.4
-		// groundMaterial.metallic = 0.4
-		// this._ground.material = groundMaterial
 		this._ground.setEnabled(false)
 
 		// Loading environment
