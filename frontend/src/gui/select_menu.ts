@@ -54,7 +54,7 @@ export default class SelectComponent {
 
 		// Selection
 		this.selected = null
-		this.selectedValue = null
+		this.selectedValue = defaultValue
 	}
 
 	addOption(value, text, color?, background?) {

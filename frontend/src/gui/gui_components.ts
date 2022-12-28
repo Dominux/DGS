@@ -1,8 +1,8 @@
 import * as GUI from 'babylonjs-gui'
 
-export default class GUIComponent {
+export default class GUIComponent<Type> {
 	constructor(
-		readonly component: any,
+		readonly component: Type,
 		readonly advancedTextureMesh: BABYLON.Mesh
 	) {}
 
