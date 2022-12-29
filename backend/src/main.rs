@@ -1,7 +1,8 @@
-use axum::{
-    routing::get,
-    Router,
-};
+use axum::{routing::get, Router};
+
+// mod users;
+pub mod models;
+// pub mod schema;
 
 #[tokio::main]
 async fn main() {

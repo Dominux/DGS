@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: 'dgs-db'
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: 'dgs'
+      POSTGRES_USER: 'dgs'
+      POSTGRES_PASSWORD: 'lmao'
+    ports:
+      - '5432:5432'
