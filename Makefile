@@ -8,14 +8,17 @@ compile_gamelib_to_wasm:
 	mv pkg ../frontend/src &&\
 	cd -
 
+pnpm_i:
+	cd ./frontend && pnpm i || true && cd -
+
 run_dev:
 	cd ./frontend && pnpm run dev || true && cd -
 
 front_build:
 	cd ./frontend && pnpm run build || true && cd -
 
-pnpm_i:
-	cd ./frontend && pnpm i || true && cd -
+run_server:
+	cd ./backend && cargo run || true && cd -
 
 deploy:
 	git branch -D gh-pages || true &&\
