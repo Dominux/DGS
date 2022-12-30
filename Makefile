@@ -18,7 +18,7 @@ front_build:
 	cd ./frontend && pnpm run build || true && cd -
 
 run_server:
-	cd ./backend && cargo run || true && cd -
+	cd ./server && cargo run || true && cd -
 
 deploy:
 	git branch -D gh-pages || true &&\

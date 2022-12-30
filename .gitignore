@@ -5,6 +5,4 @@ target/
 frontend/node_modules/
 frontend/public/build/
 
-backend/migrations
-
 .DS_Store
