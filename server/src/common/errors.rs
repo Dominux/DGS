@@ -1,3 +1,4 @@
+use axum::http::StatusCode;
 use sea_orm::error::DbErr;
 use thiserror::Error;
 
@@ -9,8 +10,8 @@ pub enum DGSError {
     EnvVarParsingError(String, String),
     #[error("cannot establish connection with db")]
     DBConnectionError,
-    #[error("not found")]
-    NotFound,
+    #[error("not found: `{0}`")]
+    NotFound(String),
     #[error("unknown error")]
     Unknown,
 }
@@ -19,7 +20,20 @@ impl From<DbErr> for DGSError {
     fn from(e: DbErr) -> Self {
         match e {
             DbErr::ConnectionAcquire => Self::DBConnectionError,
-            _ => unimplemented!(),
+            DbErr::RecordNotFound(s) => Self::NotFound(s),
+            _ => Self::Unknown,
+        }
+    }
+}
+
+impl From<DGSError> for (StatusCode, String) {
+    fn from(e: DGSError) -> Self {
+        match &e {
+            DGSError::NotFound(_) => (StatusCode::NOT_FOUND, e.to_string()),
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Something went wrong".to_owned(),
+            ),
         }
     }
 }

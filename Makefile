@@ -1,4 +1,4 @@
-test:
+test_gamelib:
 	cd ./gamelib && cargo test && cd -
 
 compile_gamelib_to_wasm:

@@ -9,6 +9,8 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub username: String,
+
+    // Secret access field like password
     pub secure_id: Uuid,
 }
 

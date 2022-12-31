@@ -26,6 +26,9 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .nest("/users", UsersRouter::get_router(app_state));
 
+    // Logging about successful start
+    println!("Server ran successfully");
+
     // run it with hyper on localhost:3000
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
         .serve(app.into_make_service())
