@@ -18,8 +18,9 @@ export default class Scene {
 			height: 30,
 			width: 30,
 		})
-		this._ground.position.y = -0.5
-		this._ground.setEnabled(false)
+		this._ground.position.y = -1
+		// TEMPORAL
+		// this._ground.setEnabled(false)
 
 		// Loading environment
 		this.loadEnv()

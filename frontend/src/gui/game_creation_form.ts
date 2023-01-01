@@ -117,6 +117,7 @@ export default class GameCreationFormGUI {
 		input.color = 'black'
 		input.background = 'white'
 		input.focusedBackground = ACCENT_COLOR
+		input.disableMobilePrompt = true
 
 		// Enabling only digits
 		input.onBeforeKeyAddObservable.add((input) => {
