@@ -18,7 +18,8 @@ export default class Scene {
 			height: 30,
 			width: 30,
 		})
-		this._ground.position.y = -1
+		// this._ground.position.y = -1
+		this._ground.material = new BABYLON.PBRMetallicRoughnessMaterial('ground')
 		// TEMPORAL
 		// this._ground.setEnabled(false)
 
@@ -30,7 +31,7 @@ export default class Scene {
 			-Math.PI / 2,
 			Math.PI / 2,
 			sphereRadius * 4,
-			new BABYLON.Vector3(0, 0, 0),
+			new BABYLON.Vector3(0, 1, 0),
 			this._scene
 		)
 		this._camera.attachControl(canvas, true)

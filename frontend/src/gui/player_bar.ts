@@ -13,8 +13,8 @@ export default class PlayerBarGUI {
 	}
 
 	constructor(readonly camera: BABYLON.Camera, onUndo: Function) {
-		this.blackScore = this.createScoreComponent('black', 0.5)
-		this.whiteScore = this.createScoreComponent('white', 0.4)
+		this.blackScore = this.createScoreComponent('black', 1.5)
+		this.whiteScore = this.createScoreComponent('white', 1.4)
 		this.undoButton = this.createUndoButton(onUndo)
 	}
 
@@ -43,7 +43,7 @@ export default class PlayerBarGUI {
 		})
 
 		const plane = BABYLON.MeshBuilder.CreatePlane(null)
-		plane.position.y = 0.3
+		plane.position.y = 1.3
 		plane.position.x = 0.8
 		plane.isVisible = false
 

@@ -32,6 +32,7 @@ export default class GridSphere implements Field {
 			{ diameter: this.sphereRadius * 2, segments: 32 },
 			scene
 		)
+		this._sphere.position.y = 1
 
 		this.stoneManager = new StoneManager(scene, gridSize, this.sphereRadius)
 

@@ -97,7 +97,7 @@ export default class GameCreationFormGUI {
 		})
 		// plane.parent = this.camera
 		plane.position.z = 0.2
-		plane.position.y = -0.1
+		plane.position.y = 0.9
 		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
@@ -138,7 +138,7 @@ export default class GameCreationFormGUI {
 		})
 		// plane.parent = this.camera
 		plane.position.z = 0.2
-		plane.position.y = 0.1
+		plane.position.y = 1.1
 		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
@@ -156,7 +156,7 @@ export default class GameCreationFormGUI {
 		})
 		// plane.parent = this.camera
 		plane.position.z = 0.2
-		plane.position.y = 0.035
+		plane.position.y = 1.035
 		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
@@ -209,7 +209,7 @@ export default class GameCreationFormGUI {
 		})
 		// plane.parent = this.camera
 		plane.position.z = 0.2
-		plane.position.y = -0.1
+		plane.position.y = 0.9
 		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
