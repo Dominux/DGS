@@ -96,7 +96,7 @@ export default class GameCreationFormGUI {
 			size: 1.2,
 		})
 		// plane.parent = this.camera
-		plane.position.z = 0.2
+		plane.position.z = -0.1
 		plane.position.y = 0.9
 		plane.position.x = 0.8
 
@@ -137,7 +137,7 @@ export default class GameCreationFormGUI {
 			size: 1,
 		})
 		// plane.parent = this.camera
-		plane.position.z = 0.2
+		plane.position.z = -0.1
 		plane.position.y = 1.1
 		plane.position.x = 0.8
 
@@ -155,7 +155,7 @@ export default class GameCreationFormGUI {
 			size: 1,
 		})
 		// plane.parent = this.camera
-		plane.position.z = 0.2
+		plane.position.z = -0.1
 		plane.position.y = 1.035
 		plane.position.x = 0.8
 
@@ -192,7 +192,10 @@ export default class GameCreationFormGUI {
 	}
 
 	createStartButton(onSumbit: Function): GUIComponent<GUI.Button> {
-		const button = GUI.Button.CreateSimpleButton('start-button', 'Start')
+		const button = GUI.Button.CreateSimpleButton(
+			'start-button',
+			'   Start game   '
+		)
 		button.height = '80px'
 		button.width = '360px'
 		button.fontSize = 36
@@ -208,7 +211,7 @@ export default class GameCreationFormGUI {
 			size: 1,
 		})
 		// plane.parent = this.camera
-		plane.position.z = 0.2
+		plane.position.z = -0.1
 		plane.position.y = 0.9
 		plane.position.x = 0.8
 

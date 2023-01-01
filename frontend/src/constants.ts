@@ -5,6 +5,7 @@ export const GRID_MATERIAL =
 
 export const MIN_GRIDSIZE = 5
 export const MAX_GRIDSIZE = 255
+export const INPUTFIELD_LENGTH_IN_SYMBOLS = 12
 
 export const ERROR_MSG_TIMEOUT = 3
 

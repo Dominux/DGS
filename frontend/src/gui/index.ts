@@ -3,13 +3,14 @@ import * as GUI from 'babylonjs-gui'
 import FieldType from '../logic/fields/enum'
 import AlertComponent from './alert'
 import GameCreationFormGUI from './game_creation_form'
+import GUIComponent from './gui_components'
 import PlayerBarGUI from './player_bar'
 
 export default class GameGUI {
 	protected gameCreationForm: GameCreationFormGUI
 	protected playerBar: PlayerBarGUI
 	protected globalTexture: GUI.AdvancedDynamicTexture
-	protected virtualKeyboard: GUI.VirtualKeyboard
+	protected virtualKeyboard: GUIComponent<GUI.VirtualKeyboard>
 
 	protected alert: AlertComponent
 
@@ -28,6 +29,8 @@ export default class GameGUI {
 	) {
 		this.globalTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui')
 
+		this.virtualKeyboard = this.createVirtualKeyBoard()
+
 		this.gameCreationForm = new GameCreationFormGUI(
 			camera,
 			onChangeFieldType,
@@ -36,28 +39,27 @@ export default class GameGUI {
 			defaultGridSize,
 			onSubmit
 		)
+		this.gameCreationForm.connectVirtualKeyboard(this.virtualKeyboard.component)
+
 		this.playerBar = new PlayerBarGUI(this.camera, onUndo)
 
 		this.alert = new AlertComponent(this.globalTexture)
-
-		this.virtualKeyboard = this.createVirtualKeyBoard(
-			this.globalTexture,
-			this.gameCreationForm
-		)
 	}
 
-	createVirtualKeyBoard(
-		advancedTexture: GUI.AdvancedDynamicTexture,
-		gameCreationForm: GameCreationFormGUI
-	): GUI.VirtualKeyboard {
+	createVirtualKeyBoard(): GUIComponent<GUI.VirtualKeyboard> {
 		const keyboard = GUI.VirtualKeyboard.CreateDefaultLayout()
-		keyboard.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM
+		keyboard.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP
 
+		const plane = BABYLON.MeshBuilder.CreatePlane('start-button-plane')
+		// plane.parent = this.camera
+		plane.position.z = -0.2
+		plane.position.y = 0.5
+		plane.position.x = 0.8
+
+		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
 		advancedTexture.addControl(keyboard)
 
-		gameCreationForm.connectVirtualKeyboard(keyboard)
-
-		return keyboard
+		return new GUIComponent(keyboard, plane)
 	}
 
 	onStart() {
