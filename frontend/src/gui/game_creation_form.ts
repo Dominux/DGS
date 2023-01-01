@@ -18,8 +18,10 @@ const ODD_RANGE_STR = [MIN_GRIDSIZE, MIN_GRIDSIZE + 2, MIN_GRIDSIZE + 4].join(
 export default class GameCreationFormGUI {
 	protected fieldTypeSelect: GUIComponent<SelectComponent>
 	protected gridSizeInput: GUIComponent<GUI.InputText>
+	protected virtualKeyboard: GUIComponent<GUI.VirtualKeyboard>
 	protected gridSizeHint: GUIComponent<TextComponent>
 	protected startButton: GUIComponent<GUI.Button>
+	protected stackMesh: BABYLON.Mesh
 
 	protected _isValid: boolean = true
 
@@ -63,6 +65,7 @@ export default class GameCreationFormGUI {
 		}
 
 		const stack = this.createStackPanel()
+		this.stackMesh = stack.advancedTextureMesh
 
 		this.fieldTypeSelect = this.createFieldTypeSelect(stack, defaultFieldType)
 		this.fieldTypeSelect.component.onSelectRegister(innerOnChangeFieldType)
@@ -73,6 +76,10 @@ export default class GameCreationFormGUI {
 			onChangeGridSize
 		)
 		this.gridSizeHint = this.createGridSizeHint(stack)
+		this.virtualKeyboard = this.createVirtualKeyBoard(
+			stack,
+			this.gridSizeInput.component
+		)
 
 		this.startButton = this.createStartButton(stack, onSumbit)
 
@@ -184,8 +191,19 @@ export default class GameCreationFormGUI {
 		return true
 	}
 
-	connectVirtualKeyboard(keyboard: GUI.VirtualKeyboard) {
-		keyboard.connect(this.gridSizeInput.component)
+	createVirtualKeyBoard(
+		stack: GUIComponent<GUI.StackPanel>,
+		gridSizeInput: GUI.InputText
+	): GUIComponent<GUI.VirtualKeyboard> {
+		const keyboard = GUI.VirtualKeyboard.CreateDefaultLayout()
+		keyboard.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP
+		keyboard.fontSize = 24
+
+		keyboard.connect(gridSizeInput)
+
+		stack.component.addControl(keyboard)
+
+		return new GUIComponent(keyboard, stack.advancedTextureMesh)
 	}
 
 	createStartButton(
@@ -213,8 +231,6 @@ export default class GameCreationFormGUI {
 	}
 
 	delete() {
-		this.fieldTypeSelect.delete()
-		this.gridSizeInput.delete()
-		this.startButton.delete()
+		this.stackMesh.dispose()
 	}
 }

@@ -10,7 +10,6 @@ export default class GameGUI {
 	protected gameCreationForm: GameCreationFormGUI
 	protected playerBar: PlayerBarGUI
 	protected globalTexture: GUI.AdvancedDynamicTexture
-	protected virtualKeyboard: GUIComponent<GUI.VirtualKeyboard>
 
 	protected alert: AlertComponent
 
@@ -29,8 +28,6 @@ export default class GameGUI {
 	) {
 		this.globalTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI('gui')
 
-		this.virtualKeyboard = this.createVirtualKeyBoard()
-
 		this.gameCreationForm = new GameCreationFormGUI(
 			camera,
 			onChangeFieldType,
@@ -39,27 +36,10 @@ export default class GameGUI {
 			defaultGridSize,
 			onSubmit
 		)
-		this.gameCreationForm.connectVirtualKeyboard(this.virtualKeyboard.component)
 
 		this.playerBar = new PlayerBarGUI(this.camera, onUndo)
 
 		this.alert = new AlertComponent(this.globalTexture)
-	}
-
-	createVirtualKeyBoard(): GUIComponent<GUI.VirtualKeyboard> {
-		const keyboard = GUI.VirtualKeyboard.CreateDefaultLayout()
-		keyboard.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP
-
-		const plane = BABYLON.MeshBuilder.CreatePlane('start-button-plane')
-		// plane.parent = this.camera
-		plane.position.z = -0.12
-		plane.position.y = 0.4
-		plane.position.x = 0.8
-
-		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
-		advancedTexture.addControl(keyboard)
-
-		return new GUIComponent(keyboard, plane)
 	}
 
 	onStart() {

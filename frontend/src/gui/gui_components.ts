@@ -15,8 +15,4 @@ export default class GUIComponent<Type> {
 			this.component.container ? this.component.container : this.component
 		)
 	}
-
-	delete() {
-		this.advancedTextureMesh.dispose()
-	}
 }

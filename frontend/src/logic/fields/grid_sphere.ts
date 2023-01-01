@@ -254,7 +254,8 @@ export default class GridSphere implements Field {
 	}
 
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {
-		const position = this.points[id]
+		const position = this.points[id].clone()
+		position.y += 1
 		const rotation = this.getStoneRotation(position)
 		return {
 			id,

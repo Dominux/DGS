@@ -18,10 +18,8 @@ export default class Scene {
 			height: 30,
 			width: 30,
 		})
-		// this._ground.position.y = -1
-		this._ground.material = new BABYLON.PBRMetallicRoughnessMaterial('ground')
-		// TEMPORAL
-		// this._ground.setEnabled(false)
+		// this._ground.material = new BABYLON.PBRMetallicRoughnessMaterial('ground')
+		this._ground.setEnabled(false)
 
 		// Loading environment
 		this.loadEnv()
