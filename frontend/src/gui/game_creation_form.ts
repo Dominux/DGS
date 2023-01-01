@@ -186,6 +186,10 @@ export default class GameCreationFormGUI {
 		return true
 	}
 
+	connectVirtualKeyboard(keyboard: GUI.VirtualKeyboard) {
+		keyboard.connect(this.gridSizeInput.component)
+	}
+
 	createStartButton(onSumbit: Function): GUIComponent<GUI.Button> {
 		const button = GUI.Button.CreateSimpleButton('start-button', 'Start')
 		button.height = '80px'

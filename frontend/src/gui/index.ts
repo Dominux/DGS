@@ -9,6 +9,7 @@ export default class GameGUI {
 	protected gameCreationForm: GameCreationFormGUI
 	protected playerBar: PlayerBarGUI
 	protected globalTexture: GUI.AdvancedDynamicTexture
+	protected virtualKeyboard: GUI.VirtualKeyboard
 
 	protected alert: AlertComponent
 
@@ -38,6 +39,25 @@ export default class GameGUI {
 		this.playerBar = new PlayerBarGUI(this.camera, onUndo)
 
 		this.alert = new AlertComponent(this.globalTexture)
+
+		this.virtualKeyboard = this.createVirtualKeyBoard(
+			this.globalTexture,
+			this.gameCreationForm
+		)
+	}
+
+	createVirtualKeyBoard(
+		advancedTexture: GUI.AdvancedDynamicTexture,
+		gameCreationForm: GameCreationFormGUI
+	): GUI.VirtualKeyboard {
+		const keyboard = GUI.VirtualKeyboard.CreateDefaultLayout()
+		keyboard.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_BOTTOM
+
+		advancedTexture.addControl(keyboard)
+
+		gameCreationForm.connectVirtualKeyboard(keyboard)
+
+		return keyboard
 	}
 
 	onStart() {
