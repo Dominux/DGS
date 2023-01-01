@@ -43,9 +43,9 @@ export default class GameCreationFormGUI {
 	protected set errorMessage(newVal: string) {
 		if (newVal) {
 			this.gridSizeHint.component.text = newVal
-			this.gridSizeHint.advancedTextureMesh.isVisible = true
+			this.gridSizeHint.component.container.isVisible = true
 		} else {
-			this.gridSizeHint.advancedTextureMesh.isVisible = false
+			this.gridSizeHint.component.container.isVisible = false
 		}
 	}
 
@@ -62,21 +62,44 @@ export default class GameCreationFormGUI {
 			onChangeFieldType(selectedValue)
 		}
 
-		this.fieldTypeSelect = this.createFieldTypeSelect(defaultFieldType)
+		const stack = this.createStackPanel()
+
+		this.fieldTypeSelect = this.createFieldTypeSelect(stack, defaultFieldType)
 		this.fieldTypeSelect.component.onSelectRegister(innerOnChangeFieldType)
 
 		this.gridSizeInput = this.createGridSizeInput(
 			defaultGridSize,
+			stack,
 			onChangeGridSize
 		)
-		this.gridSizeHint = this.createGridSizeHint()
+		this.gridSizeHint = this.createGridSizeHint(stack)
 
-		this.startButton = this.createStartButton(onSumbit)
+		this.startButton = this.createStartButton(stack, onSumbit)
 
 		this.validateGridSize(parseInt(this.gridSizeInput.component.text))
 	}
 
+	createStackPanel() {
+		const stack = new GUI.StackPanel('game-creation-form')
+		stack.spacing = 10
+		stack.isHitTestVisible = false
+
+		const plane = BABYLON.MeshBuilder.CreatePlane('field-type-plane', {
+			size: 1,
+		})
+		// plane.parent = this.camera
+		plane.position.z = -0.1
+		plane.position.y = 1.2
+		plane.position.x = 0.8
+
+		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
+		advancedTexture.addControl(stack)
+
+		return new GUIComponent(stack, plane)
+	}
+
 	createFieldTypeSelect(
+		stack: GUIComponent<GUI.StackPanel>,
 		defaultFieldType?: FieldType
 	): GUIComponent<SelectComponent> {
 		const fieldTypeSelect = new SelectComponent(
@@ -92,22 +115,14 @@ export default class GameCreationFormGUI {
 			fieldTypeSelect.addOption(fieldType, fieldType)
 		)
 
-		const plane = BABYLON.MeshBuilder.CreatePlane('field-type-plane', {
-			size: 1.2,
-		})
-		// plane.parent = this.camera
-		plane.position.z = -0.1
-		plane.position.y = 0.9
-		plane.position.x = 0.8
+		stack.component.addControl(fieldTypeSelect.container)
 
-		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
-		advancedTexture.addControl(fieldTypeSelect.container)
-
-		return new GUIComponent(fieldTypeSelect, plane)
+		return new GUIComponent(fieldTypeSelect, stack.advancedTextureMesh)
 	}
 
 	createGridSizeInput(
 		defaultGridSize: number = 0,
+		stack: GUIComponent<GUI.StackPanel>,
 		onChangeGridSize: Function
 	): GUIComponent<GUI.InputText> {
 		const input = new GUI.InputText('grid-size', String(defaultGridSize))
@@ -133,36 +148,18 @@ export default class GameCreationFormGUI {
 			this.validateGridSize(value)
 		})
 
-		const plane = BABYLON.MeshBuilder.CreatePlane('grid-size-plane', {
-			size: 1,
-		})
-		// plane.parent = this.camera
-		plane.position.z = -0.1
-		plane.position.y = 1.1
-		plane.position.x = 0.8
+		stack.component.addControl(input)
 
-		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
-		advancedTexture.addControl(input)
-
-		return new GUIComponent(input, plane)
+		return new GUIComponent(input, stack.advancedTextureMesh)
 	}
 
-	createGridSizeHint() {
+	createGridSizeHint(stack: GUIComponent<GUI.StackPanel>) {
 		// Container
 		const text = new TextComponent('50px', '500px', 'white', ALERT_COLOR, 34)
 
-		const plane = BABYLON.MeshBuilder.CreatePlane('grid-size-plane', {
-			size: 1,
-		})
-		// plane.parent = this.camera
-		plane.position.z = -0.1
-		plane.position.y = 1.035
-		plane.position.x = 0.8
+		stack.component.addControl(text.container)
 
-		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
-		advancedTexture.addControl(text.container)
-
-		return new GUIComponent(text, plane)
+		return new GUIComponent(text, stack.advancedTextureMesh)
 	}
 
 	validateGridSize(value: number): boolean {
@@ -191,13 +188,16 @@ export default class GameCreationFormGUI {
 		keyboard.connect(this.gridSizeInput.component)
 	}
 
-	createStartButton(onSumbit: Function): GUIComponent<GUI.Button> {
+	createStartButton(
+		stack: GUIComponent<GUI.StackPanel>,
+		onSumbit: Function
+	): GUIComponent<GUI.Button> {
 		const button = GUI.Button.CreateSimpleButton(
 			'start-button',
 			'   Start game   '
 		)
-		button.height = '100px'
-		button.width = '400px'
+		button.height = '80px'
+		button.width = '360px'
 		button.fontSize = 44
 		button.background = ACCENT_COLOR
 
@@ -207,18 +207,9 @@ export default class GameCreationFormGUI {
 			onSumbit()
 		})
 
-		const plane = BABYLON.MeshBuilder.CreatePlane('start-button-plane', {
-			size: 1,
-		})
-		// plane.parent = this.camera
-		plane.position.z = -0.1
-		plane.position.y = 0.96
-		plane.position.x = 0.8
+		stack.component.addControl(button)
 
-		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
-		advancedTexture.addControl(button)
-
-		return new GUIComponent(button, plane)
+		return new GUIComponent(button, stack.advancedTextureMesh)
 	}
 
 	delete() {

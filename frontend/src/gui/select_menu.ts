@@ -9,6 +9,7 @@ export default class SelectComponent {
 	readonly button: GUI.Button
 	public selected?
 	public selectedValue?
+	protected stackSize = 0
 	protected onSelect?: Function
 
 	constructor(
@@ -22,6 +23,7 @@ export default class SelectComponent {
 	) {
 		// Container
 		this.container = new GUI.Container()
+		this.container.height = this.height
 		this.container.width = this.width
 		this.container.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP
 		this.container.isHitTestVisible = false
@@ -46,6 +48,9 @@ export default class SelectComponent {
 
 		this.button.onPointerUpObservable.add(() => {
 			this.options.isVisible = !this.options.isVisible
+
+			// Adjusting container size
+			this.options.isVisible ? this.onOpenMenu() : this.onCloseMenu()
 		})
 
 		// add controls
@@ -72,14 +77,29 @@ export default class SelectComponent {
 			this.selected = button
 			this.selectedValue = value
 
+			this.onCloseMenu()
+
 			if (this.onSelect !== undefined) this.onSelect(this.selectedValue)
 		})
+
+		this.stackSize += parseFloat(this.height)
 
 		this.options.addControl(button)
 	}
 
 	onSelectRegister(func: Function) {
 		this.onSelect = func
+	}
+
+	onOpenMenu() {
+		this.container.height = `${
+			parseFloat(this.container.height) + this.stackSize
+		}px`
+	}
+	onCloseMenu() {
+		this.container.height = `${
+			parseFloat(this.container.height) - this.stackSize
+		}px`
 	}
 
 	/////////////////////////////////////////

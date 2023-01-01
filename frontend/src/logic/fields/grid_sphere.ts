@@ -227,11 +227,15 @@ export default class GridSphere implements Field {
 			throw error
 		}
 
+		// Adjusting position a bit
+		const position = this.activePoint
+		position.y += 1
+
 		const stoneSchema = {
 			id: this.activePointID,
 			position: this.activePoint,
 			color,
-			rotation: this.getStoneRotation(this.activePoint),
+			rotation: this.getStoneRotation(position),
 		}
 
 		this.stoneManager.create(stoneSchema)
@@ -261,7 +265,7 @@ export default class GridSphere implements Field {
 	}
 
 	protected getStoneRotation(position: BABYLON.Vector3): BABYLON.Vector3 {
-		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 0, 0), position])
+		const path = new BABYLON.Path3D([new BABYLON.Vector3(0, 1, 0), position])
 		return BABYLON.Vector3.RotationFromAxis(
 			path.getBinormalAt(0),
 			path.getTangentAt(0),
