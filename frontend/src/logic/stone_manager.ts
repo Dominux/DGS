@@ -1,4 +1,5 @@
 import * as BABYLON from 'babylonjs'
+import { FIELD_Y } from '../constants'
 
 export type CreateStoneScheme = {
 	id: number
@@ -16,9 +17,11 @@ export default class StoneManager {
 	protected stones: Array<Stone> = []
 	readonly stoneSize = 1.6
 	readonly height: number
+	readonly multiplier: number
 
 	constructor(readonly scene: BABYLON.Scene, gridSize: number, k: number) {
 		this.height = (0.2 * this.stoneSize * k) / gridSize
+		this.multiplier = 1 + this.height / 2 - this.height * 0.025
 	}
 
 	create(stoneSchema: CreateStoneScheme) {
@@ -34,8 +37,11 @@ export default class StoneManager {
 		})
 
 		// Setting right position
-		const multiplier = 1 + this.height / 2 - this.height * 0.025
-		stone.position = stoneSchema.position.scale(multiplier)
+		console.log(this.multiplier)
+
+		stoneSchema.position.y -= FIELD_Y
+		stone.position = stoneSchema.position.scale(this.multiplier)
+		stone.position.y += FIELD_Y
 
 		// Creating stone's material
 		const material = new BABYLON.PBRMetallicRoughnessMaterial('stone')

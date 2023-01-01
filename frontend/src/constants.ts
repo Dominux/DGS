@@ -13,3 +13,5 @@ export const SPHERE_RADIUS = 0.5
 export const REGULAR_FIELD_PADDING_TO_CELL_FRACTION = 0.5
 export const ACCENT_COLOR = '#e3f2fd'
 export const ALERT_COLOR = '#fa9393'
+
+export const FIELD_Y = 1

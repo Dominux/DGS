@@ -233,7 +233,7 @@ export default class GridSphere implements Field {
 
 		const stoneSchema = {
 			id: this.activePointID,
-			position: this.activePoint,
+			position: position,
 			color,
 			rotation: this.getStoneRotation(position),
 		}
