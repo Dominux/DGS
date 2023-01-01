@@ -52,8 +52,8 @@ export default class GameGUI {
 
 		const plane = BABYLON.MeshBuilder.CreatePlane('start-button-plane')
 		// plane.parent = this.camera
-		plane.position.z = -0.2
-		plane.position.y = 0.5
+		plane.position.z = -0.12
+		plane.position.y = 0.4
 		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)

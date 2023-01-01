@@ -196,9 +196,9 @@ export default class GameCreationFormGUI {
 			'start-button',
 			'   Start game   '
 		)
-		button.height = '80px'
-		button.width = '360px'
-		button.fontSize = 36
+		button.height = '100px'
+		button.width = '400px'
+		button.fontSize = 44
 		button.background = ACCENT_COLOR
 
 		button.onPointerUpObservable.add(() => {
@@ -212,7 +212,7 @@ export default class GameCreationFormGUI {
 		})
 		// plane.parent = this.camera
 		plane.position.z = -0.1
-		plane.position.y = 0.9
+		plane.position.y = 0.96
 		plane.position.x = 0.8
 
 		const advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane)
