@@ -19,3 +19,6 @@ uuid = { version = "1.2.2", features = ["serde", "v4"] }
 
 entity = {path="src/common/db/entity"}
 migration = {path="src/common/db/migration"}
+
+[dev-dependencies]
+axum-test-helper = "0.2.0"

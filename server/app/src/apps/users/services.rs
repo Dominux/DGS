@@ -1,5 +1,6 @@
-use crate::common::{aliases::DBConnection, errors::DGSResult};
+use crate::common::errors::DGSResult;
 use entity::users;
+use sea_orm::DbConn;
 
 use super::{
     repositories::UsersRepository,
@@ -11,7 +12,7 @@ pub struct UserService<'a> {
 }
 
 impl<'a> UserService<'a> {
-    pub fn new(db: &'a DBConnection) -> Self {
+    pub fn new(db: &'a DbConn) -> Self {
         let repo = UsersRepository::new(db);
         Self { repo }
     }

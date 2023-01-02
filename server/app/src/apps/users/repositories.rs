@@ -1,18 +1,18 @@
 use entity::users;
-use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, DbConn, EntityTrait, QueryFilter};
 use uuid;
 
 use super::schemas::OutUserSchema;
 use crate::apps::users::schemas::CreateUserSchema;
 use crate::common::errors::DGSError;
-use crate::common::{aliases::DBConnection, errors::DGSResult};
+use crate::common::errors::DGSResult;
 
 pub struct UsersRepository<'a> {
-    db: &'a DBConnection,
+    db: &'a DbConn,
 }
 
 impl<'a> UsersRepository<'a> {
-    pub fn new(db: &'a DBConnection) -> Self {
+    pub fn new(db: &'a DbConn) -> Self {
         Self { db }
     }
 
