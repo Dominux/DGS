@@ -11,8 +11,8 @@ use crate::{
 };
 
 pub struct TestTools {
-    db: TestDB,
-    client: TestClient,
+    pub db: TestDB,
+    pub client: TestClient,
 }
 
 impl TestTools {
