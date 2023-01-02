@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  server:
+    container_name: 'server-app'
+    build:
+      dockerfile: test.Dockerfile
+      context: .
+    command: cargo test -- --test-threads=1
+    depends_on:
+      - db
+    env_file:
+      - .env
+    # tty: true
+    # stdin_open: true
+
+  db:
+    container_name: 'dgs-db'
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: 'dgs'
+      POSTGRES_USER: 'dgs'
+      POSTGRES_PASSWORD: 'lmao'
+    ports:
+      - '5432:5432'

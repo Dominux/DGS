@@ -10,6 +10,8 @@ use crate::{
     common::{config::Config, db::connection::get_db, routing::app_state::AppState},
 };
 
+const DBNAME: &'static str = "test";
+
 pub struct TestTools {
     pub db: TestDB,
     pub client: TestClient,
@@ -56,37 +58,30 @@ async fn setup_schema(db: &DbConn) {
 // Creates DB on object cretion and deletes it on object drop
 pub struct TestDB {
     pub db_uri: String,
-    pub db_name: String,
     pub db: DbConn,
 }
 
 impl TestDB {
     async fn new(db_uri: &str) -> Self {
-        // Create database with UUID
-        let db_name = {
-            let id = uuid::Uuid::new_v4().to_string().replace("-", "");
-            format!("test_{id}")
-        };
+        let db = get_db(db_uri).await.unwrap();
 
-        let new_db_uri = {
-            let db = get_db(db_uri).await.unwrap();
+        // Deleting and recreating test db
+        for command in [
+            format!("DROP DATABASE IF EXISTS {DBNAME};"),
+            format!("CREATE DATABASE {DBNAME};"),
+        ] {
+            db.execute(Statement::from_string(DbBackend::Postgres, command))
+                .await
+                .unwrap();
+        }
 
-            db.execute(Statement::from_string(
-                DbBackend::Postgres,
-                format!("CREATE DATABASE {db_name};"),
-            ))
-            .await
-            .unwrap();
-
-            format!("{db_uri}/{db_name}")
-        };
+        let new_db_uri = format!("{db_uri}/{DBNAME}");
 
         // Getting new db_conn
-        let db = get_db(new_db_uri.as_str()).await.unwrap();
+        let db = get_db(&new_db_uri).await.unwrap();
 
         Self {
-            db_uri: db_uri.to_string(),
-            db_name,
+            db_uri: new_db_uri,
             db,
         }
     }
