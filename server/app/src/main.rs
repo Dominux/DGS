@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use migration::{Migrator, MigratorTrait};
 
 use app::create_app;
@@ -22,10 +24,13 @@ async fn main() {
     Migrator::up(&db, None).await.unwrap();
 
     // Creating app_state
-    let app_state = AppState::new(db, config);
+    let shared_state = {
+        let app_state = AppState::new(db, config);
+        Arc::new(app_state)
+    };
 
     // build our application with a single route
-    let app = create_app(app_state);
+    let app = create_app(shared_state);
 
     // Logging about successful start
     println!("Server ran successfully");
