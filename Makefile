@@ -20,9 +20,9 @@ front_build:
 test_server:
 	cd ./server &&\
 	cp .test.env .env &&\
-	docker compose -f test.docker-compose.yml down &&\
-	docker compose -f test.docker-compose.yml build &&\
-	docker compose -f test.docker-compose.yml run server &&\
+	docker compose -f docker-compose.test.yml down &&\
+	docker compose -f docker-compose.test.yml build &&\
+	docker compose -f docker-compose.test.yml run server &&\
 	cd -
 
 run_server:
