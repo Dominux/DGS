@@ -16,7 +16,7 @@ impl<'a> GamesRepository<'a> {
     pub async fn create(&self) -> DGSResult<games::Model> {
         let game = games::ActiveModel {
             id: ActiveValue::Set(uuid::Uuid::new_v4()),
-            is_ended: ActiveValue::NotSet,
+            is_ended: ActiveValue::Set(false),
         };
         let game = game.insert(self.db).await?;
 

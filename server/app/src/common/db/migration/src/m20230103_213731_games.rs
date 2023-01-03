@@ -12,7 +12,7 @@ impl MigrationTrait for Migration {
                     .table(Game::Table)
                     .if_not_exists()
                     .col(ColumnDef::new(Game::Id).uuid().not_null().primary_key())
-                    .col(ColumnDef::new(Game::IsEnded).boolean().default(false))
+                    .col(ColumnDef::new(Game::IsEnded).boolean().not_null())
                     .to_owned(),
             )
             .await
