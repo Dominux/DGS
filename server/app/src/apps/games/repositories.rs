@@ -2,8 +2,7 @@ use entity::games;
 use sea_orm::{ActiveModelTrait, ActiveValue, DbConn, EntityTrait};
 use uuid;
 
-use crate::common::errors::DGSError;
-use crate::common::errors::DGSResult;
+use crate::common::errors::{DGSError, DGSResult};
 
 pub struct GamesRepository<'a> {
     db: &'a DbConn,
@@ -25,12 +24,7 @@ impl<'a> GamesRepository<'a> {
     }
 
     pub async fn list(&self) -> DGSResult<Vec<games::Model>> {
-        Ok(games::Entity::find()
-            .all(self.db)
-            .await?
-            .into_iter()
-            .map(|u| u.into())
-            .collect())
+        Ok(games::Entity::find().all(self.db).await?)
     }
 
     pub async fn get(&self, game_id: uuid::Uuid) -> DGSResult<games::Model> {

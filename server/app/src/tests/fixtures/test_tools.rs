@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum_test_helper::TestClient;
-use entity::users::Entity as User;
+use entity::{games::Entity as Game, users::Entity as User};
 use migration::TableCreateStatement;
 use sea_orm::{ConnectionTrait, DbBackend, DbConn, Schema, Statement};
 
@@ -46,10 +46,12 @@ async fn setup_schema(db: &DbConn) {
     // Setup Schema helper
     let schema = Schema::new(DbBackend::Postgres);
 
-    // Derive from Entity
+    // Creating tables
     let stmt: TableCreateStatement = schema.create_table_from_entity(User);
-
-    // Execute create table statement
+    db.execute(db.get_database_backend().build(&stmt))
+        .await
+        .unwrap();
+    let stmt: TableCreateStatement = schema.create_table_from_entity(Game);
     db.execute(db.get_database_backend().build(&stmt))
         .await
         .unwrap();

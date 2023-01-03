@@ -1,4 +1,3 @@
-use crate::common::errors::DGSResult;
 use entity::users;
 use sea_orm::DbConn;
 
@@ -6,6 +5,7 @@ use super::{
     repositories::UsersRepository,
     schemas::{CreateUserSchema, OutUserSchema},
 };
+use crate::common::errors::DGSResult;
 
 pub struct UserService<'a> {
     repo: UsersRepository<'a>,
