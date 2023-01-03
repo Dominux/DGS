@@ -11,7 +11,7 @@ pub struct DeleteUserSchema {
     pub secure_id: uuid::Uuid,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct OutUserSchema {
     pub id: uuid::Uuid,
     pub username: String,

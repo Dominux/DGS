@@ -1977,6 +1977,7 @@ dependencies = [
  "migration",
  "sea-orm",
  "serde",
+ "serde_json",
  "thiserror",
  "tokio",
  "uuid",
