@@ -9,7 +9,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub player1_id: Uuid,
-    pub player2_id: Uuid,
+    pub player2_id: Option<Uuid>,
     pub game_id: Option<Uuid>,
 }
 

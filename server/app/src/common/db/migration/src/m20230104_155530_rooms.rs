@@ -21,7 +21,7 @@ impl MigrationTrait for Migration {
                             .from_col(Room::Player1Id)
                             .to(User::Table, User::Id),
                     )
-                    .col(ColumnDef::new(Room::Player2Id).uuid().not_null())
+                    .col(ColumnDef::new(Room::Player2Id).uuid())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-room-player2-id")
