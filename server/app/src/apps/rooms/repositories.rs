@@ -2,8 +2,10 @@ use entity::rooms;
 use sea_orm::{ActiveModelTrait, ActiveValue, DbConn, EntityTrait};
 use uuid;
 
-use super::schemas::CreateRoomSchema;
-use crate::common::errors::{DGSError, DGSResult};
+use crate::common::{
+    errors::{DGSError, DGSResult},
+    routing::auth::AuthenticatedUser,
+};
 
 pub struct RoomsRepository<'a> {
     db: &'a DbConn,
@@ -14,10 +16,10 @@ impl<'a> RoomsRepository<'a> {
         Self { db }
     }
 
-    pub async fn create(&self, schema: &CreateRoomSchema) -> DGSResult<rooms::Model> {
+    pub async fn create(&self, user_id: uuid::Uuid) -> DGSResult<rooms::Model> {
         let room = rooms::ActiveModel {
             id: ActiveValue::Set(uuid::Uuid::new_v4()),
-            player1_id: ActiveValue::Set(schema.user_id),
+            player1_id: ActiveValue::Set(user_id),
             ..Default::default()
         };
         let room = room.insert(self.db).await?;
@@ -45,5 +47,24 @@ impl<'a> RoomsRepository<'a> {
         } else {
             Err(DGSError::NotFound(format!("room with id {room_id}")))
         }
+    }
+
+    pub async fn add_player2(
+        &self,
+        room_id: uuid::Uuid,
+        user: AuthenticatedUser,
+    ) -> DGSResult<rooms::Model> {
+        // Checking if the game already has a second player
+        let game = self.get(room_id).await?;
+        if matches!(game.player2_id, Some(_)) {
+            return Err(DGSError::CannotAddPlayer);
+        }
+
+        // Adding a player
+        let mut game: rooms::ActiveModel = game.into();
+        game.player2_id = ActiveValue::Set(Some(user.user_id));
+
+        // Updating it
+        Ok(game.update(self.db).await?)
     }
 }

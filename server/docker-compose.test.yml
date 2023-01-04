@@ -1,18 +1,18 @@
 version: '3.9'
 
 services:
-  # server:
-  #   container_name: 'server-app'
-  #   build:
-  #     dockerfile: test.Dockerfile
-  #     context: .
-  #   command: cargo test -- --test-threads=1 && rm -rf /
-  #   depends_on:
-  #     - db
-  #   env_file:
-  #     - .env
-  #   # tty: true
-  #   # stdin_open: true
+  server:
+    container_name: 'server-app'
+    build:
+      dockerfile: test.Dockerfile
+      context: .
+    command: cargo test -- --test-threads=1 && rm -rf /
+    depends_on:
+      - db
+    env_file:
+      - .env
+    # tty: true
+    # stdin_open: true
 
   db:
     container_name: 'dgs-db'

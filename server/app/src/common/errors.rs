@@ -12,6 +12,10 @@ pub enum DGSError {
     DBConnectionError,
     #[error("not found: `{0}`")]
     NotFound(String),
+    #[error("cannot decode token")]
+    TokenDecodingError,
+    #[error("game is already full of players")]
+    CannotAddPlayer,
     #[error("unknown error")]
     Unknown,
 }
@@ -30,6 +34,8 @@ impl From<DGSError> for (StatusCode, String) {
     fn from(e: DGSError) -> Self {
         match &e {
             DGSError::NotFound(_) => (StatusCode::NOT_FOUND, e.to_string()),
+            DGSError::TokenDecodingError => (StatusCode::UNAUTHORIZED, e.to_string()),
+            DGSError::CannotAddPlayer => (StatusCode::CONFLICT, e.to_string()),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Something went wrong".to_owned(),

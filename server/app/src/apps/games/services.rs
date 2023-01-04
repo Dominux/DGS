@@ -13,20 +13,4 @@ impl<'a> GameService<'a> {
         let repo = GamesRepository::new(db);
         Self { repo }
     }
-
-    pub async fn create(&self) -> DGSResult<games::Model> {
-        self.repo.create().await
-    }
-
-    pub async fn list(&self) -> DGSResult<Vec<games::Model>> {
-        self.repo.list().await
-    }
-
-    pub async fn get(&self, game_id: uuid::Uuid) -> DGSResult<games::Model> {
-        self.repo.get(game_id).await
-    }
-
-    pub async fn delete(&self, game_id: uuid::Uuid) -> DGSResult<()> {
-        self.repo.delete(game_id).await
-    }
 }
