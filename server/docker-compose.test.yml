@@ -11,8 +11,6 @@ services:
       - db
     env_file:
       - .env
-    volumes:
-      - ./app/target:/target
     tty: true
     stdin_open: true
 

@@ -16,6 +16,12 @@ pub enum DGSError {
     TokenDecodingError,
     #[error("game is already full of players")]
     CannotAddPlayer,
+    #[error("only first player can start game")]
+    UserIsNotPlayer1,
+    #[error("you need to add a second player to start game")]
+    Player2IsNone,
+    #[error("game already started")]
+    GameAlreadyStarted,
     #[error("unknown error")]
     Unknown,
 }
@@ -36,6 +42,9 @@ impl From<DGSError> for (StatusCode, String) {
             DGSError::NotFound(_) => (StatusCode::NOT_FOUND, e.to_string()),
             DGSError::TokenDecodingError => (StatusCode::UNAUTHORIZED, e.to_string()),
             DGSError::CannotAddPlayer => (StatusCode::CONFLICT, e.to_string()),
+            DGSError::UserIsNotPlayer1 => (StatusCode::FORBIDDEN, e.to_string()),
+            DGSError::GameAlreadyStarted => (StatusCode::CONFLICT, e.to_string()),
+            DGSError::Player2IsNone => (StatusCode::CONFLICT, e.to_string()),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Something went wrong".to_owned(),

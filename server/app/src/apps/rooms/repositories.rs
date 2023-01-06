@@ -67,4 +67,15 @@ impl<'a> RoomsRepository<'a> {
         // Updating it
         Ok(game.update(self.db).await?)
     }
+
+    pub async fn attach_game(
+        &self,
+        room: rooms::Model,
+        game_id: uuid::Uuid,
+    ) -> DGSResult<rooms::Model> {
+        let mut room: rooms::ActiveModel = room.into();
+        room.game_id = ActiveValue::Set(Some(game_id));
+
+        Ok(room.update(self.db).await?)
+    }
 }
