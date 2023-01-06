@@ -1,4 +1,4 @@
 mod repositories;
 pub mod routers;
-mod schemas;
+pub mod schemas;
 mod services;

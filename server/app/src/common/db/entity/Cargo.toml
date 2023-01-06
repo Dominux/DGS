@@ -9,3 +9,4 @@ edition = "2021"
 sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros" ] }
 
 serde = { version = "1.0.152", features = [ "derive" ] }
+migration = {path="../migration"}

@@ -1,15 +1,19 @@
 use entity::games::Model as Game;
+use migration::FieldType;
 use serde::{Deserialize, Serialize};
+use spherical_go_game_lib::SizeType;
 
 #[derive(Debug, Deserialize)]
 pub struct CreateGameSchema {
     pub room_id: uuid::Uuid,
+    pub field_type: FieldType,
+    pub size: SizeType,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GameWithWSLink {
-    game: Game,
-    ws_link: String,
+    pub game: Game,
+    pub ws_link: String,
 }
 
 impl GameWithWSLink {

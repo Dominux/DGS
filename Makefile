@@ -18,12 +18,10 @@ front_build:
 	cd ./frontend && pnpm run build || true && cd -
 
 test_server:
-	cd ./server &&\
 	cp .test.env .env &&\
 	docker compose -f docker-compose.test.yml down &&\
 	docker compose -f docker-compose.test.yml build &&\
-	docker compose -f docker-compose.test.yml run server &&\
-	cd -
+	docker compose -f docker-compose.test.yml run server
 
 run_server:
 	cd ./server/app && cargo run || true && cd -

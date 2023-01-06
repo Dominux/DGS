@@ -1,9 +1,11 @@
 use axum::http::StatusCode;
 use entity::rooms::Model as Room;
+use migration::FieldType;
 use serde_json::json;
 
-use crate::tests::fixtures::{
-    create_room::create_room, create_user::create_user, test_tools::TestTools,
+use crate::{
+    apps::{games::schemas::GameWithWSLink, histories::repositories::HistoriesRepository},
+    tests::fixtures::{create_room::create_room, create_user::create_user, test_tools::TestTools},
 };
 
 #[tokio::test]
@@ -15,7 +17,8 @@ async fn test_rooms_crud() {
     let user_2 = create_user("dumba", &test_tools.client).await;
     let room = create_room(user_1.id, user_1.secure_id, &test_tools.client).await;
 
-    let starting_game_json = json!({"room_id": room.id});
+    let starting_game_json =
+        json!({"room_id": room.id, "field_type": FieldType::Regular, "size": 9});
 
     // Trying to start game without 2 players
     {
@@ -72,6 +75,13 @@ async fn test_rooms_crud() {
             .send()
             .await;
         assert_eq!(res.status(), StatusCode::CREATED);
+
+        // Checking if a game history was created too
+        let game: GameWithWSLink = res.json().await;
+        let history = HistoriesRepository::new(&test_tools.db.db)
+            .get_by_game_id(game.game.id)
+            .await;
+        assert!(matches!(history, Result::Ok(_)))
     }
 
     // Trying to start a game again

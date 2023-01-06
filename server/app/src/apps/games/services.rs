@@ -1,26 +1,35 @@
 use sea_orm::DbConn;
 
-use crate::common::{errors::DGSResult, routing::auth::AuthenticatedUser};
+use super::schemas::CreateGameSchema;
 use crate::{
     apps::{
         games::{repositories::GamesRepository, schemas::GameWithWSLink},
+        histories::{repositories::HistoriesRepository, schemas::CreateHistorySchema},
         rooms::repositories::RoomsRepository,
     },
-    common::errors::DGSError,
+    common::{
+        errors::{DGSError, DGSResult},
+        routing::auth::AuthenticatedUser,
+    },
 };
 
-use super::schemas::CreateGameSchema;
-
+/// Main game process service
 pub struct GameService<'a> {
     repo: GamesRepository<'a>,
     rooms_repo: RoomsRepository<'a>,
+    histories_repo: HistoriesRepository<'a>,
 }
 
 impl<'a> GameService<'a> {
     pub fn new(db: &'a DbConn) -> Self {
         let repo = GamesRepository::new(db);
         let rooms_repo = RoomsRepository::new(db);
-        Self { repo, rooms_repo }
+        let histories_repo = HistoriesRepository::new(db);
+        Self {
+            repo,
+            rooms_repo,
+            histories_repo,
+        }
     }
 
     pub async fn start_game(
@@ -55,6 +64,12 @@ impl<'a> GameService<'a> {
 
         // Attaching it to the room
         self.rooms_repo.attach_game(room, game.id).await?;
+
+        // Creating a game history
+        {
+            let history = CreateHistorySchema::new(game.id, schema.field_type, schema.size);
+            self.histories_repo.create(&history).await?;
+        }
 
         Ok(game.into())
     }
