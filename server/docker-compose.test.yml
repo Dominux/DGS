@@ -6,13 +6,15 @@ services:
     build:
       dockerfile: test.Dockerfile
       context: .
-    command: cargo test -- --test-threads=1 && rm -rf /
+    command: cargo test -- --test-threads=1
     depends_on:
       - db
     env_file:
       - .env
-    # tty: true
-    # stdin_open: true
+    volumes:
+      - ./app/target:/target
+    tty: true
+    stdin_open: true
 
   db:
     container_name: 'dgs-db'
