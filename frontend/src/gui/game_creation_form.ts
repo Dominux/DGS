@@ -90,6 +90,7 @@ export default class GameCreationFormGUI {
 		const stack = new GUI.StackPanel('game-creation-form')
 		stack.spacing = 10
 		stack.isHitTestVisible = false
+		stack.isVisible = false
 
 		const plane = BABYLON.MeshBuilder.CreatePlane('field-type-plane', {
 			size: 1,
@@ -228,6 +229,13 @@ export default class GameCreationFormGUI {
 		stack.component.addControl(button)
 
 		return new GUIComponent(button, stack.advancedTextureMesh)
+	}
+
+	show() {
+		this.stackMesh.isVisible = true
+	}
+	hide() {
+		this.stackMesh.isVisible = false
 	}
 
 	delete() {

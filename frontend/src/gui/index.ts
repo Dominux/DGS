@@ -42,6 +42,10 @@ export default class GameGUI {
 		this.alert = new AlertComponent(this.globalTexture)
 	}
 
+	create() {
+		this.gameCreationForm.show()
+	}
+
 	onStart() {
 		this.playerBar.initialize()
 	}

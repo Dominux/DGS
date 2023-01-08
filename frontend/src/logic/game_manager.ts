@@ -42,6 +42,10 @@ export default class GameManager {
 		this.setField()
 	}
 
+	createGUI() {
+		this._GUI.create()
+	}
+
 	setField() {
 		const klass = getFieldFromType(this.fieldType)
 
