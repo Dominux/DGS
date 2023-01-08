@@ -19,7 +19,7 @@ uuid = { version = "1.2.2", features = ["serde", "v4"] }
 
 entity = {path="src/common/db/entity"}
 migration = {path="src/common/db/migration"}
-spherical_go_game_lib = {path="../../gamelib"}
+spherical_go_game_lib = {path="../gamelib"}
 
 [dev-dependencies]
 axum-test-helper = "0.2.0"
