@@ -135,4 +135,8 @@ impl<'a> GameService<'a> {
 
         Ok(MoveResult::new(died_stones))
     }
+
+    pub async fn undo_move(&self, user: AuthenticatedUser) -> DGSResult<()> {
+        unimplemented!("undo move is currently unemplemented")
+    }
 }
