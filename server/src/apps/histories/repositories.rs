@@ -1,7 +1,9 @@
 use entity::{histories, history_records};
-use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, DbConn, EntityTrait, QueryFilter};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue, ColumnTrait, DbConn, EntityTrait, QueryFilter, QueryOrder,
+};
 
-use super::schemas::{CreateHistorySchema, HistoryWithRecords};
+use super::schemas::{CreateHistoryRecordSchema, CreateHistorySchema, HistoryWithRecords};
 use crate::common::errors::{DGSError, DGSResult};
 
 pub struct HistoriesRepository<'a> {
@@ -26,6 +28,29 @@ impl<'a> HistoriesRepository<'a> {
         Ok(history)
     }
 
+    pub async fn create_record(
+        &self,
+        record: &CreateHistoryRecordSchema,
+    ) -> DGSResult<history_records::Model> {
+        let record = history_records::ActiveModel {
+            id: ActiveValue::Set(uuid::Uuid::new_v4()),
+            history_id: ActiveValue::Set(record.history_id),
+            move_number: ActiveValue::Set(record.move_number as i32),
+            point_id: ActiveValue::Set(record.point_id as i32),
+            died_points_ids: ActiveValue::Set(
+                record
+                    .died_stones_ids
+                    .iter()
+                    .map(|rec| *rec as i32)
+                    .collect(),
+            ),
+        };
+
+        let record = record.insert(self.db).await?;
+
+        Ok(record)
+    }
+
     pub async fn get_by_game_id(&self, game_id: uuid::Uuid) -> DGSResult<HistoryWithRecords> {
         // Getting a history itself
         let history = histories::Entity::find()
@@ -39,6 +64,7 @@ impl<'a> HistoriesRepository<'a> {
         // Getting its records
         let records = history_records::Entity::find()
             .filter(history_records::Column::HistoryId.eq(history.id))
+            .order_by_asc(history_records::Column::MoveNumber)
             .all(self.db)
             .await?;
 

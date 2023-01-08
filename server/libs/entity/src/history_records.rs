@@ -12,6 +12,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub history_id: Uuid,
+    pub move_number: i32,
     pub point_id: i32,
     pub died_points_ids: Vec<i32>,
 }

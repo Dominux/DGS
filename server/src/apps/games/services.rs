@@ -1,11 +1,14 @@
 use sea_orm::DbConn;
-use spherical_go_game_lib::{Game as Gamelib, StoredGame, StoredGameMeta};
+use spherical_go_game_lib::Game as Gamelib;
 
 use super::schemas::{CreateGameSchema, MoveSchema};
 use crate::{
     apps::{
         games::{repositories::GamesRepository, schemas::GameWithWSLink},
-        histories::{repositories::HistoriesRepository, schemas::CreateHistorySchema},
+        histories::{
+            repositories::HistoriesRepository,
+            schemas::{CreateHistoryRecordSchema, CreateHistorySchema, MoveResult},
+        },
         rooms::repositories::RoomsRepository,
     },
     common::{
@@ -79,7 +82,7 @@ impl<'a> GameService<'a> {
         &self,
         move_schema: MoveSchema,
         user: AuthenticatedUser,
-    ) -> DGSResult<()> {
+    ) -> DGSResult<MoveResult> {
         // Getting room
         let room = self.rooms_repo.get_by_game_id(move_schema.game_id).await?;
 
@@ -94,6 +97,8 @@ impl<'a> GameService<'a> {
             .histories_repo
             .get_by_game_id(move_schema.game_id)
             .await?;
+        let history_id = history.history.id;
+        let history_len = history.records.len();
 
         // Validating
         {
@@ -103,7 +108,7 @@ impl<'a> GameService<'a> {
             }
 
             // Checking if player can make a move
-            match history.records.len() % 2 {
+            match history_len % 2 {
                 0 if user.user_id != room.player1_id => return Err(DGSError::NotPlayerTurn),
                 1 if user.user_id == room.player1_id => return Err(DGSError::NotPlayerTurn),
                 _ => (),
@@ -117,7 +122,17 @@ impl<'a> GameService<'a> {
         };
 
         // Saving result as a history record
+        {
+            let move_number = history_len + 1;
+            let record = &CreateHistoryRecordSchema::new(
+                history_id,
+                move_number,
+                move_schema.point_id,
+                died_stones.clone(),
+            );
+            self.histories_repo.create_record(record).await?
+        };
 
-        todo!()
+        Ok(MoveResult::new(died_stones))
     }
 }

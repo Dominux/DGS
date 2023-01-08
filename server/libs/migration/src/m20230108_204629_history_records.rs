@@ -27,6 +27,11 @@ impl MigrationTrait for Migration {
                             .from_col(HistoryRecord::HistoryID)
                             .to(History::Table, History::Id),
                     )
+                    .col(
+                        ColumnDef::new(HistoryRecord::MoveNumber)
+                            .integer()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(HistoryRecord::PointID).integer().not_null())
                     .col(
                         ColumnDef::new(HistoryRecord::DiedPointsIds)
@@ -53,6 +58,8 @@ enum HistoryRecord {
     Id,
     #[iden = "history_id"]
     HistoryID,
+    #[iden = "move_number"]
+    MoveNumber,
     #[iden = "point_id"]
     PointID,
     #[iden = "died_points_ids"]
