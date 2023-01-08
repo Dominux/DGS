@@ -3,6 +3,7 @@ use sea_orm_migration::{
     sea_orm::{DeriveActiveEnum, EnumIter},
 };
 use serde::{Deserialize, Serialize};
+use spherical_go_game_lib::FieldType as GameLibFieldType;
 
 use crate::m20230103_213731_games::Game;
 
@@ -64,4 +65,13 @@ pub enum FieldType {
     Regular,
     #[sea_orm(num_value = 1)]
     GridSphere,
+}
+
+impl Into<GameLibFieldType> for FieldType {
+    fn into(self) -> GameLibFieldType {
+        match self {
+            Self::Regular => GameLibFieldType::Regular,
+            Self::GridSphere => GameLibFieldType::GridSphere,
+        }
+    }
 }

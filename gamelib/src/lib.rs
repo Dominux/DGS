@@ -9,7 +9,8 @@ use errors::GameResult;
 use field::build_field;
 pub use field::FieldType;
 use group::Group;
-use history::{HistoryManager, StoredGame, StoredGameMeta, StoredGameMove, StoredGameMoveType};
+use history::HistoryManager;
+pub use history::{StoredGame, StoredGameMeta, StoredGameMove, StoredGameMoveType};
 pub use point::PlayerColor;
 
 mod aliases;

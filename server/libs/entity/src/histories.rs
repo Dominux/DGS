@@ -3,6 +3,7 @@
 use migration::FieldType;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
+use spherical_go_game_lib::{SizeType, StoredGameMeta};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "histories")]
@@ -24,6 +25,8 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Games,
+    #[sea_orm(has_many = "super::history_records::Entity")]
+    HistoryRecords,
 }
 
 impl Related<super::games::Entity> for Entity {
@@ -32,4 +35,19 @@ impl Related<super::games::Entity> for Entity {
     }
 }
 
+impl Related<super::history_records::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::HistoryRecords.def()
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}
+
+impl Into<StoredGameMeta> for Model {
+    fn into(self) -> StoredGameMeta {
+        StoredGameMeta {
+            field_type: self.field_type.into(),
+            size: self.size as SizeType,
+        }
+    }
+}

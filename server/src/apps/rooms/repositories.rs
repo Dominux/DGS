@@ -1,5 +1,5 @@
 use entity::rooms;
-use sea_orm::{ActiveModelTrait, ActiveValue, DbConn, EntityTrait};
+use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, DbConn, EntityTrait, QueryFilter};
 use uuid;
 
 use crate::common::{
@@ -36,6 +36,15 @@ impl<'a> RoomsRepository<'a> {
             .one(self.db)
             .await?
             .ok_or(DGSError::NotFound(format!("room with id {room_id}")))?
+            .into())
+    }
+
+    pub async fn get_by_game_id(&self, game_id: uuid::Uuid) -> DGSResult<rooms::Model> {
+        Ok(rooms::Entity::find()
+            .filter(rooms::Column::GameId.eq(game_id))
+            .one(self.db)
+            .await?
+            .ok_or(DGSError::NotFound(format!("room with game id {game_id}")))?
             .into())
     }
 

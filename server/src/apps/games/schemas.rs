@@ -1,7 +1,7 @@
 use entity::games::Model as Game;
 use migration::FieldType;
 use serde::{Deserialize, Serialize};
-use spherical_go_game_lib::SizeType;
+use spherical_go_game_lib::{PointID, SizeType};
 
 #[derive(Debug, Deserialize)]
 pub struct CreateGameSchema {
@@ -27,4 +27,10 @@ impl From<Game> for GameWithWSLink {
         let ws_link = Self::get_ws_link(&game);
         Self { game, ws_link }
     }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MoveSchema {
+    pub game_id: uuid::Uuid,
+    pub point_id: PointID,
 }

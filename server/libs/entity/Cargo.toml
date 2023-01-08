@@ -6,7 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros" ] }
+sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros", "postgres-array" ] }
 
 serde = { version = "1.0.152", features = [ "derive" ] }
+
 migration = {path="../migration"}
+spherical_go_game_lib = {path="../../../gamelib"}

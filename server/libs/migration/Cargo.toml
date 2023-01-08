@@ -13,6 +13,8 @@ async-std = { version = "^1", features = ["attributes", "tokio1"] }
 
 serde = { version = "1.0.152", features = [ "derive" ] }
 
+spherical_go_game_lib = {path="../../../gamelib"}
+
 [dependencies.sea-orm-migration]
 version = "^0.10.0"
 features = [ "runtime-tokio-rustls", "sqlx-postgres" ]

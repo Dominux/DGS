@@ -1,5 +1,6 @@
 use axum::http::StatusCode;
 use sea_orm::error::DbErr;
+use spherical_go_game_lib::errors::GameError;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -22,6 +23,16 @@ pub enum DGSError {
     Player2IsNone,
     #[error("game already started")]
     GameAlreadyStarted,
+    #[error("user is not one of players")]
+    UserIsNotRoomPlayer,
+    #[error("it is not the player's turn now")]
+    NotPlayerTurn,
+    #[error("game is already ended")]
+    GameEnded,
+
+    #[error("{0}")]
+    GameInternalError(String),
+
     #[error("unknown error")]
     Unknown,
 }
@@ -31,7 +42,10 @@ impl From<DbErr> for DGSError {
         match e {
             DbErr::ConnectionAcquire => Self::DBConnectionError,
             DbErr::RecordNotFound(s) => Self::NotFound(s),
-            _ => Self::Unknown,
+            _ => {
+                println!("[DB Error] {e}");
+                Self::Unknown
+            }
         }
     }
 }
@@ -50,6 +64,12 @@ impl From<DGSError> for (StatusCode, String) {
                 "Something went wrong".to_owned(),
             ),
         }
+    }
+}
+
+impl From<GameError> for DGSError {
+    fn from(e: GameError) -> Self {
+        Self::GameInternalError(e.to_string())
     }
 }
 

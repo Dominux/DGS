@@ -1,7 +1,7 @@
-use entity::histories;
+use entity::{histories, history_records};
 use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, DbConn, EntityTrait, QueryFilter};
 
-use super::schemas::CreateHistorySchema;
+use super::schemas::{CreateHistorySchema, HistoryWithRecords};
 use crate::common::errors::{DGSError, DGSResult};
 
 pub struct HistoriesRepository<'a> {
@@ -26,14 +26,22 @@ impl<'a> HistoriesRepository<'a> {
         Ok(history)
     }
 
-    pub async fn get_by_game_id(&self, game_id: uuid::Uuid) -> DGSResult<histories::Model> {
-        Ok(histories::Entity::find()
+    pub async fn get_by_game_id(&self, game_id: uuid::Uuid) -> DGSResult<HistoryWithRecords> {
+        // Getting a history itself
+        let history = histories::Entity::find()
             .filter(histories::Column::GameId.eq(game_id))
             .one(self.db)
             .await?
             .ok_or(DGSError::NotFound(format!(
                 "history with game id {game_id}"
-            )))?
-            .into())
+            )))?;
+
+        // Getting its records
+        let records = history_records::Entity::find()
+            .filter(history_records::Column::HistoryId.eq(history.id))
+            .all(self.db)
+            .await?;
+
+        Ok(HistoryWithRecords { history, records })
     }
 }

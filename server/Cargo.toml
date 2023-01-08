@@ -11,14 +11,14 @@ axum = "0.6.1"
 
 serde = { version = "1.0.152", features = [ "derive" ] }
 
-sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros" ] }
+sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros", "postgres-array" ] }
 
 thiserror = "1.0.38"
 
 uuid = { version = "1.2.2", features = ["serde", "v4"] }
 
-entity = {path="src/common/db/entity"}
-migration = {path="src/common/db/migration"}
+entity = {path="./libs/entity"}
+migration = {path="./libs/migration"}
 spherical_go_game_lib = {path="../gamelib"}
 
 [dev-dependencies]

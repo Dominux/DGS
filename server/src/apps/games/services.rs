@@ -1,6 +1,7 @@
 use sea_orm::DbConn;
+use spherical_go_game_lib::{Game as Gamelib, StoredGame, StoredGameMeta};
 
-use super::schemas::CreateGameSchema;
+use super::schemas::{CreateGameSchema, MoveSchema};
 use crate::{
     apps::{
         games::{repositories::GamesRepository, schemas::GameWithWSLink},
@@ -72,5 +73,51 @@ impl<'a> GameService<'a> {
         }
 
         Ok(game.into())
+    }
+
+    pub async fn make_move(
+        &self,
+        move_schema: MoveSchema,
+        user: AuthenticatedUser,
+    ) -> DGSResult<()> {
+        // Getting room
+        let room = self.rooms_repo.get_by_game_id(move_schema.game_id).await?;
+
+        // Checking if user is one of room players
+        if user.user_id != room.player1_id && Some(user.user_id) != room.player2_id {
+            return Err(DGSError::UserIsNotRoomPlayer);
+        }
+
+        // Getting game and history
+        let game = self.repo.get(move_schema.game_id).await?;
+        let history = self
+            .histories_repo
+            .get_by_game_id(move_schema.game_id)
+            .await?;
+
+        // Validating
+        {
+            // Checking if game is ended
+            if game.is_ended {
+                return Err(DGSError::GameEnded);
+            }
+
+            // Checking if player can make a move
+            match history.records.len() % 2 {
+                0 if user.user_id != room.player1_id => return Err(DGSError::NotPlayerTurn),
+                1 if user.user_id == room.player1_id => return Err(DGSError::NotPlayerTurn),
+                _ => (),
+            };
+        }
+
+        // Finally making move
+        let died_stones = {
+            let mut game = Gamelib::new_from_history(history.into())?;
+            game.make_move(&move_schema.point_id)?
+        };
+
+        // Saving result as a history record
+
+        todo!()
     }
 }
