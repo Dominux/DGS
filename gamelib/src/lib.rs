@@ -5,6 +5,7 @@
 use std::collections::HashSet;
 
 pub use aliases::{PointID, SizeType};
+use errors::GameResult;
 use field::build_field;
 pub use field::FieldType;
 use group::Group;
@@ -58,6 +59,17 @@ impl Game {
             history_manager,
         };
         Ok(game)
+    }
+
+    /// Load game from history
+    pub fn new_from_history(history: StoredGame) -> GameResult<Self> {
+        let history_manager = HistoryManager::new(history);
+        let inner = history_manager.load()?;
+
+        Ok(Self {
+            inner,
+            history_manager: Some(history_manager),
+        })
     }
 
     /// Make a move
