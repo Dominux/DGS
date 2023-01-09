@@ -42,8 +42,11 @@ export default class GameManager {
 		this.setField()
 	}
 
-	createGUI() {
-		this._GUI.create()
+	showGUI() {
+		this._GUI.show()
+	}
+	hideGUI() {
+		this._GUI.hide()
 	}
 
 	setField() {

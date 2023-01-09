@@ -42,8 +42,11 @@ export default class GameGUI {
 		this.alert = new AlertComponent(this.globalTexture)
 	}
 
-	create() {
+	show() {
 		this.gameCreationForm.show()
+	}
+	hide() {
+		this.gameCreationForm.hide()
 	}
 
 	onStart() {

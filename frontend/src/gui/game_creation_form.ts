@@ -84,13 +84,14 @@ export default class GameCreationFormGUI {
 		this.startButton = this.createStartButton(stack, onSumbit)
 
 		this.validateGridSize(parseInt(this.gridSizeInput.component.text))
+
+		this.hide()
 	}
 
 	createStackPanel() {
 		const stack = new GUI.StackPanel('game-creation-form')
 		stack.spacing = 10
 		stack.isHitTestVisible = false
-		stack.isVisible = false
 
 		const plane = BABYLON.MeshBuilder.CreatePlane('field-type-plane', {
 			size: 1,

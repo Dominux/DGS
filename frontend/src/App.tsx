@@ -1,15 +1,38 @@
-import { Route, Routes } from '@solidjs/router'
-import { Component, onMount } from 'solid-js'
+import { Component, onMount, createSignal, Show } from 'solid-js'
 
 import styles from './App.module.css'
 import { SPHERE_RADIUS } from './constants'
 import GameManager from './logic/game_manager'
-import ModeChooser from './pages/ModeChooser'
+import ModeChooser from './components/ModeChooser'
 
 const App: Component = () => {
+	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
+	const [isChooseModeShow, setIsChooseModeShow] = createSignal(true)
+
+	const modes = [
+		{
+			label: 'SinglePlayer',
+			onClick: () => {
+				// Show GUI
+				let gm = gameManager()
+				gm?.showGUI()
+
+				// Hide Game manager
+				setIsChooseModeShow(false)
+			},
+		},
+		{
+			label: 'MultiPlayer',
+			onClick: () => {},
+		},
+	]
+
 	onMount(() => {
 		// Creating game
-		setTimeout(() => new GameManager(canvas, SPHERE_RADIUS), 0)
+		setTimeout(() => {
+			let gm = new GameManager(canvas, SPHERE_RADIUS)
+			setGameManager(gm)
+		}, 0)
 	})
 
 	let canvas: HTMLCanvasElement
@@ -19,14 +42,9 @@ const App: Component = () => {
 			{/* Game Canvas */}
 			<canvas ref={canvas} class={styles.canvas}></canvas>
 
-			<div class={styles.UI}>
-				<h1>LMAO</h1>
-				<Routes>
-					<Route path="/" component={ModeChooser} />
-					<Route path="/game/singleplayer" element={<div>Lmao</div>} />
-					<Route path="/game/multiplayer" element={<div>Lmao</div>} />
-				</Routes>
-			</div>
+			<Show when={isChooseModeShow()}>
+				<ModeChooser modes={modes} />
+			</Show>
 		</div>
 	)
 }
