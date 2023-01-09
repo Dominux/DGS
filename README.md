@@ -1,6 +1,6 @@
 # Dominux Go Server
 
-##### [The Go game's](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with some brand new features.
+##### [The game of Go](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with some brand new features.
 
 </br>
 
