@@ -1,12 +1,15 @@
-:root {
-	--font-size: 2.3em;
-}
-
 .App {
 	text-align: center;
 }
 
 .canvas {
-	width: 100%;
+	width: 100vw;
 	height: 100vh;
+	position: fixed;
+	left: 0;
+}
+
+.UI {
+	position: fixed;
+	margin: 4rem;
 }
