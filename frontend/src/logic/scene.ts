@@ -4,7 +4,7 @@ import { ENV_TEXTURE } from '../constants'
 
 export default class Scene {
 	readonly _scene: BABYLON.Scene
-	readonly _camera: BABYLON.Camera
+	readonly _camera: BABYLON.ArcRotateCamera
 	readonly _ground: BABYLON.GroundMesh
 	protected _XRHelper: BABYLON.WebXRDefaultExperience | undefined
 

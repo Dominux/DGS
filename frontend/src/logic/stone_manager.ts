@@ -37,8 +37,6 @@ export default class StoneManager {
 		})
 
 		// Setting right position
-		console.log(this.multiplier)
-
 		stoneSchema.position.y -= FIELD_Y
 		stone.position = stoneSchema.position.scale(this.multiplier)
 		stone.position.y += FIELD_Y

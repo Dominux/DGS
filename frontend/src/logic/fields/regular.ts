@@ -98,7 +98,9 @@ export default class RegularField implements Field {
 		this.stoneManager = new StoneManager(scene, gridSize, 1)
 
 		this.stoneY =
-			this._field.position.y + (this.fieldSize * this.fieldHeight) / 2
+			this._field.position.y +
+			(this.fieldSize * this.fieldHeight) / 2 +
+			this.stoneManager.height / 2
 
 		// Getting points
 		const subtrehand = 0.5
