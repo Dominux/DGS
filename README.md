@@ -5,10 +5,10 @@
 </br>
 
 <p align="center">
-  <a href="https://github.com/Dominnux/DGS/pulse">
+  <a href="https://github.com/Dominux/DGS/pulse">
     <img src="https://img.shields.io/github/last-commit/Dominux/spherical-go?style=for-the-badge&logo=github&color=7dc4e4&logoColor=D9E0EE&labelColor=302D41"/>
   </a>
-  <a href="https://github.com/Dominnux/DGS/stargazers">
+  <a href="https://github.com/Dominux/DGS/stargazers">
     <img src="https://img.shields.io/github/stars/Dominux/spherical-go?style=for-the-badge&logo=apachespark&color=eebebe&logoColor=D9E0EE&labelColor=302D41"/>
   </a>
 </p>
