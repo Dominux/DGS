@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  server:
+    container_name: 'dgs-server'
+    build:
+      dockerfile: dev.Dockerfile
+      context: .
+    command: cargo run
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+
+
+  db:
+    container_name: 'dgs-db'
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: 'dgs'
+      POSTGRES_USER: 'dgs'
+      POSTGRES_PASSWORD: 'lmao'
+    ports:
+      - '5432:5432'

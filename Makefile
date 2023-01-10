@@ -24,7 +24,9 @@ test_server:
 	docker compose -f docker-compose.test.yml run server
 
 run_server:
-	cd ./server/app && cargo run || true && cd -
+	cp .dev.env .env &&\
+	docker compose -f docker-compose.dev.yml down &&\
+	docker compose -f docker-compose.dev.yml up --build --force-recreate
 
 deploy:
 	git branch -D gh-pages || true &&\

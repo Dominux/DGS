@@ -5,6 +5,6 @@ target/
 frontend/node_modules/
 frontend/public/build/
 
-server/.env
+.env
 
 .DS_Store

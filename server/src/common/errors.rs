@@ -7,8 +7,8 @@ use thiserror::Error;
 pub enum DGSError {
     #[error("environment variable `{0}` is not set")]
     EnvConfigLoadingError(String),
-    #[error("environment variable `{0}` cannot be parsed as type `{1}`")]
-    EnvVarParsingError(String, String),
+    #[error("environment variable `{0}` cannot be parsed")]
+    EnvVarParsingError(String),
     #[error("cannot establish connection with db")]
     DBConnectionError,
     #[error("not found: `{0}`")]
