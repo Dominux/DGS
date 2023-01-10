@@ -1,50 +1,15 @@
-import { Component, onMount, createSignal, Show } from 'solid-js'
+import { Component } from 'solid-js'
+import { useRoutes } from '@solidjs/router'
 
 import styles from './App.module.css'
-import { SPHERE_RADIUS } from './constants'
-import GameManager from './logic/game_manager'
-import ModeChooser from './components/ModeChooser'
+import routes from './router'
 
 const App: Component = () => {
-	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
-	const [isChooseModeShow, setIsChooseModeShow] = createSignal(true)
-
-	const modes = [
-		{
-			label: 'SinglePlayer',
-			onClick: () => {
-				// Show GUI
-				let gm = gameManager()
-				gm?.showGUI()
-
-				// Hide Game manager
-				setIsChooseModeShow(false)
-			},
-		},
-		{
-			label: 'MultiPlayer',
-			onClick: () => {},
-		},
-	]
-
-	onMount(() => {
-		// Creating game
-		setTimeout(() => {
-			let gm = new GameManager(canvas, SPHERE_RADIUS)
-			setGameManager(gm)
-		}, 0)
-	})
-
-	let canvas: HTMLCanvasElement
+	const Routes = useRoutes(routes)
 
 	return (
 		<div class={styles.App}>
-			{/* Game Canvas */}
-			<canvas ref={canvas} class={styles.canvas}></canvas>
-
-			<Show when={isChooseModeShow()}>
-				<ModeChooser modes={modes} />
-			</Show>
+			<Routes />
 		</div>
 	)
 }
