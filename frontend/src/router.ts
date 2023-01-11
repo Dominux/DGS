@@ -1,6 +1,8 @@
+import NotFound from './pages/404'
 import GamePage from './pages/Game'
 import LoginPage from './pages/Login'
-import RoomsPage from './pages/Rooms'
+import RoomsPage from './pages/rooms'
+import RoomPage from './pages/rooms/[id]'
 
 const routes = [
 	{
@@ -18,7 +20,15 @@ const routes = [
 				path: '/',
 				component: RoomsPage,
 			},
+			{
+				path: '/:id',
+				component: RoomPage,
+			},
 		],
+	},
+	{
+		path: '/404',
+		component: NotFound,
 	},
 ]
 

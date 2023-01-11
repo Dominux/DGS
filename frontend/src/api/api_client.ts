@@ -1,4 +1,6 @@
 import axios from 'axios'
+
+import createLocalStore from '../../libs'
 import { API } from '../constants'
 
 /**
@@ -11,9 +13,20 @@ export class ApiClient {
 		return new URL(path, this.apiURI).toString()
 	}
 
+	get headers() {
+		const [store, _] = createLocalStore()
+
+		if (store.user) {
+			return { AUTHORIZATION: `${store.user.id}:${store.user.secure_id}` }
+		}
+	}
+
 	async get(path: string, params?: Object) {
 		return await axios
-			.get(this.buildAbsolutePath(path), { params: params })
+			.get(this.buildAbsolutePath(path), {
+				params: params,
+				headers: this.headers,
+			})
 			.catch((error) => {
 				throw Error(error.response.data)
 			})
@@ -21,7 +34,10 @@ export class ApiClient {
 
 	async post(path: string, data?: Object, params?: Object) {
 		return await axios
-			.post(this.buildAbsolutePath(path), data, { params: params })
+			.post(this.buildAbsolutePath(path), data, {
+				params: params,
+				headers: this.headers,
+			})
 			.catch((error) => {
 				throw Error(error.response.data)
 			})

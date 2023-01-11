@@ -6,14 +6,13 @@ services:
     build:
       dockerfile: dev.Dockerfile
       context: .
-    command: cargo run
+    command: ./target/debug/server
     depends_on:
       - db
     env_file:
       - .env
     ports:
-      - "${PORT}:${PORT}"
-
+      - '${PORT}:${PORT}'
 
   db:
     container_name: 'dgs-db'

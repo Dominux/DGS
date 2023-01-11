@@ -18,3 +18,4 @@ COPY ./server .
 
 COPY ../gamelib /gamelib
 
+RUN cargo build
