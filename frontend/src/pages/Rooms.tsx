@@ -1,8 +1,11 @@
-import { Component } from 'solid-js'
+import { Component, onMount } from 'solid-js'
+import { checkAuth } from '../auth'
 
-import styles from '../App.module.css'
+const RoomsPage: Component = () => {
+	onMount(() => {
+		checkAuth()
+	})
 
-const RoomsPage: Component = (props) => {
 	return <h1>Rooms</h1>
 }
 

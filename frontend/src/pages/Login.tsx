@@ -7,7 +7,7 @@ import LockOutlinedIcon from '@suid/icons-material/LockOutlined'
 import Typography from '@suid/material/Typography'
 import Container from '@suid/material/Container'
 import { createTheme, ThemeProvider } from '@suid/material/styles'
-import { createSignal } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 import createLocalStore from '../../libs'
 
 import api from '../api'
@@ -19,6 +19,13 @@ export default function Login() {
 	const [usernameError, setUsernameError] = createSignal('')
 	const [store, setStore] = createLocalStore()
 	const navigate = useNavigate()
+
+	onMount(() => {
+		// If user is registered => moving him to rooms
+		if (store.user) {
+			navigate('/rooms')
+		}
+	})
 
 	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault()
