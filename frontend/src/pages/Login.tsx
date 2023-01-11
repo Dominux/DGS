@@ -8,20 +8,30 @@ import Typography from '@suid/material/Typography'
 import Container from '@suid/material/Container'
 import { createTheme, ThemeProvider } from '@suid/material/styles'
 import { createSignal } from 'solid-js'
+import createLocalStore from '../../libs'
+
+import api from '../api'
+import { useNavigate } from '@solidjs/router'
 
 const theme = createTheme()
 
-export default function Login(props: LoginProps) {
+export default function Login() {
 	const [usernameError, setUsernameError] = createSignal('')
+	const [store, setStore] = createLocalStore()
+	const navigate = useNavigate()
 
-	const handleSubmit = (event: SubmitEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault()
 		const data = new FormData(event.currentTarget)
 
-		props.onSumbit({
-			username: data.get('username'),
-			// password: data.get('password'),
-		})
+		// Creating user
+		const user = await api.register(data.get('username'))
+
+		// Setting it to store
+		setStore('user', user)
+
+		// Redirecting to rooms page
+		navigate('/rooms')
 	}
 
 	const validateUsername = (e: InputEvent) => {

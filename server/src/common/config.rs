@@ -6,14 +6,23 @@ use super::errors::{DGSError, DGSResult};
 pub struct Config {
     pub db_uri: String,
     pub port: u16,
+    pub allowed_origins: Vec<String>,
 }
 
 impl Config {
     pub fn new() -> DGSResult<Self> {
         let db_uri = Self::get_env_var("DATABASE_URL")?;
         let port = Self::get_env_var("PORT")?;
+        let allowed_origins = Self::get_env_var::<String>("ALLOWED_ORIGINS")?
+            .split(" ")
+            .map(|origin| origin.to_string())
+            .collect();
 
-        Ok(Self { db_uri, port })
+        Ok(Self {
+            db_uri,
+            port,
+            allowed_origins,
+        })
     }
 
     #[inline]

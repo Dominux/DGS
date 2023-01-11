@@ -1985,6 +1985,7 @@ dependencies = [
  "spherical_go_game_lib",
  "thiserror",
  "tokio",
+ "tower-http",
  "uuid",
 ]
 
