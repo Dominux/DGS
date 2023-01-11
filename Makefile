@@ -18,15 +18,15 @@ front_build:
 	cd ./frontend && pnpm run build || true && cd -
 
 test_server:
-	cp .test.env .env &&\
-	docker compose -f docker-compose.test.yml down &&\
-	docker compose -f docker-compose.test.yml build &&\
-	docker compose -f docker-compose.test.yml run server
+	cp ./deploy/test/* .
+	docker compose down &&\
+	docker compose build &&\
+	docker compose run server
 
 run_server:
-	cp .dev.env .env &&\
-	docker compose -f docker-compose.dev.yml down &&\
-	docker compose -f docker-compose.dev.yml up --build --force-recreate
+	cp ./deploy/dev/* .
+	docker compose down --remove-orphans &&\
+	docker compose up --build --force-recreate
 
 deploy:
 	git branch -D gh-pages || true &&\

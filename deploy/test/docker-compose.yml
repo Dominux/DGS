@@ -3,9 +3,7 @@ version: '3.9'
 services:
   server:
     container_name: 'server-app'
-    build:
-      dockerfile: test.Dockerfile
-      context: .
+    build: .
     command: cargo test -- --test-threads=1
     depends_on:
       - db

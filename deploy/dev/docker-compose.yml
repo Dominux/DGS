@@ -3,10 +3,7 @@ version: '3.9'
 services:
   server:
     container_name: 'dgs-server'
-    build:
-      dockerfile: dev.Dockerfile
-      context: .
-    command: ./target/debug/server
+    build: .
     depends_on:
       - db
     env_file:

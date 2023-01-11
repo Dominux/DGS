@@ -5,6 +5,9 @@ target/
 frontend/node_modules/
 frontend/public/build/
 
-.env
+/.env
 
 .DS_Store
+
+/Dockerfile
+/docker-compose.yml

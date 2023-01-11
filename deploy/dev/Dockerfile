@@ -1,6 +1,7 @@
-FROM rustlang/rust:nightly
+# Building
+FROM rustlang/rust:nightly AS builder
 
-WORKDIR /server
+WORKDIR /app
 
 # Creating dummy main.rs file
 RUN mkdir ./src
@@ -19,3 +20,8 @@ COPY ./server .
 COPY ../gamelib /gamelib
 
 RUN cargo build
+
+# Running
+FROM debian:11-slim AS runtime
+COPY --from=builder /app/target/debug/server /dgs_server
+ENTRYPOINT [ "./dgs_server" ]
