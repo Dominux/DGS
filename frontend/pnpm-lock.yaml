@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@solid-primitives/websocket': ^0.3.3
   '@solidjs/router': ^0.6.0
   '@suid/icons-material': ^0.5.5
   '@suid/material': ^0.9.1
@@ -14,6 +15,7 @@ specifiers:
   vite-plugin-solid: ^2.3.0
 
 dependencies:
+  '@solid-primitives/websocket': 0.3.3_solid-js@1.6.8
   '@solidjs/router': 0.6.0_solid-js@1.6.8
   '@suid/icons-material': 0.5.5_solid-js@1.6.8
   '@suid/material': 0.9.1_solid-js@1.6.8
@@ -471,6 +473,14 @@ packages:
 
   /@popperjs/core/2.11.6:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
+    dev: false
+
+  /@solid-primitives/websocket/0.3.3_solid-js@1.6.8:
+    resolution: {integrity: sha512-FlaBN07UDsu1u42xUO/776+s7Tip4EIp3l/SUzVNnJqVL0ryDOMLgvlYXkheVu1+8FntPCek1g6Nd8uS5L6qwQ==}
+    peerDependencies:
+      solid-js: ^1.5.0
+    dependencies:
+      solid-js: 1.6.8
     dev: false
 
   /@solidjs/router/0.6.0_solid-js@1.6.8:
