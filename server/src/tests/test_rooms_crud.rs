@@ -49,7 +49,7 @@ async fn test_invite() {
 
     // Accepting invitation
     {
-        let url = format!("/rooms/{}/invite", room.id);
+        let url = format!("/rooms/{}/enter", room.id);
         let auth_header = format!("{}:{}", user_2.id, user_2.secure_id);
         let res = test_tools
             .client
@@ -67,7 +67,7 @@ async fn test_invite() {
 
     // Trying to do it again and we must get an error
     {
-        let url = format!("/rooms/{}/invite", room.id);
+        let url = format!("/rooms/{}/enter", room.id);
         let auth_header = format!("{}:{}", user_2.id, user_2.secure_id);
         let res = test_tools
             .client

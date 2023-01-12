@@ -4,10 +4,12 @@ import styles from '../App.module.css'
 import { SPHERE_RADIUS } from '../constants'
 import GameManager from '../logic/game_manager'
 import ModeChooser from '../components/ModeChooser'
+import { useNavigate } from '@solidjs/router'
 
 const GamePage: Component = () => {
 	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
 	const [isChooseModeShow, setIsChooseModeShow] = createSignal(true)
+	const navigate = useNavigate()
 
 	const modes = [
 		{
@@ -23,7 +25,9 @@ const GamePage: Component = () => {
 		},
 		{
 			label: 'MultiPlayer',
-			onClick: () => {},
+			onClick: () => {
+				navigate('/rooms')
+			},
 		},
 	]
 

@@ -42,6 +42,17 @@ export class ApiClient {
 				throw Error(error.response.data)
 			})
 	}
+
+	async patch(path: string, data?: Object, params?: Object) {
+		return await axios
+			.patch(this.buildAbsolutePath(path), data, {
+				params: params,
+				headers: this.headers,
+			})
+			.catch((error) => {
+				throw Error(error.response.data)
+			})
+	}
 }
 
 const apiClient = new ApiClient(API)

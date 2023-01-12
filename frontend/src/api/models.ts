@@ -1,6 +1,9 @@
-export type User = {
+export type FetchedUser = {
 	id: string
 	username: string
+}
+
+export interface User extends FetchedUser {
 	secureId: string
 }
 

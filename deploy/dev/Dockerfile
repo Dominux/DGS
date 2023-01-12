@@ -15,9 +15,8 @@ RUN sed -i "s/^\(\(entity = {\)\|\(migration = {\)\|\(spherical_go_game_lib = {\
 RUN cargo build
 
 # Copying all the logic
-COPY ./server .
-
 COPY ../gamelib /gamelib
+COPY ./server .
 
 RUN cargo build
 

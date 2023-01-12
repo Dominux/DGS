@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   server:
-    container_name: 'dgs-server'
+    container_name: 'dgs-server-test'
     build: .
     depends_on:
       - db
@@ -12,7 +12,7 @@ services:
       - '${PORT}:${PORT}'
 
   db:
-    container_name: 'dgs-db'
+    container_name: 'dgs-db-test'
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: 'dgs'

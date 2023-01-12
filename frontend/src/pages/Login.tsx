@@ -83,6 +83,7 @@ export default function Login() {
 							helperText={usernameError()}
 							error={usernameError().length !== 0}
 							onInput={validateUsername}
+							inputProps={{ maxLength: 15 }}
 						/>
 						{/* <TextField
 							margin="normal"

@@ -18,7 +18,7 @@ impl RoomsRouter {
         Router::new()
             .route("/", post(Self::create_room))
             .route("/:room_id", get(Self::get_room))
-            .route("/:room_id/invite", patch(Self::accept_invitation))
+            .route("/:room_id/enter", patch(Self::accept_invitation))
             .with_state(state)
     }
 

@@ -35,7 +35,7 @@ async fn test_rooms_crud() {
 
     // Adding a second player
     {
-        let url = format!("/rooms/{}/invite", room.id);
+        let url = format!("/rooms/{}/enter", room.id);
         let auth_header = format!("{}:{}", user_2.id, user_2.secure_id);
         let res = test_tools
             .client
