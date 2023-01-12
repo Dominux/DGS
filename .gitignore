@@ -11,3 +11,4 @@ frontend/public/build/
 
 /Dockerfile
 /docker-compose.yml
+/volumes/

@@ -25,6 +25,7 @@ test_server:
 
 run_server:
 	cp ./deploy/dev/* .
+	mkdir -p ./volumes/postgres_data &&\
 	docker compose down --remove-orphans &&\
 	docker compose up --build --force-recreate
 

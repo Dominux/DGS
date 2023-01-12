@@ -20,3 +20,5 @@ services:
       POSTGRES_PASSWORD: 'lmao'
     ports:
       - '5432:5432'
+    volumes:
+      - ./volumes/postgres_data:/var/lib/postgresql/data/
