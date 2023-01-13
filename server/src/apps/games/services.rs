@@ -1,7 +1,8 @@
 use sea_orm::DbConn;
 use spherical_go_game_lib::Game as Gamelib;
+use tokio::sync::broadcast;
 
-use super::schemas::{CreateGameSchema, MoveSchema};
+use super::schemas::{CreateGameSchema, MoveSchema, RoomState};
 use crate::{
     apps::{
         games::{repositories::GamesRepository, schemas::GameWithWSLink},
@@ -10,6 +11,7 @@ use crate::{
             schemas::{CreateHistoryRecordSchema, CreateHistorySchema, MoveResult},
         },
         rooms::repositories::RoomsRepository,
+        users::repositories::UsersRepository,
     },
     common::{
         errors::{DGSError, DGSResult},
@@ -22,6 +24,7 @@ pub struct GameService<'a> {
     repo: GamesRepository<'a>,
     rooms_repo: RoomsRepository<'a>,
     histories_repo: HistoriesRepository<'a>,
+    users_repo: UsersRepository<'a>,
 }
 
 impl<'a> GameService<'a> {
@@ -29,10 +32,12 @@ impl<'a> GameService<'a> {
         let repo = GamesRepository::new(db);
         let rooms_repo = RoomsRepository::new(db);
         let histories_repo = HistoriesRepository::new(db);
+        let users_repo = UsersRepository::new(db);
         Self {
             repo,
             rooms_repo,
             histories_repo,
+            users_repo,
         }
     }
 
@@ -80,7 +85,7 @@ impl<'a> GameService<'a> {
 
     pub async fn make_move(
         &self,
-        move_schema: MoveSchema,
+        move_schema: &MoveSchema,
         user: AuthenticatedUser,
     ) -> DGSResult<MoveResult> {
         // Getting room
@@ -138,5 +143,32 @@ impl<'a> GameService<'a> {
 
     pub async fn undo_move(&self, user: AuthenticatedUser) -> DGSResult<()> {
         unimplemented!("undo move is currently unemplemented")
+    }
+
+    pub async fn get_room_state(
+        &self,
+        game_id: uuid::Uuid,
+        user: &AuthenticatedUser,
+    ) -> DGSResult<RoomState> {
+        // Fetching from db
+        let game = self.repo.get(game_id).await?;
+        let room = self.rooms_repo.get_by_game_id(game.id).await?;
+        let black_user = self.users_repo.get(room.player1_id).await?;
+        let white_user = self
+            .users_repo
+            .get(room.player2_id.ok_or(DGSError::Unknown)?)
+            .await?;
+
+        // Creating a channel
+        let (tx, _rx) = broadcast::channel(2);
+
+        let room_state = RoomState {
+            room_id: room.id,
+            black_player: black_user,
+            white_player: white_user,
+            tx,
+        };
+
+        Ok(room_state)
     }
 }

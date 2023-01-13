@@ -1987,6 +1987,7 @@ dependencies = [
  "axum",
  "axum-test-helper",
  "entity",
+ "futures",
  "migration",
  "sea-orm",
  "serde",

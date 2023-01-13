@@ -3,6 +3,7 @@ use axum::{async_trait, extract::FromRequestParts};
 
 use crate::common::errors::{DGSError, DGSResult};
 
+#[derive(Debug, Clone)]
 pub struct AuthenticatedUser {
     pub user_id: uuid::Uuid,
     pub secure_id: uuid::Uuid,

@@ -1,9 +1,10 @@
 use axum::http::StatusCode;
 use sea_orm::error::DbErr;
+use serde::Serialize;
 use spherical_go_game_lib::errors::GameError;
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, Serialize)]
 pub enum DGSError {
     #[error("environment variable `{0}` is not set")]
     EnvConfigLoadingError(String),

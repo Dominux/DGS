@@ -1,41 +1,155 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use axum::{
     extract::{
-        ws::{WebSocket, WebSocketUpgrade},
-        State,
+        ws::{Message, WebSocket, WebSocketUpgrade},
+        Path, State,
     },
     http::StatusCode,
-    response::{IntoResponse, Response},
+    response::IntoResponse,
     routing::{get, post},
     Json, Router,
 };
+use futures::{stream::StreamExt, SinkExt};
+use tokio::sync::Mutex;
 
-use super::{schemas::CreateGameSchema, services::GameService};
-use crate::common::routing::{app_state::AppState, auth::AuthenticatedUser};
+use super::{
+    schemas::{CreateGameSchema, RoomState},
+    services::GameService,
+};
+use crate::{
+    apps::games::schemas::{MoveSchema, MoveWithResult, WSError},
+    common::routing::{app_state::AppState, auth::AuthenticatedUser},
+};
 
+struct GameState {
+    app_state: Arc<AppState>,
+    rooms: Mutex<HashMap<uuid::Uuid, RoomState>>,
+}
 pub struct GamesRouter;
 
 impl GamesRouter {
     pub fn get_router(state: Arc<AppState>) -> Router {
+        let game_state = Arc::new(GameState {
+            app_state: state,
+            rooms: Mutex::new(HashMap::new()),
+        });
+
         Router::new()
             .route("/", post(Self::start_game))
-            .route("/ws", get(Self::ws_handler))
-            .with_state(state)
+            .route("/ws/:room_id", get(Self::ws_handler))
+            .with_state(game_state)
     }
 
     async fn start_game(
-        State(state): State<Arc<AppState>>,
+        State(state): State<Arc<GameState>>,
         user: AuthenticatedUser,
         Json(schema): Json<CreateGameSchema>,
     ) -> impl IntoResponse {
-        let game_with_link = GameService::new(&state.db).start_game(schema, user).await?;
+        let game_with_link = GameService::new(&state.app_state.db)
+            .start_game(schema, user)
+            .await?;
         Ok::<_, (StatusCode, String)>((StatusCode::CREATED, Json(game_with_link)))
     }
 
-    async fn ws_handler(ws: WebSocketUpgrade, State(state): State<Arc<AppState>>) -> Response {
-        ws.on_upgrade(|socket| Self::websocket(socket, state))
+    async fn ws_handler(
+        ws: WebSocketUpgrade,
+        State(state): State<Arc<GameState>>,
+        Path(room_id): Path<uuid::Uuid>,
+        user: AuthenticatedUser,
+    ) -> impl IntoResponse {
+        ws.on_upgrade(move |socket| Self::websocket(socket, state, room_id, user))
     }
 
-    async fn websocket(stream: WebSocket, state: Arc<AppState>) {}
+    async fn websocket(
+        stream: WebSocket,
+        state: Arc<GameState>,
+        room_id: uuid::Uuid,
+        user: AuthenticatedUser,
+    ) {
+        // By splitting, we can send and receive at the same time.
+        let (mut sender, mut receiver) = stream.split();
+
+        // Checking if game is already loaded
+        let room = {
+            let mut rooms = state.rooms.lock().await;
+
+            match rooms.get(&room_id) {
+                Some(room) => room.clone(),
+                None => {
+                    // Trying to load a game
+                    let room_result = GameService::new(&state.app_state.db)
+                        .get_room_state(room_id, &user)
+                        .await;
+                    let room = match room_result {
+                        Ok(room) => room,
+                        Err(e) => {
+                            let e = WSError::new(e.to_string());
+                            let _ = sender
+                                .send(Message::Text(serde_json::to_string(&e).unwrap()))
+                                .await;
+                            return;
+                        }
+                    };
+
+                    // Inserting game into games
+                    rooms.insert(room_id, room.clone());
+                    room
+                }
+            }
+        };
+
+        // Subsribing
+        let mut rx = room.tx.subscribe();
+
+        // This task will receive broadcast messages and send text message to our client.
+        let mut send_task = tokio::spawn(async move {
+            while let Ok(msg) = rx.recv().await {
+                // In any websocket error, break loop.
+                if sender.send(Message::Text(msg.to_string())).await.is_err() {
+                    break;
+                }
+            }
+        });
+
+        // We need to access the `tx` variable directly again, so we can't shadow it here.
+        let mut recv_task = {
+            // Clone things we want to pass to the receiving task.
+            let tx = room.tx.clone();
+
+            // This task will receive messages from client and send them to broadcast subscribers.
+            tokio::spawn(async move {
+                while let Some(Ok(Message::Text(move_schema))) = receiver.next().await {
+                    let move_schema = match serde_json::from_str::<MoveSchema>(&move_schema) {
+                        Ok(ms) => ms.clone(),
+                        Err(e) => {
+                            let e = WSError::new(e.to_string());
+                            let _ = tx.send(serde_json::to_string(&e).unwrap());
+                            continue;
+                        }
+                    };
+
+                    let result = GameService::new(&state.app_state.db)
+                        .make_move(&move_schema, user.clone())
+                        .await;
+                    let msg = match result {
+                        Ok(move_result) => serde_json::to_string(&MoveWithResult::new(
+                            move_schema.point_id,
+                            move_result.died_stones_ids,
+                        ))
+                        .unwrap(),
+                        Err(e) => serde_json::to_string(&WSError::new(e.to_string())).unwrap(),
+                    };
+
+                    let _ = tx.send(msg);
+                }
+            })
+        };
+
+        // If any one of the tasks exit, abort the other.
+        tokio::select! {
+            _ = (&mut send_task) => recv_task.abort(),
+            _ = (&mut recv_task) => send_task.abort(),
+        };
+    }
 }
