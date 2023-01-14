@@ -35,3 +35,8 @@ export type MoveSchema = {
 	game_id: string
 	point_id: number
 }
+
+export type MoveResult = {
+	point_id: number
+	died_stones_ids: Array<number>
+}

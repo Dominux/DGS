@@ -101,8 +101,7 @@ export default function RoomPage() {
 					<Show
 						when={
 							store?.room?.player1_id !== null &&
-							store?.room?.player2_id !== null &&
-							isUserPlayer1()
+							store?.room?.player2_id !== null
 						}
 					>
 						<Button

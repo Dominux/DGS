@@ -155,25 +155,27 @@ export default class RegularField implements Field {
 	}
 
 	protected allowPuttingStones() {
-		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
-			switch (pointerInfo.type) {
-				case BABYLON.PointerEventTypes.POINTERDOWN:
-					this.canPutStone = true
-					setTimeout(() => (this.canPutStone = false), 300)
-					break
-				case BABYLON.PointerEventTypes.POINTERUP:
-					if (
-						this.canPutStone &&
-						pointerInfo.pickInfo?.hit &&
-						pointerInfo.pickInfo?.pickedMesh === this._field
-					) {
-						this.putStone(pointerInfo.pickInfo.pickedPoint)
-					}
+		this.scene.onPointerObservable.add(
+			async (pointerInfo: BABYLON.PointerInfo) => {
+				switch (pointerInfo.type) {
+					case BABYLON.PointerEventTypes.POINTERDOWN:
+						this.canPutStone = true
+						setTimeout(() => (this.canPutStone = false), 300)
+						break
+					case BABYLON.PointerEventTypes.POINTERUP:
+						if (
+							this.canPutStone &&
+							pointerInfo.pickInfo?.hit &&
+							pointerInfo.pickInfo?.pickedMesh === this._field
+						) {
+							await this.putStone(pointerInfo.pickInfo.pickedPoint)
+						}
+				}
 			}
-		})
+		)
 	}
 
-	private putStone(point: BABYLON.Vector3) {
+	private async putStone(point: BABYLON.Vector3) {
 		const color =
 			this.game?.playerTurn === 'Black'
 				? BABYLON.Color3.Black()
@@ -187,7 +189,7 @@ export default class RegularField implements Field {
 
 		let deadlist = []
 		try {
-			deadlist = this.game?.makeMove(clickedPointID)
+			deadlist = await this.game?.makeMove(clickedPointID)
 		} catch (error) {
 			this.onError(error.message)
 			throw error

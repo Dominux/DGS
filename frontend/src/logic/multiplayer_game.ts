@@ -3,7 +3,8 @@ import api from '../api/index'
 import WSClient from '../api/ws_client'
 import FieldType from './fields/enum'
 import Game from './game'
-import { MoveSchema } from '../api/models'
+import { MoveResult, MoveSchema } from '../api/models'
+import { MOVE_RESULT_CHECK_INTERVAL_MS } from '../constants'
 
 export default class MultiplayerGame implements Game {
 	private wsClient: WSClient | null = null
@@ -35,14 +36,33 @@ export default class MultiplayerGame implements Game {
 		)
 	}
 
-	makeMove(pointID: number): number[] {
+	async makeMove(pointID: number): number[] {
 		const [store, _setStore] = createLocalStore()
 
+		// Sending message
 		const move_schema: MoveSchema = {
 			game_id: store.room.game_id,
 			point_id: pointID,
 		}
 		this.wsClient?.sendMsg(JSON.stringify(move_schema))
+
+		// Waiting for response from server
+		let msg = undefined
+		while (msg === undefined) {
+			await new Promise((resolve) =>
+				setTimeout(resolve, MOVE_RESULT_CHECK_INTERVAL_MS)
+			)
+
+			msg = this.wsClient?.messages.pop()
+		}
+
+		let move_result = JSON.parse(msg)
+
+		if (move_result.error !== undefined) {
+			throw new Error(move_result.error)
+		}
+
+		return move_result.died_stones_ids
 	}
 
 	undoMove(): void {

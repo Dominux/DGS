@@ -151,8 +151,6 @@ impl GamesRouter {
             // Clone things we want to pass to the receiving task.
             let tx = room.tx.clone();
 
-            println!("{:?}", state.rooms.lock().await);
-
             // This task will receive messages from client and send them to broadcast subscribers.
             tokio::spawn(async move {
                 while let Some(Ok(Message::Text(move_schema))) = receiver.next().await {

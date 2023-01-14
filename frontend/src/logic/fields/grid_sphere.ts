@@ -194,26 +194,28 @@ export default class GridSphere implements Field {
 	}
 
 	protected allowPuttingStones() {
-		this.scene.onPointerObservable.add((pointerInfo: BABYLON.PointerInfo) => {
-			switch (pointerInfo.type) {
-				case BABYLON.PointerEventTypes.POINTERDOWN:
-					this.canPutStone = true
-					setTimeout(() => (this.canPutStone = false), 300)
-					break
-				case BABYLON.PointerEventTypes.POINTERUP:
-					if (
-						this.canPutStone &&
-						pointerInfo.pickInfo?.hit &&
-						pointerInfo.pickInfo?.pickedMesh === this._sphere &&
-						this.activePointID !== null
-					) {
-						this.putStone()
-					}
+		this.scene.onPointerObservable.add(
+			async (pointerInfo: BABYLON.PointerInfo) => {
+				switch (pointerInfo.type) {
+					case BABYLON.PointerEventTypes.POINTERDOWN:
+						this.canPutStone = true
+						setTimeout(() => (this.canPutStone = false), 300)
+						break
+					case BABYLON.PointerEventTypes.POINTERUP:
+						if (
+							this.canPutStone &&
+							pointerInfo.pickInfo?.hit &&
+							pointerInfo.pickInfo?.pickedMesh === this._sphere &&
+							this.activePointID !== null
+						) {
+							await this.putStone()
+						}
+				}
 			}
-		})
+		)
 	}
 
-	private putStone() {
+	private async putStone() {
 		const color =
 			this.game?.playerTurn === 'Black'
 				? BABYLON.Color3.Black()
@@ -221,7 +223,7 @@ export default class GridSphere implements Field {
 
 		let deadlist = []
 		try {
-			deadlist = this.game?.makeMove(this.activePointID)
+			deadlist = await this.game?.makeMove(this.activePointID)
 		} catch (error) {
 			this.onError(error.message)
 			throw error
