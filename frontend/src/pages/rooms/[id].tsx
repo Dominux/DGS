@@ -39,8 +39,10 @@ export default function RoomPage() {
 		// If the user is the player 1 -> another player is (or will be) the player 2
 		if (isUserPlayer1()) {
 			/// Trying to fetch player 2
-			const player_2 = await api.getUser(store.room.player2_id)
-			setAnotherPlayer(player_2)
+			if (store.room.player2_id !== null) {
+				const player_2 = await api.getUser(store.room.player2_id)
+				setAnotherPlayer(player_2)
+			}
 		} else {
 			// user can be the player 2, so it's up to him to decide whether to be or not
 			const player_1 = await api.getUser(store.room.player1_id)
@@ -96,22 +98,22 @@ export default function RoomPage() {
 						</Show>
 					</Stack>
 
-					<Show
+					{/* <Show
 						when={
 							store.room?.player1_id !== null &&
 							store.room?.player2_id !== null &&
 							isUserPlayer1()
 						}
+					> */}
+					<Button
+						sx={{ marginTop: '5rem' }}
+						variant="contained"
+						onClick={() => navigate('/multiplayer')}
+						size="large"
 					>
-						<Button
-							sx={{ marginTop: '5rem' }}
-							variant="contained"
-							onClick={() => console.log('start')}
-							size="large"
-						>
-							Start game!
-						</Button>
-					</Show>
+						Enter game
+					</Button>
+					{/* </Show> */}
 				</Box>
 			</Container>
 		</ThemeProvider>

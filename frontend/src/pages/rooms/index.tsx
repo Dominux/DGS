@@ -13,7 +13,7 @@ import { checkAuth } from '../../auth'
 const theme = createTheme()
 
 export default function RoomsPage() {
-	const [store, setStore] = createLocalStore()
+	const [_store, setStore] = createLocalStore()
 	const navigate = useNavigate()
 
 	onMount(() => {

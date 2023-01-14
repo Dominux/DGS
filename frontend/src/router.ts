@@ -6,7 +6,7 @@ import RoomPage from './pages/rooms/[id]'
 
 const routes = [
 	{
-		path: '/',
+		path: ['/', '/singleplayer', '/multiplayer'],
 		component: GamePage,
 	},
 	{

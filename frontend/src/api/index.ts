@@ -1,5 +1,6 @@
+import FieldType from '../logic/fields/enum'
 import apiClient from './api_client'
-import { FetchedUser, Room, User } from './models'
+import { FetchedUser, GameWithLink, Room, User } from './models'
 
 async function register(username: string): Promise<User> {
 	const res = await apiClient.post('/users', { username: username })
@@ -26,12 +27,22 @@ async function enterRoom(id: string): Promise<Room> {
 	return res.data
 }
 
+async function startGame(
+	room_id: string,
+	field_type: FieldType,
+	size: number
+): Promise<GameWithLink> {
+	const res = await apiClient.post(`/games`, { room_id, field_type, size })
+	return res.data
+}
+
 const api = {
 	register,
 	getUser,
 	createRoom,
 	getRoom,
 	enterRoom,
+	startGame,
 }
 
 export default api

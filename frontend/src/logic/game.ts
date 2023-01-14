@@ -1,48 +1,19 @@
-import init, { Game as GameLib } from '../pkg/wasm_gamelib'
-import FieldType from './fields/enum'
+export default interface Game {
+	start(): void
 
-await init()
+	makeMove(pointID: number): Array<number>
 
-export default class Game {
-	protected inner: GameLib
+	undoMove(): void
 
-	constructor(size: number, fieldType: FieldType) {
-		this.inner = new GameLib(fieldType, size, true)
-	}
+	get playerTurn(): any
 
-	start() {
-		this.inner.start()
-	}
+	get whiteScore(): any
 
-	makeMove(pointID: number): Array<number> {
-		return [...this.inner.make_move(pointID)]
-	}
+	get blackScore(): any
 
-	undoMove() {
-		return this.inner.undo_move()
-	}
+	get moveNumber(): any
 
-	get playerTurn() {
-		return this.inner.player_turn()
-	}
+	get blackStones(): any
 
-	get whiteScore() {
-		return this.inner.get_white_score()
-	}
-
-	get blackScore() {
-		return this.inner.get_black_score()
-	}
-
-	get moveNumber() {
-		return this.inner.get_move_number()
-	}
-
-	get blackStones() {
-		return [...this.inner.get_black_stones()]
-	}
-
-	get whiteStones() {
-		return [...this.inner.get_white_stones()]
-	}
+	get whiteStones(): any
 }

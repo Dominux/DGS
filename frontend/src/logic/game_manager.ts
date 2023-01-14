@@ -14,7 +14,11 @@ export default class GameManager {
 	protected field?: Field
 	protected isStarted: boolean = false
 
-	constructor(canvas: HTMLCanvasElement, sphereRadius: number) {
+	constructor(
+		canvas: HTMLCanvasElement,
+		sphereRadius: number,
+		readonly gameKlass: { new (): Game }
+	) {
 		this._scene = new Scene(canvas, sphereRadius)
 
 		const onChangeFieldType = (newVal: FieldType) => {
@@ -63,7 +67,7 @@ export default class GameManager {
 		this.isStarted = true
 
 		// Starting game
-		const game = new Game(this.gridSize, this.fieldType)
+		const game = new this.gameKlass(this.gridSize, this.fieldType)
 		this.field?.start(
 			game,
 			() => this.onEndMove(),
