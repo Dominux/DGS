@@ -3,27 +3,28 @@ import api from '../api/index'
 import WSClient from '../api/ws_client'
 import FieldType from './fields/enum'
 import Game from './game'
+import { MoveSchema } from '../api/models'
 
 export default class MultiplayerGame implements Game {
 	private wsClient: WSClient | null = null
 
 	constructor(public fieldType: FieldType, public size: number) {}
 
-	start() {
+	async start() {
 		const [store, setStore] = createLocalStore()
 
-		if (store.room.game_id !== null) {
+		if (store.room.game_id === null) {
 			// Starting game
-			api
-				.startGame(store.room?.id, this.fieldType, this.size)
-				.then((game_with_link) => {
-					// Updating room
-					console.log(game_with_link)
+			const game_with_link = await api.startGame(
+				store.room?.id,
+				this.fieldType,
+				this.size
+			)
 
-					const room = store.room
-					room.game_id = game_with_link.game.id
-					setStore('room', room)
-				})
+			// Updating room
+			const room = store.room
+			room.game_id = game_with_link.game.id
+			setStore('room', room)
 		}
 
 		// Opening ws
@@ -35,8 +36,15 @@ export default class MultiplayerGame implements Game {
 	}
 
 	makeMove(pointID: number): number[] {
-		throw new Error('Method not implemented.')
+		const [store, _setStore] = createLocalStore()
+
+		const move_schema: MoveSchema = {
+			game_id: store.room.game_id,
+			point_id: pointID,
+		}
+		this.wsClient?.sendMsg(JSON.stringify(move_schema))
 	}
+
 	undoMove(): void {
 		throw new Error('Method not implemented.')
 	}

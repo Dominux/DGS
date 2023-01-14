@@ -19,7 +19,7 @@ use super::{
 };
 use crate::{
     apps::{
-        games::schemas::{InitMsg, MoveSchema, MoveWithResult, WSError},
+        games::schemas::{InternalMsg, MoveSchema, MoveWithResult, WSError},
         users::services::UserService,
     },
     common::routing::{app_state::AppState, auth::AuthenticatedUser},
@@ -107,7 +107,7 @@ impl GamesRouter {
                 None => {
                     // Trying to load a game
                     let room_result = GameService::new(&state.app_state.db)
-                        .get_room_state(room_id, &user)
+                        .get_room_state(room_id)
                         .await;
                     let room = match room_result {
                         Ok(room) => room,
@@ -133,8 +133,14 @@ impl GamesRouter {
         // This task will receive broadcast messages and send text message to our client.
         let mut send_task = tokio::spawn(async move {
             while let Ok(msg) = rx.recv().await {
+                // We don't send message if it's for another player
+                match msg.receiver_id {
+                    Some(receiver_id) if receiver_id != user.user_id => continue,
+                    _ => (),
+                }
+
                 // In any websocket error, break loop.
-                if sender.send(Message::Text(msg.to_string())).await.is_err() {
+                if sender.send(Message::Text(msg.get_msg())).await.is_err() {
                     break;
                 }
             }
@@ -154,7 +160,8 @@ impl GamesRouter {
                         Ok(ms) => ms.clone(),
                         Err(e) => {
                             let e = WSError::new(e.to_string());
-                            let _ = tx.send(serde_json::to_string(&e).unwrap());
+                            let e = serde_json::to_string(&e).unwrap();
+                            let _ = tx.send(InternalMsg::new(Some(user.user_id), e));
                             continue;
                         }
                     };
@@ -169,10 +176,14 @@ impl GamesRouter {
                             move_result.died_stones_ids,
                         ))
                         .unwrap(),
-                        Err(e) => serde_json::to_string(&WSError::new(e.to_string())).unwrap(),
+                        Err(e) => {
+                            let e = serde_json::to_string(&WSError::new(e.to_string())).unwrap();
+                            let _ = tx.send(InternalMsg::new(Some(user.user_id), e));
+                            continue;
+                        }
                     };
 
-                    let _ = tx.send(msg);
+                    let _ = tx.send(InternalMsg::new(None, msg));
                 }
             })
         };

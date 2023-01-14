@@ -40,12 +40,31 @@ pub struct MoveSchema {
     pub point_id: PointID,
 }
 
+/// Internal message between receiving and sending tasks
+///
+/// It defines whether to send msg to all the room users or to a single one only
+#[derive(Debug, Clone)]
+pub struct InternalMsg {
+    pub receiver_id: Option<uuid::Uuid>,
+    msg: String,
+}
+
+impl InternalMsg {
+    pub fn new(receiver_id: Option<uuid::Uuid>, msg: String) -> Self {
+        Self { receiver_id, msg }
+    }
+
+    pub fn get_msg(&self) -> String {
+        self.msg.clone()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct RoomState {
     pub room_id: uuid::Uuid,
     pub black_player: OutUserSchema,
     pub white_player: OutUserSchema,
-    pub tx: broadcast::Sender<String>,
+    pub tx: broadcast::Sender<InternalMsg>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -72,10 +91,4 @@ impl WSError {
     pub fn new(e: String) -> Self {
         Self { error: e }
     }
-}
-
-#[derive(Debug, Deserialize)]
-pub struct InitMsg {
-    pub room_id: uuid::Uuid,
-    pub token: String,
 }

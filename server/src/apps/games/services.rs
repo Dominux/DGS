@@ -145,11 +145,7 @@ impl<'a> GameService<'a> {
         unimplemented!("undo move is currently unemplemented")
     }
 
-    pub async fn get_room_state(
-        &self,
-        room_id: uuid::Uuid,
-        user: &AuthenticatedUser,
-    ) -> DGSResult<RoomState> {
+    pub async fn get_room_state(&self, room_id: uuid::Uuid) -> DGSResult<RoomState> {
         // Fetching from db
         let room = self.rooms_repo.get(room_id).await?;
         let black_user = self.users_repo.get_out_user(room.player1_id).await?;

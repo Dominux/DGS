@@ -30,3 +30,8 @@ export interface StoredGame extends Game {
 	field_type: FieldType
 	size: number
 }
+
+export type MoveSchema = {
+	game_id: string
+	point_id: number
+}
