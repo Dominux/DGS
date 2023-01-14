@@ -1,6 +1,5 @@
 import { Component, onMount, createSignal, Show } from 'solid-js'
 import { useLocation, useNavigate } from '@solidjs/router'
-import createLocalStore from '../../libs'
 
 import styles from '../App.module.css'
 import { SPHERE_RADIUS } from '../constants'
@@ -12,7 +11,6 @@ import SingleplayerGame from '../logic/singleplayer_game'
 const GamePage: Component = () => {
 	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
 	const navigate = useNavigate()
-	const [store, setStore] = createLocalStore()
 	const location = useLocation()
 
 	const modes = [

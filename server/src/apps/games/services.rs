@@ -147,16 +147,15 @@ impl<'a> GameService<'a> {
 
     pub async fn get_room_state(
         &self,
-        game_id: uuid::Uuid,
+        room_id: uuid::Uuid,
         user: &AuthenticatedUser,
     ) -> DGSResult<RoomState> {
         // Fetching from db
-        let game = self.repo.get(game_id).await?;
-        let room = self.rooms_repo.get_by_game_id(game.id).await?;
-        let black_user = self.users_repo.get(room.player1_id).await?;
+        let room = self.rooms_repo.get(room_id).await?;
+        let black_user = self.users_repo.get_out_user(room.player1_id).await?;
         let white_user = self
             .users_repo
-            .get(room.player2_id.ok_or(DGSError::Unknown)?)
+            .get_out_user(room.player2_id.ok_or(DGSError::Unknown)?)
             .await?;
 
         // Creating a channel

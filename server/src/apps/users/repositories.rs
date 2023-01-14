@@ -33,12 +33,15 @@ impl<'a> UsersRepository<'a> {
         Ok(db_users.into_iter().map(|u| u.into()).collect())
     }
 
-    pub async fn get(&self, user_id: uuid::Uuid) -> DGSResult<OutUserSchema> {
-        Ok(users::Entity::find_by_id(user_id)
+    pub async fn get(&self, user_id: uuid::Uuid) -> DGSResult<users::Model> {
+        users::Entity::find_by_id(user_id)
             .one(self.db)
             .await?
-            .ok_or(DGSError::NotFound(format!("user with id {user_id}")))?
-            .into())
+            .ok_or(DGSError::NotFound(format!("user with id {user_id}")))
+    }
+
+    pub async fn get_out_user(&self, user_id: uuid::Uuid) -> DGSResult<OutUserSchema> {
+        self.get(user_id).await.map(|user| user.into())
     }
 
     pub async fn delete(&self, user_id: uuid::Uuid, secure_id: uuid::Uuid) -> DGSResult<()> {

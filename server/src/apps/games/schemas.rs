@@ -73,3 +73,9 @@ impl WSError {
         Self { error: e }
     }
 }
+
+#[derive(Debug, Deserialize)]
+pub struct InitMsg {
+    pub room_id: uuid::Uuid,
+    pub token: String,
+}

@@ -16,6 +16,8 @@ pub enum DGSError {
     NotFound(String),
     #[error("cannot decode token")]
     TokenDecodingError,
+    #[error("wrong credentials")]
+    AuthenticationError,
     #[error("game is already full of players")]
     CannotAddPlayer,
     #[error("only first player can start game")]

@@ -13,11 +13,11 @@ impl AuthenticatedUser {
     fn decode_request_parts(req: &mut Parts) -> DGSResult<Self> {
         // Get authorization header
         let authorization = Self::get_header(req)?;
+        Self::decode_token(authorization)
+    }
 
-        // Decoding token
-        let (user_id, secure_id) = authorization
-            .split_once(':')
-            .ok_or(DGSError::TokenDecodingError)?;
+    pub fn decode_token(token: &str) -> DGSResult<Self> {
+        let (user_id, secure_id) = token.split_once(':').ok_or(DGSError::TokenDecodingError)?;
         let user_id = uuid::Uuid::parse_str(user_id).map_err(|_| DGSError::TokenDecodingError)?;
         let secure_id =
             uuid::Uuid::parse_str(secure_id).map_err(|_| DGSError::TokenDecodingError)?;

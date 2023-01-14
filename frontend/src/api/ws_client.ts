@@ -7,7 +7,13 @@ export default class WSClient {
 		this.socket = new WebSocket(addr)
 
 		this.socket.onopen = (_) => {
-			this.socket.send(`${user.id}:${user.secureId}`)
+			this.socket.send(`${user.id}:${user.secure_id}`)
+		}
+		this.socket.onerror = (e) => {
+			console.log(e)
+		}
+		this.socket.onclose = (e) => {
+			console.log(e)
 		}
 
 		this.onMessage(onMsg)

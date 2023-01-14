@@ -6,7 +6,7 @@ export type FetchedUser = {
 }
 
 export interface User extends FetchedUser {
-	secureId: string
+	secure_id: string
 }
 
 export type Room = {

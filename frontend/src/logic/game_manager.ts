@@ -67,7 +67,7 @@ export default class GameManager {
 		this.isStarted = true
 
 		// Starting game
-		const game = new this.gameKlass(this.gridSize, this.fieldType)
+		const game = new this.gameKlass(this.fieldType, this.gridSize)
 		this.field?.start(
 			game,
 			() => this.onEndMove(),

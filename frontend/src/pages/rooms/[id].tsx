@@ -98,22 +98,22 @@ export default function RoomPage() {
 						</Show>
 					</Stack>
 
-					{/* <Show
+					<Show
 						when={
-							store.room?.player1_id !== null &&
-							store.room?.player2_id !== null &&
+							store?.room?.player1_id !== null &&
+							store?.room?.player2_id !== null &&
 							isUserPlayer1()
 						}
-					> */}
-					<Button
-						sx={{ marginTop: '5rem' }}
-						variant="contained"
-						onClick={() => navigate('/multiplayer')}
-						size="large"
 					>
-						Enter game
-					</Button>
-					{/* </Show> */}
+						<Button
+							sx={{ marginTop: '5rem' }}
+							variant="contained"
+							onClick={() => navigate('/multiplayer')}
+							size="large"
+						>
+							Enter game
+						</Button>
+					</Show>
 				</Box>
 			</Container>
 		</ThemeProvider>
