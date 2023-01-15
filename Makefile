@@ -33,7 +33,7 @@ run_server:
 	docker compose down --remove-orphans &&\
 	docker compose up --build --force-recreate
 
-deploy:
+deploy_front:
 	git branch -D gh-pages || true &&\
 	git checkout -b gh-pages &&\
 	make compile_gamelib_to_wasm &&\
