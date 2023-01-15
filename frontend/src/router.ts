@@ -3,31 +3,40 @@ import GamePage from './pages/Game'
 import LoginPage from './pages/Login'
 import RoomsPage from './pages/rooms'
 import RoomPage from './pages/rooms/[id]'
+import { PREFIX_PATH } from './constants'
+
+export function realLocation(rawLocation: string): string {
+	return `${PREFIX_PATH}${rawLocation}`
+}
 
 const routes = [
 	{
-		path: ['/', '/singleplayer', '/multiplayer'],
+		path: [
+			realLocation('/'),
+			realLocation('/singleplayer'),
+			realLocation('/multiplayer'),
+		],
 		component: GamePage,
 	},
 	{
-		path: '/login',
+		path: realLocation('/login'),
 		component: LoginPage,
 	},
 	{
-		path: '/rooms',
+		path: realLocation('/rooms'),
 		children: [
 			{
-				path: '/',
+				path: realLocation('/'),
 				component: RoomsPage,
 			},
 			{
-				path: '/:id',
+				path: realLocation('/:id'),
 				component: RoomPage,
 			},
 		],
 	},
 	{
-		path: '/404',
+		path: realLocation('/404'),
 		component: NotFound,
 	},
 ]

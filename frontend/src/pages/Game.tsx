@@ -2,13 +2,14 @@ import { Component, onMount, createSignal, Show } from 'solid-js'
 import { useLocation, useNavigate } from '@solidjs/router'
 
 import styles from '../App.module.css'
-import { JOINING_GAME_SLEEP_MS, SPHERE_RADIUS } from '../constants'
+import { SPHERE_RADIUS } from '../constants'
 import GameManager from '../logic/game_manager'
 import ModeChooser from '../components/ModeChooser'
 import MultiplayerGame from '../logic/multiplayer_game'
 import SingleplayerGame from '../logic/singleplayer_game'
 import createLocalStore from '../../libs'
 import api from '../api'
+import { realLocation } from '../router'
 
 const GamePage: Component = () => {
 	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
@@ -21,7 +22,7 @@ const GamePage: Component = () => {
 			label: 'SinglePlayer',
 			onClick: () => {
 				{
-					navigate('/singleplayer')
+					navigate(realLocation('/singleplayer'))
 					startGUI()
 				}
 			},
@@ -29,7 +30,7 @@ const GamePage: Component = () => {
 		{
 			label: 'MultiPlayer',
 			onClick: () => {
-				navigate('/rooms')
+				navigate(realLocation('/rooms'))
 			},
 		},
 	]
@@ -47,8 +48,8 @@ const GamePage: Component = () => {
 
 	let canvas: HTMLCanvasElement
 
-	const isRoot = () => location.pathname === '/'
-	const isMultiplayer = () => location.pathname === '/multiplayer'
+	const isRoot = () => location.pathname === realLocation('/')
+	const isMultiplayer = () => location.pathname === realLocation('/multiplayer')
 
 	async function startGUI() {
 		if (isMultiplayer()) {

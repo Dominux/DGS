@@ -18,13 +18,17 @@ front_build:
 	cd ./frontend && pnpm run build || true && cd -
 
 test_server:
-	yes | cp ./deploy/test/* .
+	rm .env Dockerfile docker-compose.yml &&\
+	cp ./deploy/test/* . &&\
+	cp ./deploy/test/.env . &&\
 	docker compose down &&\
 	docker compose build &&\
 	docker compose run server
 
 run_server:
-	yes | cp ./deploy/dev/* .
+	rm .env Dockerfile docker-compose.yml || true &&\
+	cp ./deploy/dev/* . &&\
+	cp ./deploy/dev/.env . &&\
 	mkdir -p ./volumes/postgres_data &&\
 	docker compose down --remove-orphans &&\
 	docker compose up --build --force-recreate
