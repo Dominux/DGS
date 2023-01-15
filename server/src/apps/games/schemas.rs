@@ -6,13 +6,19 @@ use serde::{Deserialize, Serialize};
 use spherical_go_game_lib::{PointID, SizeType};
 use tokio::sync::broadcast;
 
-use crate::apps::users::schemas::OutUserSchema;
+use crate::apps::{histories::schemas::HistoryWithRecords, users::schemas::OutUserSchema};
 
 #[derive(Debug, Deserialize)]
 pub struct CreateGameSchema {
     pub room_id: uuid::Uuid,
     pub field_type: FieldType,
     pub size: SizeType,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GameWithHistorySchema {
+    pub game: Game,
+    pub history: HistoryWithRecords,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

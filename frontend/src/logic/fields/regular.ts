@@ -1,4 +1,5 @@
 import * as BABYLON from 'babylonjs'
+import { MoveResult } from '../../api/models'
 
 import {
 	REGULAR_FIELD_PADDING_TO_CELL_FRACTION,
@@ -27,6 +28,7 @@ export default class RegularField implements Field {
 	private onDeath: Function | undefined
 	private onError: Function | undefined
 	private canPutStone = false
+	canMove = true
 
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		const textureSize = 512
@@ -115,12 +117,12 @@ export default class RegularField implements Field {
 			})
 	}
 
-	start(
+	async start(
 		game: Game,
 		onEndMove: Function,
 		onDeath: Function,
 		onError: Function
-	): void {
+	): Promise<void> {
 		this.game = game
 		this.onDeath = onDeath
 		this.onEndMove = onEndMove
@@ -129,7 +131,7 @@ export default class RegularField implements Field {
 		this._field.enablePointerMoveEvents = true
 
 		// Starting the game process
-		this.game?.start()
+		await this.game?.start()
 
 		// Allowing putting stones
 		this.allowPuttingStones()
@@ -164,6 +166,7 @@ export default class RegularField implements Field {
 						break
 					case BABYLON.PointerEventTypes.POINTERUP:
 						if (
+							this.canMove &&
 							this.canPutStone &&
 							pointerInfo.pickInfo?.hit &&
 							pointerInfo.pickInfo?.pickedMesh === this._field
@@ -176,11 +179,6 @@ export default class RegularField implements Field {
 	}
 
 	private async putStone(point: BABYLON.Vector3) {
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
-
 		const clickedPointID = this.getPointID(point)
 
 		if (clickedPointID === undefined) return
@@ -194,6 +192,11 @@ export default class RegularField implements Field {
 			this.onError(error.message)
 			throw error
 		}
+
+		const color =
+			this.game?.playerTurn === 'Black'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
 
 		// Placing a stone
 		const clickedPoint = new BABYLON.Vector3(
@@ -211,6 +214,31 @@ export default class RegularField implements Field {
 		this.stoneManager.delete(deadlist)
 
 		if (deadlist?.length) this.onDeath()
+		this.onEndMove()
+
+		// Defines if the game is multiplayered
+		if (this.game.wsClient) {
+			this.canMove = false
+
+			const move_result = await this.game.waitForOpponentMove()
+			this.makeMoveProgramatically(move_result)
+
+			this.canMove = true
+		}
+	}
+
+	makeMoveProgramatically(move_result: MoveResult): void {
+		const color =
+			this.game?.playerTurn === 'Black'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
+
+		const stoneSchema = this.getCreateStoneSchema(move_result.point_id, color)
+
+		this.stoneManager.create(stoneSchema)
+		this.stoneManager.delete(move_result.died_stones_ids)
+
+		if (move_result.died_stones_ids?.length) this.onDeath()
 		this.onEndMove()
 	}
 

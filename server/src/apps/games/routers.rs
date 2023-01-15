@@ -40,6 +40,7 @@ impl GamesRouter {
 
         Router::new()
             .route("/", post(Self::start_game))
+            .route("/:game_id", get(Self::get_game_with_history))
             .route("/ws/:room_id", get(Self::ws_handler))
             .with_state(game_state)
     }
@@ -53,6 +54,16 @@ impl GamesRouter {
             .start_game(schema, user)
             .await?;
         Ok::<_, (StatusCode, String)>((StatusCode::CREATED, Json(game_with_link)))
+    }
+
+    async fn get_game_with_history(
+        State(state): State<Arc<GameState>>,
+        Path(game_id): Path<uuid::Uuid>,
+    ) -> impl IntoResponse {
+        let game_with_history = GameService::new(&state.app_state.db)
+            .get_game_with_history(game_id)
+            .await?;
+        Ok::<_, (StatusCode, String)>((StatusCode::CREATED, Json(game_with_history)))
     }
 
     async fn ws_handler(

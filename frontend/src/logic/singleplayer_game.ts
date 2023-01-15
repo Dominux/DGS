@@ -7,15 +7,15 @@ await init()
 export default class SingleplayerGame implements Game {
 	protected inner: GameLib
 
-	constructor(size: number, fieldType: FieldType) {
+	constructor(fieldType: FieldType, size: number) {
 		this.inner = new GameLib(fieldType, size, true)
 	}
 
-	start() {
+	async start() {
 		this.inner.start()
 	}
 
-	makeMove(pointID: number): Array<number> {
+	async makeMove(pointID: number): Promise<Array<number>> {
 		return [...this.inner.make_move(pointID)]
 	}
 

@@ -1,3 +1,4 @@
+import createLocalStore from '../../libs'
 import GameGUI from '../gui'
 import FieldType, { getFieldFromType } from './fields/enum'
 import { Field } from './fields/interface'
@@ -8,8 +9,8 @@ export default class GameManager {
 	readonly _scene: Scene
 	readonly _GUI: GameGUI
 
-	protected fieldType: FieldType = FieldType.GridSphere
-	protected gridSize: number = 9
+	fieldType: FieldType = FieldType.GridSphere
+	gridSize: number = 9
 
 	protected field?: Field
 	protected isStarted: boolean = false
@@ -29,7 +30,7 @@ export default class GameManager {
 			this.gridSize = newVal
 			this.setField()
 		}
-		const onSumbit = () => this.gameStart()
+		const onSumbit = async () => await this.gameStart()
 		const onUndo = () => this.undo()
 
 		this._GUI = new GameGUI(
@@ -63,17 +64,30 @@ export default class GameManager {
 		this.field = new klass(this._scene._scene, this.gridSize)
 	}
 
-	gameStart() {
+	async gameStart() {
+		const [store, _setStore] = createLocalStore()
+
 		this.isStarted = true
 
 		// Starting game
 		const game = new this.gameKlass(this.fieldType, this.gridSize)
-		this.field?.start(
+
+		await this.field?.start(
 			game,
 			() => this.onEndMove(),
 			() => this.onDeath(),
 			(errorMsg: string) => this._GUI.onError(errorMsg)
 		)
+
+		// if it's multiplayer and it's a player 2
+		if (game.wsClient && store.room.player2_id === store.user.id) {
+			this.field.canMove = false
+
+			const move_result = await game.waitForOpponentMove()
+			this.field?.makeMoveProgramatically(move_result)
+
+			this.field.canMove = true
+		}
 
 		this._GUI.onStart()
 

@@ -40,3 +40,28 @@ export type MoveResult = {
 	point_id: number
 	died_stones_ids: Array<number>
 }
+
+export type History = {
+	id: string
+	game_id: string
+	size: number
+	field_type: FieldType
+}
+
+export type HistoryRecord = {
+	id: string
+	history_id: string
+	move_number: number
+	point_id: number
+	died_points_ids: Array<number>
+}
+
+export type HistoryWithRecords = {
+	history: History
+	records: Array<HistoryRecord>
+}
+
+export type GameWithHistory = {
+	game: Game
+	history: HistoryWithRecords
+}

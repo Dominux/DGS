@@ -1,5 +1,7 @@
 import * as BABYLON from 'babylonjs'
+import createLocalStore from '../../../libs'
 
+import { MoveResult } from '../../api/models'
 import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
 import Game from '../game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
@@ -17,6 +19,7 @@ export default class GridSphere implements Field {
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
+	canMove = true
 	private circleRadius
 	private circleAmount
 	private circlePosition
@@ -81,12 +84,12 @@ export default class GridSphere implements Field {
 		})
 	}
 
-	start(
+	async start(
 		game: Game,
 		onEndMove: Function,
 		onDeath: Function,
 		onError: Function
-	): void {
+	): Promise<void> {
 		this.game = game
 		this.onDeath = onDeath
 		this.onEndMove = onEndMove
@@ -165,7 +168,7 @@ export default class GridSphere implements Field {
 		this.points = this.generatePoints(0.5)
 
 		// Starting the game process
-		this.game?.start()
+		await this.game?.start()
 
 		// Setting circle color
 		this.setCircleColor()
@@ -203,6 +206,7 @@ export default class GridSphere implements Field {
 						break
 					case BABYLON.PointerEventTypes.POINTERUP:
 						if (
+							this.canMove &&
 							this.canPutStone &&
 							pointerInfo.pickInfo?.hit &&
 							pointerInfo.pickInfo?.pickedMesh === this._sphere &&
@@ -216,11 +220,6 @@ export default class GridSphere implements Field {
 	}
 
 	private async putStone() {
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
-
 		let deadlist = []
 		try {
 			deadlist = await this.game?.makeMove(this.activePointID)
@@ -228,6 +227,11 @@ export default class GridSphere implements Field {
 			this.onError(error.message)
 			throw error
 		}
+
+		const color =
+			this.game?.playerTurn === 'Black'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
 
 		// Adjusting position a bit
 		const position = this.activePoint
@@ -246,13 +250,47 @@ export default class GridSphere implements Field {
 		if (deadlist?.length) this.onDeath()
 		this.setCircleColor()
 		this.onEndMove()
+
+		// Defines if the game is multiplayered
+		if (this.game.wsClient) {
+			this.canMove = false
+
+			const move_result = await this.game.waitForOpponentMove()
+			this.makeMoveProgramatically(move_result)
+
+			this.canMove = true
+		}
+	}
+
+	makeMoveProgramatically(move_result: MoveResult): void {
+		const color =
+			this.game?.playerTurn === 'Black'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
+
+		const stoneSchema = this.getCreateStoneSchema(move_result.point_id, color)
+
+		this.stoneManager.create(stoneSchema)
+		this.stoneManager.delete(move_result.died_stones_ids)
+
+		if (move_result.died_stones_ids?.length) this.onDeath()
+		this.setCircleColor()
+		this.onEndMove()
 	}
 
 	private setCircleColor() {
-		this.circleColor.value =
-			this.playerTurn.toLowerCase() === 'black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
+		if (this.game.wsClient) {
+			const [store, _setStore] = createLocalStore()
+			this.circleColor.value =
+				store.user.id === store.room.player1_id
+					? BABYLON.Color3.Black()
+					: BABYLON.Color3.White()
+		} else {
+			this.circleColor.value =
+				this.playerTurn.toLowerCase() === 'black'
+					? BABYLON.Color3.Black()
+					: BABYLON.Color3.White()
+		}
 	}
 
 	getCreateStoneSchema(id: number, color: BABYLON.Color3): CreateStoneScheme {

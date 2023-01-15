@@ -46,7 +46,7 @@ impl CreateHistoryRecordSchema {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct HistoryWithRecords {
     pub history: histories::Model,
     pub records: Vec<history_records::Model>,

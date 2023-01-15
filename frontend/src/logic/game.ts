@@ -1,7 +1,7 @@
 export default interface Game {
 	start(): void
 
-	makeMove(pointID: number): Array<number>
+	makeMove(pointID: number): Promise<Array<number>>
 
 	undoMove(): void
 

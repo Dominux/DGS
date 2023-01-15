@@ -1,6 +1,12 @@
 import FieldType from '../logic/fields/enum'
 import apiClient from './api_client'
-import { FetchedUser, GameWithLink, Room, User } from './models'
+import {
+	FetchedUser,
+	GameWithHistory,
+	GameWithLink,
+	Room,
+	User,
+} from './models'
 
 async function register(username: string): Promise<User> {
 	const res = await apiClient.post('/users', { username: username })
@@ -32,7 +38,12 @@ async function startGame(
 	field_type: FieldType,
 	size: number
 ): Promise<GameWithLink> {
-	const res = await apiClient.post(`/games`, { room_id, field_type, size })
+	const res = await apiClient.post('/games', { room_id, field_type, size })
+	return res.data
+}
+
+async function getGameWithHistory(game_id: string): Promise<GameWithHistory> {
+	const res = await apiClient.get(`/games/${game_id}`)
 	return res.data
 }
 
@@ -43,6 +54,7 @@ const api = {
 	getRoom,
 	enterRoom,
 	startGame,
+	getGameWithHistory,
 }
 
 export default api

@@ -1,10 +1,11 @@
+import { MOVE_RESULT_CHECK_INTERVAL_MS } from '../constants'
 import { User } from './models'
 
 export default class WSClient {
 	private socket: WebSocket
 	messages: MessageQueue<any>
 
-	constructor(addr: string, user: User, onMsg: Function) {
+	constructor(addr: string, user: User) {
 		this.messages = new MessageQueue()
 		this.socket = new WebSocket(addr)
 
@@ -18,18 +19,26 @@ export default class WSClient {
 			console.log(e)
 		}
 
-		this.onMessage(onMsg)
-	}
-
-	private onMessage(onMessage: Function) {
 		this.socket.onmessage = (e) => {
 			this.messages.push(e.data)
-			onMessage()
 		}
 	}
 
 	public sendMsg(msg: string) {
 		this.socket.send(msg)
+	}
+
+	public async waitForMsg(): Promise<any> {
+		let msg = undefined
+		while (msg === undefined) {
+			await new Promise((resolve) =>
+				setTimeout(resolve, MOVE_RESULT_CHECK_INTERVAL_MS)
+			)
+
+			msg = this.messages.pop()
+		}
+
+		return msg
 	}
 }
 

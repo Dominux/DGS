@@ -221,10 +221,10 @@ export default class GameCreationFormGUI {
 		button.fontSize = 44
 		button.background = ACCENT_COLOR
 
-		button.onPointerUpObservable.add(() => {
+		button.onPointerUpObservable.add(async () => {
 			this.delete()
 
-			onSumbit()
+			await onSumbit()
 		})
 
 		stack.component.addControl(button)

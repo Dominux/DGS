@@ -2,7 +2,7 @@ use sea_orm::DbConn;
 use spherical_go_game_lib::Game as Gamelib;
 use tokio::sync::broadcast;
 
-use super::schemas::{CreateGameSchema, MoveSchema, RoomState};
+use super::schemas::{CreateGameSchema, GameWithHistorySchema, MoveSchema, RoomState};
 use crate::{
     apps::{
         games::{repositories::GamesRepository, schemas::GameWithWSLink},
@@ -165,5 +165,14 @@ impl<'a> GameService<'a> {
         };
 
         Ok(room_state)
+    }
+
+    pub async fn get_game_with_history(
+        &self,
+        game_id: uuid::Uuid,
+    ) -> DGSResult<GameWithHistorySchema> {
+        let game = self.repo.get(game_id).await?;
+        let history = self.histories_repo.get_by_game_id(game_id).await?;
+        Ok(GameWithHistorySchema { game, history })
     }
 }
