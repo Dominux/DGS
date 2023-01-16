@@ -41,7 +41,7 @@ deploy_front:
 	make front_build &&\
 	mv ./frontend/dist/* ./ &&\
 	rm -rf ./frontend &&\
-	find . -not \( -wholename './.git/*' -or -name 'index.html' -or -wholename './assets/*' -or -wholename '404.html' \) -delete || true &&\
+	find . -not \( -wholename './.git/*' -or -name 'index.html' -or -wholename './assets/*' -or -name '404.html' \) -delete || true &&\
 	sed -i "s/href=\"\//href=\"/g" ./index.html &&\
 	sed -i "s/src=\"\//src=\"/g" ./index.html &&\
 	sed -i "s/URL(\"\/assets/URL(\"assets/g" ./assets/*.js &&\
