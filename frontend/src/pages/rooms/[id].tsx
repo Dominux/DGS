@@ -11,6 +11,7 @@ import createLocalStore from '../../../libs'
 import api from '../../api'
 import { checkAuth } from '../../auth'
 import { FetchedUser } from '../../api/models'
+import { fullLocation } from '../../router'
 
 const theme = createTheme()
 
@@ -32,7 +33,7 @@ export default function RoomPage() {
 			// Inserting/Updating room in store
 			setStore('room', room)
 		} catch (e) {
-			navigate('/404')
+			navigate(fullLocation('/404'))
 			return
 		}
 
@@ -107,7 +108,7 @@ export default function RoomPage() {
 						<Button
 							sx={{ marginTop: '5rem' }}
 							variant="contained"
-							onClick={() => navigate('/multiplayer')}
+							onClick={() => navigate(fullLocation('/multiplayer'))}
 							size="large"
 						>
 							Enter game

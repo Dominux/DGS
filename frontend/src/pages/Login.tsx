@@ -8,10 +8,11 @@ import Typography from '@suid/material/Typography'
 import Container from '@suid/material/Container'
 import { createTheme, ThemeProvider } from '@suid/material/styles'
 import { createSignal, onMount } from 'solid-js'
-import createLocalStore from '../../libs'
+import { useNavigate } from '@solidjs/router'
 
+import createLocalStore from '../../libs'
 import api from '../api'
-import { useLocation, useNavigate } from '@solidjs/router'
+import { fullLocation } from '../router'
 
 const theme = createTheme()
 
@@ -23,7 +24,7 @@ export default function Login() {
 	onMount(() => {
 		// If user is registered => moving him to rooms
 		if (store.user) {
-			navigate('/rooms')
+			navigate(fullLocation('/rooms'))
 		}
 	})
 
@@ -38,7 +39,7 @@ export default function Login() {
 		setStore('user', user)
 
 		// Redirecting to rooms page
-		navigate('/rooms')
+		navigate(fullLocation('/rooms'))
 	}
 
 	const validateUsername = (e: InputEvent) => {

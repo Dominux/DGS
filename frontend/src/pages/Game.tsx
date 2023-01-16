@@ -22,7 +22,7 @@ const GamePage: Component = () => {
 			label: 'SinglePlayer',
 			onClick: () => {
 				{
-					navigate('/singleplayer')
+					navigate(fullLocation('/singleplayer'))
 					startGUI()
 				}
 			},
@@ -30,7 +30,7 @@ const GamePage: Component = () => {
 		{
 			label: 'MultiPlayer',
 			onClick: () => {
-				navigate('/rooms')
+				navigate(fullLocation('/rooms'))
 			},
 		},
 	]
