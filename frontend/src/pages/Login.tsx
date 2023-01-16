@@ -12,7 +12,6 @@ import createLocalStore from '../../libs'
 
 import api from '../api'
 import { useNavigate } from '@solidjs/router'
-import { realLocation } from '../router'
 
 const theme = createTheme()
 
@@ -24,7 +23,7 @@ export default function Login() {
 	onMount(() => {
 		// If user is registered => moving him to rooms
 		if (store.user) {
-			navigate(realLocation('/rooms'))
+			navigate('/rooms')
 		}
 	})
 
@@ -39,7 +38,7 @@ export default function Login() {
 		setStore('user', user)
 
 		// Redirecting to rooms page
-		navigate(realLocation('/rooms'))
+		navigate('/rooms')
 	}
 
 	const validateUsername = (e: InputEvent) => {

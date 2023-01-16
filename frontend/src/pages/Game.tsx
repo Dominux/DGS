@@ -9,7 +9,6 @@ import MultiplayerGame from '../logic/multiplayer_game'
 import SingleplayerGame from '../logic/singleplayer_game'
 import createLocalStore from '../../libs'
 import api from '../api'
-import { realLocation } from '../router'
 
 const GamePage: Component = () => {
 	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
@@ -22,7 +21,7 @@ const GamePage: Component = () => {
 			label: 'SinglePlayer',
 			onClick: () => {
 				{
-					navigate(realLocation('/singleplayer'))
+					navigate('/singleplayer')
 					startGUI()
 				}
 			},
@@ -30,7 +29,7 @@ const GamePage: Component = () => {
 		{
 			label: 'MultiPlayer',
 			onClick: () => {
-				navigate(realLocation('/rooms'))
+				navigate('/rooms')
 			},
 		},
 	]
@@ -48,8 +47,8 @@ const GamePage: Component = () => {
 
 	let canvas: HTMLCanvasElement
 
-	const isRoot = () => location.pathname === realLocation('/')
-	const isMultiplayer = () => location.pathname === realLocation('/multiplayer')
+	const isRoot = () => location.pathname === '/'
+	const isMultiplayer = () => location.pathname === '/multiplayer'
 
 	async function startGUI() {
 		if (isMultiplayer()) {
