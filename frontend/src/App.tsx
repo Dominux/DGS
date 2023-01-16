@@ -3,10 +3,10 @@ import { useRoutes } from '@solidjs/router'
 
 import styles from './App.module.css'
 import routes from './router'
-import { PREFIX_PATH } from './constants'
+import { BASENAME } from './constants'
 
 const App: Component = () => {
-	const Routes = useRoutes(routes, PREFIX_PATH)
+	const Routes = useRoutes(routes, BASENAME)
 
 	return (
 		<div class={styles.App}>

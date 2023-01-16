@@ -18,6 +18,6 @@ export const FIELD_Y = 1
 
 export const API = import.meta.env.VITE_DEV_API
 
-export const PREFIX_PATH = import.meta.env.DEV ? '' : '/DGS'
+export const BASENAME = import.meta.env.DEV ? '' : '/DGS'
 
 export const MOVE_RESULT_CHECK_INTERVAL_MS = 200

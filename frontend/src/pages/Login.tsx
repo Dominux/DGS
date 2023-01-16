@@ -11,7 +11,7 @@ import { createSignal, onMount } from 'solid-js'
 import createLocalStore from '../../libs'
 
 import api from '../api'
-import { useNavigate } from '@solidjs/router'
+import { useLocation, useNavigate } from '@solidjs/router'
 
 const theme = createTheme()
 

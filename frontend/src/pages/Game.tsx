@@ -9,6 +9,7 @@ import MultiplayerGame from '../logic/multiplayer_game'
 import SingleplayerGame from '../logic/singleplayer_game'
 import createLocalStore from '../../libs'
 import api from '../api'
+import { fullLocation } from '../router'
 
 const GamePage: Component = () => {
 	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
@@ -47,8 +48,10 @@ const GamePage: Component = () => {
 
 	let canvas: HTMLCanvasElement
 
-	const isRoot = () => location.pathname === '/'
-	const isMultiplayer = () => location.pathname === '/multiplayer'
+	const isRoot = () =>
+		location.pathname === fullLocation('/') ||
+		location.pathname === fullLocation('')
+	const isMultiplayer = () => location.pathname === fullLocation('/multiplayer')
 
 	async function startGUI() {
 		if (isMultiplayer()) {
