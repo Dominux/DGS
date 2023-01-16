@@ -40,6 +40,7 @@ deploy_front:
 	make pnpm_i &&\
 	make front_build &&\
 	mv ./frontend/dist/* ./ &&\
+	mv ./frontend/404.html ./ &&\
 	rm -rf ./frontend &&\
 	find . -not \( -wholename './.git/*' -or -name 'index.html' -or -wholename './assets/*' -or -name '404.html' \) -delete || true &&\
 	sed -i "s/href=\"\//href=\"/g" ./index.html &&\
