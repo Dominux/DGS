@@ -16,7 +16,9 @@ export const ALERT_COLOR = '#fa9393'
 
 export const FIELD_Y = 1
 
-export const API = import.meta.env.VITE_DEV_API
+export const API = impoty.meta.env.DEV
+	? import.meta.env.VITE_DEV_API
+	: import.meta.env.VITE_PROD_API
 
 export const BASENAME = import.meta.env.DEV ? '' : '/DGS'
 
