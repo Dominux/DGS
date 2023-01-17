@@ -16,7 +16,7 @@ export const ALERT_COLOR = '#fa9393'
 
 export const FIELD_Y = 1
 
-export const API = impoty.meta.env.DEV
+export const API = import.meta.env.DEV
 	? import.meta.env.VITE_DEV_API
 	: import.meta.env.VITE_PROD_API
 
