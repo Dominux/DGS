@@ -1,4 +1,5 @@
 import GridSphere from './grid_sphere'
+import { Field } from './interface'
 import RegularField from './regular'
 
 enum FieldType {

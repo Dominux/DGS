@@ -66,10 +66,25 @@ impl InternalMsg {
 }
 
 #[derive(Debug, Clone)]
+pub struct RoomPlayer {
+    pub player: OutUserSchema,
+    pub is_connected: bool,
+}
+
+impl RoomPlayer {
+    pub fn new(player: OutUserSchema, is_connected: bool) -> Self {
+        Self {
+            player,
+            is_connected,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct RoomState {
     pub room_id: uuid::Uuid,
-    pub black_player: OutUserSchema,
-    pub white_player: OutUserSchema,
+    pub black_player: RoomPlayer,
+    pub white_player: RoomPlayer,
     pub tx: broadcast::Sender<InternalMsg>,
 }
 

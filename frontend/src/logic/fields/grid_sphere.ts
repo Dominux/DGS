@@ -98,6 +98,8 @@ export default class GridSphere implements Field {
 		this._sphere.enablePointerMoveEvents = true
 
 		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
+		console.log(this.gridRatio, this.majorUnitFrequency)
+
 		const gridFactor =
 			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
 

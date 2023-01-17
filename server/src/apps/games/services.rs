@@ -2,7 +2,7 @@ use sea_orm::DbConn;
 use spherical_go_game_lib::Game as Gamelib;
 use tokio::sync::broadcast;
 
-use super::schemas::{CreateGameSchema, GameWithHistorySchema, MoveSchema, RoomState};
+use super::schemas::{CreateGameSchema, GameWithHistorySchema, MoveSchema, RoomPlayer, RoomState};
 use crate::{
     apps::{
         games::{repositories::GamesRepository, schemas::GameWithWSLink},
@@ -156,6 +156,9 @@ impl<'a> GameService<'a> {
 
         // Creating a channel
         let (tx, _rx) = broadcast::channel(2);
+
+        let black_user = RoomPlayer::new(black_user, true);
+        let white_user = RoomPlayer::new(white_user, false);
 
         let room_state = RoomState {
             room_id: room.id,

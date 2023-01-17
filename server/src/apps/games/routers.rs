@@ -29,6 +29,7 @@ struct GameState {
     app_state: Arc<AppState>,
     rooms: Mutex<HashMap<uuid::Uuid, RoomState>>,
 }
+
 pub struct GamesRouter;
 
 impl GamesRouter {
@@ -63,7 +64,7 @@ impl GamesRouter {
         let game_with_history = GameService::new(&state.app_state.db)
             .get_game_with_history(game_id)
             .await?;
-        Ok::<_, (StatusCode, String)>((StatusCode::CREATED, Json(game_with_history)))
+        Ok::<_, (StatusCode, String)>((StatusCode::OK, Json(game_with_history)))
     }
 
     async fn ws_handler(
@@ -113,8 +114,11 @@ impl GamesRouter {
         let room = {
             let mut rooms = state.rooms.lock().await;
 
-            match rooms.get(&room_id) {
-                Some(room) => room.clone(),
+            match rooms.get_mut(&room_id) {
+                Some(room) => {
+                    room.white_player.is_connected = true;
+                    room.clone()
+                }
                 None => {
                     // Trying to load a game
                     let room_result = GameService::new(&state.app_state.db)
@@ -161,6 +165,8 @@ impl GamesRouter {
         let mut recv_task = {
             // Clone things we want to pass to the receiving task.
             let tx = room.tx.clone();
+            let db_clone = state.app_state.db.clone();
+            let user_clone = user.clone();
 
             // This task will receive messages from client and send them to broadcast subscribers.
             tokio::spawn(async move {
@@ -170,14 +176,14 @@ impl GamesRouter {
                         Err(e) => {
                             let e = WSError::new(e.to_string());
                             let e = serde_json::to_string(&e).unwrap();
-                            let _ = tx.send(InternalMsg::new(Some(user.user_id), e));
+                            let _ = tx.send(InternalMsg::new(Some(user_clone.user_id), e));
                             continue;
                         }
                     };
 
                     // Making move
-                    let result = GameService::new(&state.app_state.db)
-                        .make_move(&move_schema, user.clone())
+                    let result = GameService::new(&db_clone)
+                        .make_move(&move_schema, user_clone.clone())
                         .await;
                     let msg = match result {
                         Ok(move_result) => serde_json::to_string(&MoveWithResult::new(
@@ -187,7 +193,7 @@ impl GamesRouter {
                         .unwrap(),
                         Err(e) => {
                             let e = serde_json::to_string(&WSError::new(e.to_string())).unwrap();
-                            let _ = tx.send(InternalMsg::new(Some(user.user_id), e));
+                            let _ = tx.send(InternalMsg::new(Some(user_clone.user_id), e));
                             continue;
                         }
                     };
@@ -202,5 +208,25 @@ impl GamesRouter {
             _ = (&mut send_task) => recv_task.abort(),
             _ = (&mut recv_task) => send_task.abort(),
         };
+
+        // Deleting room states if all its players disconnected
+        {
+            let mut rooms = state.rooms.lock().await;
+
+            // Poping room
+            if let Some(mut room) = rooms.remove(&room_id) {
+                // Setting current user as disconnected
+                if room.black_player.player.id == user.user_id {
+                    room.black_player.is_connected = false
+                } else {
+                    room.white_player.is_connected = false
+                }
+
+                // Inserting it back if there's still some connected player
+                if room.black_player.is_connected || room.white_player.is_connected {
+                    rooms.insert(room_id, room);
+                }
+            }
+        }
     }
 }

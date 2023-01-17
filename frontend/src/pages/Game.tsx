@@ -79,6 +79,7 @@ const GamePage: Component = () => {
 
 		// Setting
 		let gm = gameManager()
+
 		gm.fieldType = game.history.history.field_type
 		gm.size = game.history.history.size
 		gm?.setField()
