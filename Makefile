@@ -39,7 +39,7 @@ run_server:
 	cp ./deploy/dev/.env . &&\
 	mkdir -p ./volumes/postgres_data &&\
 	docker compose down --remove-orphans &&\
-	docker compose up --build --force-recreate
+	docker compose up -d --build --force-recreate
 
 deploy_front:
 	git branch -D gh-pages || true &&\
