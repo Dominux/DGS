@@ -1,5 +1,5 @@
 export default interface Game {
-	start(): void
+	start(): Promise<void>
 
 	makeMove(pointID: number): Promise<Array<number>>
 

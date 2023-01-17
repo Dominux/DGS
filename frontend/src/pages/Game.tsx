@@ -40,6 +40,7 @@ const GamePage: Component = () => {
 		setTimeout(async () => {
 			let innerGame = isMultiplayer() ? MultiplayerGame : SingleplayerGame
 			let gm = new GameManager(canvas, SPHERE_RADIUS, innerGame)
+			await gm.setField()
 			setGameManager(gm)
 
 			if (!isRoot()) await startGUI()
@@ -81,8 +82,9 @@ const GamePage: Component = () => {
 		let gm = gameManager()
 
 		gm.fieldType = game.history.history.field_type
-		gm.size = game.history.history.size
-		gm?.setField()
+		gm.gridSize = game.history.history.size
+
+		await gm?.setField()
 
 		// Starting game
 		await gm?.gameStart()

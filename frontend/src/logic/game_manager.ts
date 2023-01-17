@@ -22,13 +22,13 @@ export default class GameManager {
 	) {
 		this._scene = new Scene(canvas, sphereRadius)
 
-		const onChangeFieldType = (newVal: FieldType) => {
+		const onChangeFieldType = async (newVal: FieldType) => {
 			this.fieldType = newVal
-			this.setField()
+			await this.setField()
 		}
-		const onChangeGridSize = (newVal: number) => {
+		const onChangeGridSize = async (newVal: number) => {
 			this.gridSize = newVal
-			this.setField()
+			await this.setField()
 		}
 		const onSumbit = async () => await this.gameStart()
 		const onUndo = () => this.undo()
@@ -42,9 +42,6 @@ export default class GameManager {
 			onSumbit,
 			onUndo
 		)
-
-		// Setting field
-		this.setField()
 	}
 
 	showGUI() {
@@ -54,14 +51,15 @@ export default class GameManager {
 		this._GUI.hide()
 	}
 
-	setField() {
+	async setField() {
 		const klass = getFieldFromType(this.fieldType)
 
 		// Deleting old field
 		this.field?.delete()
 
 		// Creating a new one
-		this.field = new klass(this._scene._scene, this.gridSize)
+		this.field = await klass.init(this._scene._scene, this.gridSize)
+		console.log(this.field)
 	}
 
 	async gameStart() {
@@ -72,12 +70,15 @@ export default class GameManager {
 		// Starting game
 		const game = new this.gameKlass(this.fieldType, this.gridSize)
 
+		console.log('before')
+
 		await this.field?.start(
 			game,
 			() => this.onEndMove(),
 			() => this.onDeath(),
 			(errorMsg: string) => this._GUI.onError(errorMsg)
 		)
+		console.log('after')
 
 		// if it's multiplayer and it's a player 2
 		if (game.wsClient && store.room.player2_id === store.user.id) {

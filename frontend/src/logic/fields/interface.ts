@@ -5,6 +5,8 @@ import StoneManager, { CreateStoneScheme } from '../stone_manager'
 export interface Field {
 	game: Game | undefined
 
+	init(scene: BABYLON.Scene, gridSize: number): Promise<Field>
+
 	start(
 		game: Game,
 		onEndMove: Function,

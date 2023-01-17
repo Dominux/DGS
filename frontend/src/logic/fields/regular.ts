@@ -30,6 +30,13 @@ export default class RegularField implements Field {
 	private canPutStone = false
 	canMove = true
 
+	static async init(
+		scene: globalThis.BABYLON.Scene,
+		gridSize: number
+	): Promise<RegularField> {
+		return new RegularField(scene, gridSize)
+	}
+
 	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
 		const textureSize = 512
 		const paddingFraction =
@@ -123,6 +130,8 @@ export default class RegularField implements Field {
 		onDeath: Function,
 		onError: Function
 	): Promise<void> {
+		console.log('inside')
+
 		this.game = game
 		this.onDeath = onDeath
 		this.onEndMove = onEndMove

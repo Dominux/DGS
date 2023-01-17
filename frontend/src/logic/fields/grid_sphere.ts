@@ -27,62 +27,70 @@ export default class GridSphere implements Field {
 	private gridRatio
 	private majorUnitFrequency
 
-	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {
+	static async init(
+		scene: globalThis.BABYLON.Scene,
+		gridSize: number
+	): Promise<GridSphere> {
+		const _this = new GridSphere(scene, gridSize)
+
 		gridSize--
 
-		this._sphere = BABYLON.MeshBuilder.CreateSphere(
+		_this._sphere = BABYLON.MeshBuilder.CreateSphere(
 			'sphere',
-			{ diameter: this.sphereRadius * 2, segments: 32 },
+			{ diameter: _this.sphereRadius * 2, segments: 32 },
 			scene
 		)
-		this._sphere.position.y = 1
+		_this._sphere.position.y = 1
 
-		this.stoneManager = new StoneManager(scene, gridSize, this.sphereRadius)
+		_this.stoneManager = new StoneManager(scene, gridSize, _this.sphereRadius)
 
-		BABYLON.NodeMaterial.ParseFromFileAsync(
+		const gridMaterial = await BABYLON.NodeMaterial.ParseFromFileAsync(
 			'gridMaterial',
 			GRID_MATERIAL,
 			scene
-		).then((gridMaterial) => {
-			this.gridRatio = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'gridRatio'
-			)
-			this.majorUnitFrequency = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'majorUnitFrequency'
-			)
-			const minorUnitVisibility = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'minorUnitVisibility'
-			)
-			this.circleRadius = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleRadius'
-			)
-			this.circleAmount = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleAmount'
-			)
-			this.circlePosition = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circlePosition'
-			)
-			const circleSmoothness = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleSmoothness'
-			)
-			const lineColor = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'lineColor'
-			)
-			this.circleColor = gridMaterial.getInputBlockByPredicate(
-				(b) => b.name === 'circleColor'
-			)
+		)
+		_this.gridRatio = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'gridRatio'
+		)
+		_this.majorUnitFrequency = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'majorUnitFrequency'
+		)
+		const minorUnitVisibility = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'minorUnitVisibility'
+		)
+		_this.circleRadius = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'circleRadius'
+		)
+		_this.circleAmount = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'circleAmount'
+		)
+		_this.circlePosition = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'circlePosition'
+		)
+		const circleSmoothness = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'circleSmoothness'
+		)
+		const lineColor = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'lineColor'
+		)
+		_this.circleColor = gridMaterial.getInputBlockByPredicate(
+			(b) => b.name === 'circleColor'
+		)
 
-			lineColor.value = BABYLON.Color3.Black()
-			// this.circleColor.value = BABYLON.Color3.Green()
-			this.gridRatio.value = this.sphereRadius / gridSize
-			this.majorUnitFrequency.value = 1
-			minorUnitVisibility.value = 0
-			this.circleRadius.value = (0.4 * this.sphereRadius) / gridSize
-			circleSmoothness.value = 0.005
+		lineColor.value = BABYLON.Color3.Black()
+		// this.circleColor.value = BABYLON.Color3.Green()
+		_this.gridRatio.value = _this.sphereRadius / gridSize
+		_this.majorUnitFrequency.value = 1
+		minorUnitVisibility.value = 0
+		_this.circleRadius.value = (0.4 * _this.sphereRadius) / gridSize
+		circleSmoothness.value = 0.005
 
-			this._sphere.material = gridMaterial
-		})
+		_this._sphere.material = gridMaterial
+
+		return _this
 	}
+
+	constructor(readonly scene: BABYLON.Scene, readonly gridSize: number) {}
 
 	async start(
 		game: Game,
@@ -98,8 +106,6 @@ export default class GridSphere implements Field {
 		this._sphere.enablePointerMoveEvents = true
 
 		const sphereRadiusSqrd = this.sphereRadius * this.sphereRadius
-		console.log(this.gridRatio, this.majorUnitFrequency)
-
 		const gridFactor =
 			1 / this.gridRatio.value / Math.round(this.majorUnitFrequency.value)
 
