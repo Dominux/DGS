@@ -130,8 +130,6 @@ export default class RegularField implements Field {
 		onDeath: Function,
 		onError: Function
 	): Promise<void> {
-		console.log('inside')
-
 		this.game = game
 		this.onDeath = onDeath
 		this.onEndMove = onEndMove

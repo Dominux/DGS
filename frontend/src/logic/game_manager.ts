@@ -59,7 +59,6 @@ export default class GameManager {
 
 		// Creating a new one
 		this.field = await klass.init(this._scene._scene, this.gridSize)
-		console.log(this.field)
 	}
 
 	async gameStart() {
@@ -70,15 +69,12 @@ export default class GameManager {
 		// Starting game
 		const game = new this.gameKlass(this.fieldType, this.gridSize)
 
-		console.log('before')
-
 		await this.field?.start(
 			game,
 			() => this.onEndMove(),
 			() => this.onDeath(),
 			(errorMsg: string) => this._GUI.onError(errorMsg)
 		)
-		console.log('after')
 
 		// if it's multiplayer and it's a player 2
 		if (game.wsClient && store.room.player2_id === store.user.id) {
