@@ -228,6 +228,11 @@ export default class GridSphere implements Field {
 	}
 
 	private async putStone() {
+		const color =
+			this.game?.playerTurn === 'Black'
+				? BABYLON.Color3.Black()
+				: BABYLON.Color3.White()
+
 		let deadlist = []
 		try {
 			deadlist = await this.game?.makeMove(this.activePointID)
@@ -236,10 +241,7 @@ export default class GridSphere implements Field {
 			throw error
 		}
 
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
+		console.log(this.game?.moveNumber)
 
 		// Adjusting position a bit
 		const position = this.activePoint
@@ -271,6 +273,7 @@ export default class GridSphere implements Field {
 	}
 
 	makeMoveProgramatically(move_result: MoveResult): void {
+		console.log(this.game?.moveNumber)
 		const color =
 			this.game?.playerTurn === 'Black'
 				? BABYLON.Color3.Black()

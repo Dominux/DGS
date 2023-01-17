@@ -7,7 +7,7 @@ import { MoveResult, MoveSchema } from '../api/models'
 
 export default class MultiplayerGame implements Game {
 	private wsClient: WSClient | null = null
-	private _moveNumber: number = 0
+	private _moveNumber: number = 1
 	private _blackStones: Array<number> = []
 	private _whiteStones: Array<number> = []
 	private _blackScore = 0
@@ -101,7 +101,7 @@ export default class MultiplayerGame implements Game {
 	}
 
 	get playerTurn() {
-		return this._moveNumber % 2 === 1 ? 'Black' : 'White'
+		return this._moveNumber % 2 === 0 ? 'Black' : 'White'
 	}
 	get whiteScore(): any {
 		return this._whiteScore

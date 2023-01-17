@@ -15,8 +15,8 @@ export default class PlayerBarGUI {
 
 	constructor(readonly camera: BABYLON.Camera, onUndo: Function) {
 		this.stack = this.createStackPanel()
-		this.blackScore = this.createScoreComponent('black', 1.5)
-		this.whiteScore = this.createScoreComponent('white', 1.4)
+		this.blackScore = this.createScoreComponent('black')
+		this.whiteScore = this.createScoreComponent('white')
 		this.undoButton = this.createUndoButton(onUndo)
 	}
 
@@ -40,7 +40,7 @@ export default class PlayerBarGUI {
 		return new GUIComponent(stack, plane)
 	}
 
-	createScoreComponent(color: string, y: number): GUIComponent<TextComponent> {
+	createScoreComponent(color: string): GUIComponent<TextComponent> {
 		const background = color
 		color = color === 'black' ? 'white' : 'black'
 		const scoreBlock = new TextComponent('80px', '360px', color, background, 46)
