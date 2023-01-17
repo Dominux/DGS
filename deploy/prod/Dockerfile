@@ -12,15 +12,15 @@ COPY ./server/Cargo.toml .
 RUN sed -i "s/^\(\(entity = {\)\|\(migration = {\)\|\(spherical_go_game_lib = {\)\\).*//g" ./Cargo.toml
 
 # Copying deps and downloading and pre-building them
-RUN cargo build
+RUN cargo build --release
 
 # Copying all the logic
 COPY ../gamelib /gamelib
 COPY ./server .
 
-RUN cargo build
+RUN cargo build --release
 
 # Running
 FROM debian:11-slim AS runtime
-COPY --from=builder /app/target/debug/server /dgs_server
+COPY --from=builder /app/target/release/server /dgs_server
 ENTRYPOINT [ "./dgs_server" ]
