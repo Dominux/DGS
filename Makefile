@@ -31,7 +31,7 @@ run_prod:
 	cp ./deploy/prod/.env . &&\
 	mkdir -p ./volumes/postgres_data &&\
 	docker compose down --remove-orphans &&\
-	docker compose up --build --force-recreate
+	docker compose up -d --build --force-recreate
 
 run_server:
 	rm .env Dockerfile docker-compose.yml || true &&\
