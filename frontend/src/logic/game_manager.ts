@@ -14,6 +14,7 @@ export default class GameManager {
 
 	protected field?: Field
 	protected isStarted: boolean = false
+	protected isMultiplayer: boolean
 
 	constructor(
 		canvas: HTMLCanvasElement,
@@ -76,8 +77,10 @@ export default class GameManager {
 			(errorMsg: string) => this._GUI.onError(errorMsg)
 		)
 
+		this.isMultiplayer = game.wsClient
+
 		// if it's multiplayer and it's a player 2
-		if (game.wsClient && store.room.player2_id === store.user.id) {
+		if (this.isMultiplayer && store.room.player2_id === store.user.id) {
 			this.field.canMove = false
 
 			const move_result = await game.waitForOpponentMove()
@@ -118,7 +121,10 @@ export default class GameManager {
 	}
 
 	onDeath() {
-		if (this.field?.game?.playerTurn.toLowerCase() === 'white') {
+		if (
+			this.field.game.playerTurn.toLowerCase() ===
+			(this.isMultiplayer ? 'black' : 'white')
+		) {
 			this.setBlackScore(this.field?.blackScore)
 		} else {
 			this.setWhiteScore(this.field?.whiteScore)

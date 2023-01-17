@@ -79,6 +79,8 @@ export default class MultiplayerGame implements Game {
 	}
 
 	private postMoveActions(move_result: MoveResult) {
+		this._moveNumber++
+
 		if (this.playerTurn == 'Black') {
 			this._blackStones.push(move_result.point_id)
 			this._whiteStones = this._whiteStones.filter((p) =>
@@ -92,8 +94,6 @@ export default class MultiplayerGame implements Game {
 			)
 			this._whiteScore += move_result.died_stones_ids.length
 		}
-
-		this._moveNumber++
 	}
 
 	undoMove(): void {

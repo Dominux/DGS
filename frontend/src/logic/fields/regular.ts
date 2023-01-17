@@ -1,4 +1,5 @@
 import * as BABYLON from 'babylonjs'
+import createLocalStore from '../../../libs'
 import { MoveResult } from '../../api/models'
 
 import {
@@ -186,6 +187,21 @@ export default class RegularField implements Field {
 	}
 
 	private async putStone(point: BABYLON.Vector3) {
+		const [store, _setStore] = createLocalStore()
+
+		let color
+		if (this.game.wsClient) {
+			color =
+				store.user.id === store.room.player1_id
+					? BABYLON.Color3.Black()
+					: BABYLON.Color3.White()
+		} else {
+			color =
+				this.playerTurn.toLowerCase() === 'black'
+					? BABYLON.Color3.Black()
+					: BABYLON.Color3.White()
+		}
+
 		const clickedPointID = this.getPointID(point)
 
 		if (clickedPointID === undefined) return
@@ -199,11 +215,6 @@ export default class RegularField implements Field {
 			this.onError(error.message)
 			throw error
 		}
-
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
 
 		// Placing a stone
 		const clickedPoint = new BABYLON.Vector3(

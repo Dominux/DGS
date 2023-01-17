@@ -19,7 +19,6 @@ export default class GridSphere implements Field {
 	private activePointID: number | null = null
 	private activePoint: BABYLON.Vector3 | undefined
 	private canPutStone = false
-	canMove = true
 	private circleRadius
 	private circleAmount
 	private circlePosition
@@ -204,6 +203,10 @@ export default class GridSphere implements Field {
 		return this.game?.whiteScore
 	}
 
+	set canMove(value: boolean) {
+		this._sphere.enablePointerMoveEvents = value
+	}
+
 	protected allowPuttingStones() {
 		this.scene.onPointerObservable.add(
 			async (pointerInfo: BABYLON.PointerInfo) => {
@@ -214,7 +217,6 @@ export default class GridSphere implements Field {
 						break
 					case BABYLON.PointerEventTypes.POINTERUP:
 						if (
-							this.canMove &&
 							this.canPutStone &&
 							pointerInfo.pickInfo?.hit &&
 							pointerInfo.pickInfo?.pickedMesh === this._sphere &&
@@ -228,10 +230,20 @@ export default class GridSphere implements Field {
 	}
 
 	private async putStone() {
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
+		const [store, _setStore] = createLocalStore()
+
+		let color
+		if (this.game.wsClient) {
+			color =
+				store.user.id === store.room.player1_id
+					? BABYLON.Color3.Black()
+					: BABYLON.Color3.White()
+		} else {
+			color =
+				this.playerTurn.toLowerCase() === 'black'
+					? BABYLON.Color3.Black()
+					: BABYLON.Color3.White()
+		}
 
 		let deadlist = []
 		try {
@@ -240,8 +252,6 @@ export default class GridSphere implements Field {
 			this.onError(error.message)
 			throw error
 		}
-
-		console.log(this.game?.moveNumber)
 
 		// Adjusting position a bit
 		const position = this.activePoint
@@ -273,7 +283,6 @@ export default class GridSphere implements Field {
 	}
 
 	makeMoveProgramatically(move_result: MoveResult): void {
-		console.log(this.game?.moveNumber)
 		const color =
 			this.game?.playerTurn === 'Black'
 				? BABYLON.Color3.Black()
