@@ -20,6 +20,6 @@ export const API = import.meta.env.DEV
 	? import.meta.env.VITE_DEV_API
 	: import.meta.env.VITE_PROD_API
 
-export const BASENAME = import.meta.env.DEV ? '' : '/DGS'
+export const BASENAME = ''
 
 export const MOVE_RESULT_CHECK_INTERVAL_MS = 200
