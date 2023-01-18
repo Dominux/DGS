@@ -21,13 +21,13 @@
 
 # Table of contents
 
-- ##### [TL/DR](#tldr)
-- ##### [Idea and prerequesities](#idea-and-prerequesities)
-- ##### [Spherical fields design](#spherical-fields-design)
-- ##### [Algorithm](#algorithm)
-- ##### [Tech stack](#tech-stack)
-- ##### [Entities](#entities)
-- ##### [Future plans](#future-plans)
+- [TL/DR](#tldr)
+- [Idea and prerequesities](#idea-and-prerequesities)
+- [Spherical fields design](#spherical-fields-design)
+- [Algorithm](#algorithm)
+- [Tech stack](#tech-stack)
+- [Entities](#entities)
+- [Future plans](#future-plans)
 
 ---
 
