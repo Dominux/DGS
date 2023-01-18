@@ -44,7 +44,7 @@ pub fn create_app(app_state: Arc<AppState>) -> Router {
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
                 .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
         )
-        .layer(dgs_cors)
+    // .layer(dgs_cors)
 }
 
 async fn websocket_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
