@@ -4,6 +4,7 @@ import WSClient from '../api/ws_client'
 import FieldType from './fields/enum'
 import Game from './game'
 import { MoveResult, MoveSchema } from '../api/models'
+import { WS_API } from '../constants'
 
 export default class MultiplayerGame implements Game {
 	private wsClient: WSClient | null = null
@@ -38,7 +39,7 @@ export default class MultiplayerGame implements Game {
 
 		// Opening ws
 		this.wsClient = new WSClient(
-			`ws://localhost:8000/games/ws/${store.room.id}`,
+			`${WS_API}/games/ws/${store.room.id}`,
 			store.user
 		)
 	}
