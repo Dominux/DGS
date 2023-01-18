@@ -10,7 +10,7 @@ export class ApiClient {
 	constructor(readonly apiURI: string) {}
 
 	protected buildAbsolutePath(path: string): string {
-		return `${this.apiURI}/${path}`
+		return `${this.apiURI}${path}`
 	}
 
 	get headers() {
