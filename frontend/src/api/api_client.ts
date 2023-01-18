@@ -11,7 +11,7 @@ export class ApiClient {
 
 	protected buildAbsolutePath(path: string): string {
 		const url = new URL(path, this.apiURI)
-		console.log(url)
+		console.log(this.apiURI, url)
 		return url.href
 	}
 
