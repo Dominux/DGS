@@ -10,9 +10,7 @@ export class ApiClient {
 	constructor(readonly apiURI: string) {}
 
 	protected buildAbsolutePath(path: string): string {
-		const url = new URL(path, this.apiURI)
-		console.log(this.apiURI, url)
-		return url.href
+		return `${this.apiURI}/${path}`
 	}
 
 	get headers() {
