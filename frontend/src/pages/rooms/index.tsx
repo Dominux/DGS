@@ -9,6 +9,7 @@ import createLocalStore from '../../../libs'
 import api from '../../api'
 import { useNavigate } from '@solidjs/router'
 import { checkAuth } from '../../auth'
+import { fullLocation } from '../../router'
 
 const theme = createTheme()
 
@@ -28,7 +29,7 @@ export default function RoomsPage() {
 		setStore('room', room)
 
 		// Moving to the room
-		navigate(`/rooms/${room.id}`)
+		navigate(fullLocation(`/rooms/${room.id}`))
 	}
 
 	return (
