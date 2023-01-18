@@ -51,9 +51,6 @@ deploy_front:
 	mv ./frontend/404.html ./ &&\
 	rm -rf ./frontend &&\
 	find . -not \( -wholename './.git/*' -or -name 'index.html' -or -wholename './assets/*' -or -name '404.html' \) -delete || true &&\
-	sed -i "s/href=\"\//href=\"/g" ./index.html &&\
-	sed -i "s/src=\"\//src=\"/g" ./index.html &&\
-	sed -i "s/URL(\"\/assets/URL(\"assets/g" ./assets/*.js &&\
 	git add --all &&\
 	git commit -m "lol" &&\
 	git push -f -u origin gh-pages &&\
