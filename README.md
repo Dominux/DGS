@@ -38,7 +38,7 @@ The brand new features this server offers are rather [UX](https://en.wikipedia.o
 - Various spherical game fields
 - [VR](https://en.wikipedia.org/wiki/Virtual_reality) game mode
 
-Without any other words, just try it [right here, right now](https://dominux.github.io/spherical-go/)
+Without any other words, just try it [right here, right now](https://dgs.dominux.site/)
 
 </br>
 
