@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 use migration::{Migrator, MigratorTrait};
 
@@ -11,6 +11,11 @@ mod common;
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt()
+        .with_target(false)
+        .compact()
+        .init();
+
     // Creating config
     let config = Config::new().unwrap();
 
@@ -21,7 +26,7 @@ async fn main() {
     Migrator::up(&db, None).await.unwrap();
 
     // Getting url
-    let url = format!("0.0.0.0:{}", config.port);
+    let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
 
     // Creating app_state
     let shared_state = {
@@ -33,10 +38,10 @@ async fn main() {
     let app = create_app(shared_state);
 
     // Logging about successful start
-    println!("Server ran successfully at {url}");
+    tracing::info!("listening on {addr}");
 
     // run it with hyper on localhost:3000
-    axum::Server::bind(&url.parse().unwrap())
+    axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
