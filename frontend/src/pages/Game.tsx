@@ -64,7 +64,7 @@ const GamePage: Component = () => {
 		if (isMultiplayer() && store.user.id === store.room.player2_id) return
 
 		// Show GUI
-		if (!store.room.game_id) {
+		if (!isMultiplayer() || !store.room.game_id) {
 			let gm = gameManager()
 			gm?.showGUI()
 		}
