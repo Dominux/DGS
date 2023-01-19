@@ -39,7 +39,7 @@ export default function Login() {
 		setStore('user', user)
 
 		// Redirecting back
-		const redirect_url = store.redurect || fullLocation('/rooms')
+		const redirect_url = store.redirect || fullLocation('/rooms')
 		navigate(redirect_url)
 	}
 
