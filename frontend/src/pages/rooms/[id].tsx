@@ -52,6 +52,7 @@ export default function RoomPage() {
 	})
 
 	const isUserPlayer1 = () => store.room?.player1_id === store.user?.id
+	const isWaitingForGameToStart = () => !isUserPlayer1() && !store.room?.game_id
 
 	async function enterRoom() {
 		const room = await api.enterRoom(store.room.id)
@@ -109,9 +110,12 @@ export default function RoomPage() {
 							sx={{ marginTop: '5rem' }}
 							variant="contained"
 							onClick={() => navigate(fullLocation('/multiplayer'))}
+							disabled={isWaitingForGameToStart()}
 							size="large"
 						>
-							Enter game
+							{isWaitingForGameToStart()
+								? 'Waiting for the black player to start game'
+								: 'Enter game'}
 						</Button>
 					</Show>
 				</Box>

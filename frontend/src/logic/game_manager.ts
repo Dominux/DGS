@@ -105,7 +105,8 @@ export default class GameManager {
 	}
 
 	setIsUndoMoveDisabled() {
-		this._GUI.isUndoButtonHidden = this.field?.game?.moveNumber <= 1
+		this._GUI.isUndoButtonHidden =
+			this.isMultiplayer || this.field?.game?.moveNumber <= 1
 	}
 
 	setBlackScore(value: number) {

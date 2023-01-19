@@ -64,8 +64,10 @@ const GamePage: Component = () => {
 		if (isMultiplayer() && store.user.id === store.room.player2_id) return
 
 		// Show GUI
-		let gm = gameManager()
-		gm?.showGUI()
+		if (!store.room.game_id) {
+			let gm = gameManager()
+			gm?.showGUI()
+		}
 	}
 
 	async function joinStartedGame() {
