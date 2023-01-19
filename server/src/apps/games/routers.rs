@@ -79,37 +79,6 @@ impl GamesRouter {
         // By splitting, we can send and receive at the same time.
         let (mut sender, mut receiver) = stream.split();
 
-        // User set in the receive loop, if it's valid.
-        let mut user = None;
-        // Loop until a text message is found.
-        while let Some(Ok(message)) = receiver.next().await {
-            if let Message::Text(token) = message {
-                // Authorization
-                let auth_result = UserService::new(&state.app_state.db)
-                    .authenticate(token)
-                    .await;
-
-                // If not empty we want to quit the loop else we want to quit function.
-                match auth_result {
-                    Ok(auth_user) => {
-                        user = Some(auth_user);
-                        break;
-                    }
-                    Err(e) => {
-                        // Only send our client error
-                        let _ = sender
-                            .send(Message::Text(serde_json::to_string(&e).unwrap()))
-                            .await;
-
-                        return;
-                    }
-                }
-            }
-        }
-
-        // Now we know user is some
-        let user = user.unwrap();
-
         // Checking if game is already loaded
         let room = {
             let mut rooms = state.rooms.lock().await;
@@ -141,6 +110,37 @@ impl GamesRouter {
                 }
             }
         };
+
+        // User set in the receive loop, if it's valid.
+        let mut user = None;
+        // Loop until a text message is found.
+        while let Some(Ok(message)) = receiver.next().await {
+            if let Message::Text(token) = message {
+                // Authorization
+                let auth_result = UserService::new(&state.app_state.db)
+                    .authenticate(token)
+                    .await;
+
+                // If not empty we want to quit the loop else we want to quit function.
+                match auth_result {
+                    Ok(auth_user) => {
+                        user = Some(auth_user);
+                        break;
+                    }
+                    Err(e) => {
+                        // Only send our client error
+                        let _ = sender
+                            .send(Message::Text(serde_json::to_string(&e).unwrap()))
+                            .await;
+
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Now we know user is some
+        let user = user.unwrap();
 
         // Subsribing
         let mut rx = room.tx.subscribe();

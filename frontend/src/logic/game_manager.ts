@@ -2,7 +2,7 @@ import createLocalStore from '../../libs'
 import GameGUI from '../gui'
 import FieldType, { getFieldFromType } from './fields/enum'
 import { Field } from './fields/interface'
-import Game from './game'
+import Game from './games/game'
 import Scene from './scene'
 
 export default class GameManager {
@@ -68,7 +68,12 @@ export default class GameManager {
 		this.isStarted = true
 
 		// Starting game
-		const game = new this.gameKlass(this.fieldType, this.gridSize)
+		const game = new this.gameKlass(
+			this.fieldType,
+			this.gridSize,
+			(blackStones, whiteStones) =>
+				this.onRecreateGame(blackStones, whiteStones)
+		)
 
 		await this.field?.start(
 			game,
@@ -79,17 +84,23 @@ export default class GameManager {
 
 		this.isMultiplayer = game.wsClient
 
-		// if it's multiplayer and it's a player 2
-		if (this.isMultiplayer && store.room.player2_id === store.user.id) {
+		this._GUI.onStart()
+
+		// if it's multiplayer and it's not player's turn
+		if (
+			this.isMultiplayer &&
+			((store.room.player2_id === store.user.id &&
+				store.game?.history?.records.length % 2 === 0) ||
+				(store.room.player1_id === store.user.id &&
+					store.game?.history?.records.length % 2 === 1))
+		) {
 			this.field.canMove = false
 
-			const move_result = await game.waitForOpponentMove()
-			this.field?.makeMoveProgramatically(move_result)
+			const moveResult = await game.waitForOpponentMove()
+			this.field?.makeMoveProgramatically(moveResult)
 
 			this.field.canMove = true
 		}
-
-		this._GUI.onStart()
 
 		// Setting initial score
 		this.setBlackScore(game.blackScore)
@@ -102,6 +113,22 @@ export default class GameManager {
 		this.setBlackScore(this.field?.blackScore)
 		this.setWhiteScore(this.field?.whiteScore)
 		this.setIsUndoMoveDisabled()
+	}
+
+	onRecreateGame(blackStones: Array<number>, whiteStones: Array<number>) {
+		// Putting stones
+		for (const [stones, color] of [
+			[blackStones, 'Black'],
+			[whiteStones, 'White'],
+		]) {
+			for (const stone of stones) {
+				const moveResult = {
+					point_id: stone,
+					died_stones_ids: [],
+				}
+				this.field?.putStoneProgramatically(moveResult, color)
+			}
+		}
 	}
 
 	setIsUndoMoveDisabled() {

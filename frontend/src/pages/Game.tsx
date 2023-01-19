@@ -5,8 +5,8 @@ import styles from '../App.module.css'
 import { SPHERE_RADIUS } from '../constants'
 import GameManager from '../logic/game_manager'
 import ModeChooser from '../components/ModeChooser'
-import MultiplayerGame from '../logic/multiplayer_game'
-import SingleplayerGame from '../logic/singleplayer_game'
+import MultiplayerGame from '../logic/games/multiplayer_game'
+import SingleplayerGame from '../logic/games/singleplayer_game'
 import createLocalStore from '../../libs'
 import api from '../api'
 import { fullLocation } from '../router'
@@ -72,9 +72,8 @@ const GamePage: Component = () => {
 
 	async function joinStartedGame() {
 		// Fetching
-		if (!store.room.game_id) {
-			return
-		}
+		if (!store.room.game_id) return
+
 		const game = await api.getGameWithHistory(store.room.game_id)
 
 		// Storing

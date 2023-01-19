@@ -3,7 +3,7 @@ import createLocalStore from '../../../libs'
 
 import { MoveResult } from '../../api/models'
 import { GRID_MATERIAL, SPHERE_RADIUS } from '../../constants'
-import Game from '../game'
+import Game from '../games/game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
 
@@ -275,27 +275,35 @@ export default class GridSphere implements Field {
 		if (this.game.wsClient) {
 			this.canMove = false
 
-			const move_result = await this.game.waitForOpponentMove()
-			this.makeMoveProgramatically(move_result)
+			const moveResult = await this.game.waitForOpponentMove()
+			this.makeMoveProgramatically(moveResult)
 
 			this.canMove = true
 		}
 	}
 
-	makeMoveProgramatically(move_result: MoveResult): void {
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
+	makeMoveProgramatically(moveResult: MoveResult): void {
+		this.putStoneProgramatically(moveResult, this.playerTurn)
 
-		const stoneSchema = this.getCreateStoneSchema(move_result.point_id, color)
-
-		this.stoneManager.create(stoneSchema)
-		this.stoneManager.delete(move_result.died_stones_ids)
-
-		if (move_result.died_stones_ids?.length) this.onDeath()
+		if (moveResult.died_stones_ids?.length) this.onDeath()
 		this.setCircleColor()
 		this.onEndMove()
+	}
+
+	putStoneProgramatically(
+		moveResult: MoveResult,
+		color: 'Black' | 'White'
+	): void {
+		const babylonColor =
+			color === 'Black' ? BABYLON.Color3.Black() : BABYLON.Color3.White()
+
+		const stoneSchema = this.getCreateStoneSchema(
+			moveResult.point_id,
+			babylonColor
+		)
+
+		this.stoneManager.create(stoneSchema)
+		this.stoneManager.delete(moveResult.died_stones_ids)
 	}
 
 	private setCircleColor() {

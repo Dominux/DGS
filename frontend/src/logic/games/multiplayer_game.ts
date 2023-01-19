@@ -1,10 +1,10 @@
-import createLocalStore from '../../libs'
-import api from '../api/index'
-import WSClient from '../api/ws_client'
-import FieldType from './fields/enum'
+import createLocalStore from '../../../libs'
+import api from '../../api/index'
+import WSClient from '../../api/ws_client'
+import FieldType from '../fields/enum'
 import Game from './game'
-import { MoveResult, MoveSchema } from '../api/models'
-import { WS_API } from '../constants'
+import { MoveResult, MoveSchema, GameWithHistory } from '../../api/models'
+import { WS_API } from '../../constants'
 
 export default class MultiplayerGame implements Game {
 	private wsClient: WSClient | null = null
@@ -14,7 +14,11 @@ export default class MultiplayerGame implements Game {
 	private _blackScore = 0
 	private _whiteScore = 0
 
-	constructor(public fieldType: FieldType, public size: number) {}
+	constructor(
+		public fieldType: FieldType,
+		public size: number,
+		readonly onRecreateGame: Function
+	) {}
 
 	async start() {
 		const [store, setStore] = createLocalStore()
@@ -36,6 +40,13 @@ export default class MultiplayerGame implements Game {
 
 			setStore('room', room)
 		}
+
+		// Fetching game
+		const game = await api.getGameWithHistory(store.room.game_id)
+		setStore('game', game)
+
+		// Recreating game
+		this.recreateGame(game)
 
 		// Opening ws
 		this.wsClient = new WSClient(
@@ -95,6 +106,50 @@ export default class MultiplayerGame implements Game {
 			)
 			this._whiteScore += move_result.died_stones_ids.length
 		}
+	}
+
+	recreateGame(game: GameWithHistory) {
+		if (!game.history.records.length) return
+
+		let blackStones: Array<number> = []
+		let whiteStones: Array<number> = []
+
+		// Recreating moves
+		let isBlackTurn = true
+		for (const record of game.history.records) {
+			if (isBlackTurn) {
+				blackStones.push(record.point_id)
+
+				if (record.died_points_ids) {
+					whiteStones = whiteStones.filter(
+						(pid) => !record.died_points_ids.includes(pid)
+					)
+
+					this._blackScore += record.died_points_ids.length
+				}
+			} else {
+				whiteStones.push(record.point_id)
+
+				if (record.died_points_ids) {
+					blackStones = blackStones.filter(
+						(pid) => !record.died_points_ids.includes(pid)
+					)
+
+					this._whiteScore += record.died_points_ids.length
+				}
+			}
+
+			// Changing turn
+			isBlackTurn = !isBlackTurn
+		}
+
+		// Setting right moveNumber
+		this._moveNumber += game.history.records.length
+
+		console.log(this._blackScore)
+
+		// put stones and scores
+		this.onRecreateGame(blackStones, whiteStones)
 	}
 
 	undoMove(): void {

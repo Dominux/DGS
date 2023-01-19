@@ -1,13 +1,13 @@
 import Game from './game'
-import init, { Game as GameLib } from '../pkg/wasm_gamelib'
-import FieldType from './fields/enum'
+import init, { Game as GameLib } from '../../pkg/wasm_gamelib'
+import FieldType from '../fields/enum'
 
 await init()
 
 export default class SingleplayerGame implements Game {
 	protected inner: GameLib
 
-	constructor(fieldType: FieldType, size: number) {
+	constructor(fieldType: FieldType, size: number, _onRecreateGame: Function) {
 		this.inner = new GameLib(fieldType, size, true)
 	}
 

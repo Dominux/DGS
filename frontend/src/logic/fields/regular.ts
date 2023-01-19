@@ -6,7 +6,7 @@ import {
 	REGULAR_FIELD_PADDING_TO_CELL_FRACTION,
 	SPHERE_RADIUS,
 } from '../../constants'
-import Game from '../game'
+import Game from '../games/game'
 import StoneManager, { CreateStoneScheme } from '../stone_manager'
 import { Field, returnStonesBack } from './interface'
 
@@ -245,19 +245,27 @@ export default class RegularField implements Field {
 		}
 	}
 
-	makeMoveProgramatically(move_result: MoveResult): void {
-		const color =
-			this.game?.playerTurn === 'Black'
-				? BABYLON.Color3.Black()
-				: BABYLON.Color3.White()
+	makeMoveProgramatically(moveResult: MoveResult): void {
+		this.putStoneProgramatically(moveResult, this.playerTurn)
 
-		const stoneSchema = this.getCreateStoneSchema(move_result.point_id, color)
+		if (moveResult.died_stones_ids?.length) this.onDeath()
+		this.onEndMove()
+	}
+
+	putStoneProgramatically(
+		moveResult: MoveResult,
+		color: 'Black' | 'White'
+	): void {
+		const babylonColor =
+			color === 'Black' ? BABYLON.Color3.Black() : BABYLON.Color3.White()
+
+		const stoneSchema = this.getCreateStoneSchema(
+			moveResult.point_id,
+			babylonColor
+		)
 
 		this.stoneManager.create(stoneSchema)
-		this.stoneManager.delete(move_result.died_stones_ids)
-
-		if (move_result.died_stones_ids?.length) this.onDeath()
-		this.onEndMove()
+		this.stoneManager.delete(moveResult.died_stones_ids)
 	}
 
 	protected getPointID(coords: BABYLON.Vector3): number | void {
