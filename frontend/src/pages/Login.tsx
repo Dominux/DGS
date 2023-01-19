@@ -38,8 +38,9 @@ export default function Login() {
 		// Setting it to store
 		setStore('user', user)
 
-		// Redirecting to rooms page
-		navigate(fullLocation('/rooms'))
+		// Redirecting back
+		const redirect_url = store.redurect || fullLocation('/rooms')
+		navigate(redirect_url)
 	}
 
 	const validateUsername = (e: InputEvent) => {
