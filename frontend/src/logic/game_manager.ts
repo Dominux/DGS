@@ -86,6 +86,10 @@ export default class GameManager {
 
 		this._GUI.onStart()
 
+		// Setting initial score
+		this.setBlackScore(game.blackScore)
+		this.setWhiteScore(game.whiteScore)
+
 		// if it's multiplayer and it's not player's turn
 		if (
 			this.isMultiplayer &&
@@ -101,10 +105,6 @@ export default class GameManager {
 
 			this.field.canMove = true
 		}
-
-		// Setting initial score
-		this.setBlackScore(game.blackScore)
-		this.setWhiteScore(game.whiteScore)
 	}
 
 	undo() {

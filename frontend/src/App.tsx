@@ -1,7 +1,7 @@
 import { Component } from 'solid-js'
 import { useNavigate, useRoutes } from '@solidjs/router'
-import { Button, Card, CardActions, IconButton } from '@suid/material'
-import { House } from '@suid/icons-material'
+import { Card, CardActions, IconButton } from '@suid/material'
+import { Home } from '@suid/icons-material'
 
 import styles from './App.module.css'
 import routes, { fullLocation } from './router'
@@ -28,7 +28,7 @@ const App: Component = () => {
 						color="primary"
 						onClick={() => navigate(fullLocation('/'))}
 					>
-						<House fontSize="large" />
+						<Home fontSize="large" />
 					</IconButton>
 				</CardActions>
 			</Card>

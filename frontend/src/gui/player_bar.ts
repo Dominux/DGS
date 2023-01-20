@@ -26,7 +26,7 @@ export default class PlayerBarGUI {
 		stack.isHitTestVisible = false
 
 		const plane = BABYLON.MeshBuilder.CreatePlane('stack-plane', {
-			size: 1,
+			size: 0.5,
 		})
 		// plane.parent = this.camera
 		plane.position.z = -0.1
@@ -43,7 +43,13 @@ export default class PlayerBarGUI {
 	createScoreComponent(color: string): GUIComponent<TextComponent> {
 		const background = color
 		color = color === 'black' ? 'white' : 'black'
-		const scoreBlock = new TextComponent('80px', '360px', color, background, 46)
+		const scoreBlock = new TextComponent(
+			'200px',
+			'760px',
+			color,
+			background,
+			120
+		)
 		scoreBlock.container.isVisible = false
 
 		this.stack.component.addControl(scoreBlock.container)
@@ -54,9 +60,9 @@ export default class PlayerBarGUI {
 	createUndoButton(onUndo: Function): GUIComponent<GUI.Button> {
 		const button = GUI.Button.CreateSimpleButton('undo-button', 'Undo move')
 		button.background = 'white'
-		button.height = '60px'
-		button.width = '160px'
-		button.fontSize = 24
+		button.height = '160px'
+		button.width = '450px'
+		button.fontSize = 60
 		button.isVisible = false
 
 		button.onPointerClickObservable.add(() => {

@@ -146,8 +146,6 @@ export default class MultiplayerGame implements Game {
 		// Setting right moveNumber
 		this._moveNumber += game.history.records.length
 
-		console.log(this._blackScore)
-
 		// put stones and scores
 		this.onRecreateGame(blackStones, whiteStones)
 	}

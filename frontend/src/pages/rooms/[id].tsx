@@ -3,7 +3,7 @@ import Box from '@suid/material/Box'
 import Container from '@suid/material/Container'
 import { createTheme, ThemeProvider } from '@suid/material/styles'
 import { Component, createSignal, onMount, Show } from 'solid-js'
-import { useNavigate, useParams } from '@solidjs/router'
+import { useLocation, useNavigate, useParams } from '@solidjs/router'
 import { Button, Card, CardContent, Stack, Typography } from '@suid/material'
 import { grey } from '@suid/material/colors'
 
@@ -19,6 +19,7 @@ export default function RoomPage() {
 	const [store, setStore] = createLocalStore()
 	const params = useParams()
 	const navigate = useNavigate()
+	const location = useLocation()
 	const [anotherPlayer, setAnotherPlayer] = createSignal<FetchedUser | null>(
 		null
 	)
@@ -54,6 +55,9 @@ export default function RoomPage() {
 	const isUserPlayer1 = () => store.room?.player1_id === store.user?.id
 	const isWaitingForGameToStart = () => !isUserPlayer1() && !store.room?.game_id
 
+	const copyLinkToClipboard = async () =>
+		navigator.clipboard.writeText(window.location.href)
+
 	async function enterRoom() {
 		const room = await api.enterRoom(store.room.id)
 		setStore('room', room)
@@ -81,6 +85,14 @@ export default function RoomPage() {
 									: anotherPlayer()?.username
 							}
 						></PlayerCard>
+						<Show when={isUserPlayer1() && store.room?.player2_id === null}>
+							<Button
+								color="secondary"
+								onClick={async () => await copyLinkToClipboard()}
+							>
+								<Typography>Copy This Link</Typography>
+							</Button>
+						</Show>
 
 						<Show when={!isUserPlayer1() && store.room?.player2_id === null}>
 							<Button variant="contained" onClick={() => enterRoom()}>
