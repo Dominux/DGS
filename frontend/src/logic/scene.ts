@@ -60,7 +60,7 @@ export default class Scene {
 
 			this._scene.environmentTexture = envTexture
 
-			const hdrSkybox = BABYLON.Mesh.CreateBox('hdrSkyBox', 4000.0, this._scene)
+			const hdrSkybox = BABYLON.Mesh.CreateBox('hdrSkyBox', 1000.0, this._scene)
 			const hdrSkyboxMaterial = new BABYLON.PBRMaterial('skyBox', this._scene)
 			hdrSkyboxMaterial.backFaceCulling = false
 			hdrSkyboxMaterial.reflectionTexture = envTexture.clone()

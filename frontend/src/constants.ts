@@ -1,5 +1,5 @@
 export const ENV_TEXTURE =
-	'https://raw.githubusercontent.com/Dominux/spherical-go/main/frontend/src/assets/environments/rainforest_trail/4k.env'
+	'https://raw.githubusercontent.com/Dominux/spherical-go/main/frontend/src/assets/environments/rainforest_trail/16k.env'
 export const GRID_MATERIAL =
 	'https://raw.githubusercontent.com/Dominux/spherical-go/main/frontend/src/assets/gridMaterial.json'
 
