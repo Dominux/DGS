@@ -1,6 +1,10 @@
 import * as BABYLON from 'babylonjs'
-
-import { ENV_TEXTURE } from '../constants'
+import {
+	defaultEnvTextures,
+	defaultResolution,
+	defaultTextureName,
+	EnvTexture,
+} from '../constants'
 
 export default class Scene {
 	readonly _scene: BABYLON.Scene
@@ -18,11 +22,10 @@ export default class Scene {
 			height: 30,
 			width: 30,
 		})
-		// this._ground.material = new BABYLON.PBRMetallicRoughnessMaterial('ground')
 		this._ground.setEnabled(false)
 
 		// Loading environment
-		this.loadEnv()
+		this.setEnv(defaultEnvTextures[defaultTextureName][defaultResolution])
 
 		this._camera = new BABYLON.ArcRotateCamera(
 			'camera',
@@ -49,29 +52,15 @@ export default class Scene {
 		})
 	}
 
-	protected loadEnv() {
+	public setEnv(envTexture: EnvTexture) {
 		setTimeout(() => {
-			const envTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-				ENV_TEXTURE,
-				this._scene
+			const hdrTexture = new BABYLON.HDRCubeTexture(
+				envTexture.url,
+				this._scene,
+				envTexture.res
 			)
-			envTexture.name = 'envTexture'
-			envTexture.gammaSpace = false
 
-			this._scene.environmentTexture = envTexture
-
-			const hdrSkybox = BABYLON.Mesh.CreateBox('hdrSkyBox', 1000.0, this._scene)
-			const hdrSkyboxMaterial = new BABYLON.PBRMaterial('skyBox', this._scene)
-			hdrSkyboxMaterial.backFaceCulling = false
-			hdrSkyboxMaterial.reflectionTexture = envTexture.clone()
-			hdrSkyboxMaterial.reflectionTexture.coordinatesMode =
-				BABYLON.Texture.SKYBOX_MODE
-			hdrSkyboxMaterial.microSurface = 1.0
-			hdrSkyboxMaterial.cameraExposure = 0.8
-			hdrSkyboxMaterial.cameraContrast = 1.5
-			hdrSkyboxMaterial.disableLighting = true
-			hdrSkybox.material = hdrSkyboxMaterial
-			hdrSkybox.infiniteDistance = true
+			this._scene.createDefaultSkybox(hdrTexture)
 		}, 0)
 	}
 

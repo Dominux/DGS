@@ -10,6 +10,7 @@ import SingleplayerGame from '../logic/games/singleplayer_game'
 import createLocalStore from '../../libs'
 import api from '../api'
 import { fullLocation } from '../router'
+import { Settings } from './Settings'
 
 const GamePage: Component = () => {
 	const [gameManager, setGameManager] = createSignal<GameManager | undefined>()
@@ -95,6 +96,8 @@ const GamePage: Component = () => {
 		<>
 			{/* Game Canvas */}
 			<canvas ref={canvas} class={styles.canvas}></canvas>
+
+			<Settings gm={gameManager()} />
 
 			<Show when={isRoot()}>
 				<ModeChooser modes={modes} />

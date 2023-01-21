@@ -1,4 +1,5 @@
 import createLocalStore from '../../libs'
+import { EnvTexture } from '../constants'
 import GameGUI from '../gui'
 import FieldType, { getFieldFromType } from './fields/enum'
 import { Field } from './fields/interface'
@@ -134,6 +135,10 @@ export default class GameManager {
 	setIsUndoMoveDisabled() {
 		this._GUI.isUndoButtonHidden =
 			this.isMultiplayer || this.field?.game?.moveNumber <= 1
+	}
+
+	setEnvTexture(envTexture: EnvTexture) {
+		this._scene.setEnv(envTexture)
 	}
 
 	setBlackScore(value: number) {

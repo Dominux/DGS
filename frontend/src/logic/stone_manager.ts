@@ -21,7 +21,7 @@ export default class StoneManager {
 
 	constructor(readonly scene: BABYLON.Scene, gridSize: number, k: number) {
 		this.height = (0.2 * this.stoneSize * k) / gridSize
-		this.multiplier = 1 + this.height / 2 - this.height * 0.025
+		this.multiplier = 1 + this.height * 0.95
 	}
 
 	create(stoneSchema: CreateStoneScheme) {
@@ -44,6 +44,8 @@ export default class StoneManager {
 		// Creating stone's material
 		const material = new BABYLON.PBRMetallicRoughnessMaterial('stone')
 		material._albedoColor = stoneSchema.color
+		material.roughness = 0.9
+		material.metallic = 0.15
 		stone.material = material
 
 		// Setting stone's rotation
