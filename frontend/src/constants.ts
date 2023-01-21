@@ -100,23 +100,23 @@ export const defaultEnvTextures = {
 			url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/8k/misty_pines_8k.hdr',
 			res: 4096,
 		},
-		'Phalzer forest': {
-			'1K': {
-				url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/phalzer_forest_01_1k.hdr',
-				res: 512,
-			},
-			'2K': {
-				url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/phalzer_forest_01_2k.hdr',
-				res: 1024,
-			},
-			'4K': {
-				url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/phalzer_forest_01_4k.hdr',
-				res: 2048,
-			},
-			'8K': {
-				url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/8k/phalzer_forest_01_8k.hdr',
-				res: 4096,
-			},
+	},
+	'Phalzer forest': {
+		'1K': {
+			url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/phalzer_forest_01_1k.hdr',
+			res: 512,
+		},
+		'2K': {
+			url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/phalzer_forest_01_2k.hdr',
+			res: 1024,
+		},
+		'4K': {
+			url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/phalzer_forest_01_4k.hdr',
+			res: 2048,
+		},
+		'8K': {
+			url: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/8k/phalzer_forest_01_8k.hdr',
+			res: 4096,
 		},
 	},
 }
