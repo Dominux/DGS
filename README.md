@@ -24,9 +24,7 @@ Without any other words, just try it [right here, right now](https://dgs.dominux
 
 </br>
 
-<!-- TODO -->
-
-![image](https://user-images.githubusercontent.com/55978340/193566975-8db1cf24-7a49-4e1f-ab57-27a404793b06.png)
+![image](https://user-images.githubusercontent.com/55978340/213906893-44c07cc1-dece-47a0-9874-30acd7be0d93.png)
 
 ---
 
