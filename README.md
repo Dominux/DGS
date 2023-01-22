@@ -13,7 +13,18 @@
   </a>
 </p>
 
+# :pinching_hand: TL/DR
+
+_The brand new features this server offers are rather [UX](https://en.wikipedia.org/wiki/User_experience) ones and they neither break original rules nor add new ones in a game process. They contain at this moment_:
+
+- Various spherical game fields
+- [VR](https://en.wikipedia.org/wiki/Virtual_reality) game mode
+
+Without any other words, just try it [right here, right now](https://dgs.dominux.site/)
+
 </br>
+
+<!-- TODO -->
 
 ![image](https://user-images.githubusercontent.com/55978340/193566975-8db1cf24-7a49-4e1f-ab57-27a404793b06.png)
 
@@ -30,17 +41,6 @@
 - [Future plans](#chart_with_upwards_trend-future-plans)
 
 ---
-
-# :pinching_hand: TL/DR
-
-The brand new features this server offers are rather [UX](https://en.wikipedia.org/wiki/User_experience) ones and they neither break original rules nor add new ones in a game process. They contain at this moment:
-
-- Various spherical game fields
-- [VR](https://en.wikipedia.org/wiki/Virtual_reality) game mode
-
-Without any other words, just try it [right here, right now](https://dgs.dominux.site/)
-
-</br>
 
 # :bulb: Idea and prerequesities
 
@@ -164,6 +164,6 @@ Since Go has many [rulesets](https://en.wikipedia.org/wiki/Rules_of_Go#Rulesets)
 
 > When you are willing to create some new project full of killing features, you in 99% of cases have no idea what to do especially after implementing what you planned first. You just don't know what to go ahead with. But in this case it's not a simple project so there're clearly obvious plans that gotta be done next
 
-- [Create a multiplayer](https://github.com/Dominux/DGS/issues/39) - finally creating a server, not just a webpage like now. It's definetely seems like a hardest feature to implement, but as I said before Imma a backand dev by a profession and not a gamedev, so I assume it to be not so hard for me since I already know the majority of steps to do to achieve this goal. This feature was requested by [people from reddit who tested it](https://www.reddit.com/r/rust_gamedev/comments/wmvx92/comment/ik1q10y/?utm_source=share&utm_medium=web2x&context=3) as a thing this game needs first.
-- [Add settings to set background and it's resolution](https://github.com/Dominux/DGS/issues/35) - in comparing with a previous plan this one looks like a kindergarden task
-- Add adequate scene and improve UI - this one is already harder than previous, but still not as hard as the first one
+✅ ~~[Create a multiplayer](https://github.com/Dominux/DGS/issues/39) - finally creating a server, not just a webpage like now. It's definetely seems like a hardest feature to implement, but as I said before Imma a backand dev by a profession and not a gamedev, so I assume it to be not so hard for me since I already know the majority of steps to do to achieve this goal. This feature was requested by [people from reddit who tested it](https://www.reddit.com/r/rust_gamedev/comments/wmvx92/comment/ik1q10y/?utm_source=share&utm_medium=web2x&context=3) as a thing this game needs first.~~
+✅ ~~[Add settings to set background and it's resolution](https://github.com/Dominux/DGS/issues/35) - in comparing with a previous plan this one looks like a kindergarden task~~
+☐ Add adequate scene and improve UI - this one is already harder than previous, but still not as hard as the first one
