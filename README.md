@@ -24,7 +24,10 @@ Without any other words, just try it [right here, right now](https://dgs.dominux
 
 </br>
 
-![image](https://user-images.githubusercontent.com/55978340/213906893-44c07cc1-dece-47a0-9874-30acd7be0d93.png)
+<p align="center">
+  <img width="500px" src="https://user-images.githubusercontent.com/55978340/213907265-1cab057a-2f3d-4a7d-8711-0ccd5242db20.png"/>
+  <img width="500px" src="https://user-images.githubusercontent.com/55978340/213906893-44c07cc1-dece-47a0-9874-30acd7be0d93.png"/>
+</p>
 
 ---
 
