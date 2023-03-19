@@ -1,4 +1,7 @@
-import { MOVE_RESULT_CHECK_INTERVAL_MS } from '../constants'
+import {
+	MOVE_RESULT_CHECK_INTERVAL_MS,
+	RECONNECT_TIMEOUT_MS,
+} from '../constants'
 import { User } from './models'
 
 export default class WSClient {
@@ -30,7 +33,7 @@ export default class WSClient {
 			console.log('trying to reconnect')
 			this.socket = new WSClient(addr, user).socket
 			clearInterval(job)
-		})
+		}, RECONNECT_TIMEOUT_MS)
 	}
 
 	public sendMsg(msg: string) {
