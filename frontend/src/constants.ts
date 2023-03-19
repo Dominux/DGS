@@ -2,6 +2,8 @@ export const MIN_GRIDSIZE = 5
 export const MAX_GRIDSIZE = 255
 export const INPUTFIELD_LENGTH_IN_SYMBOLS = 12
 
+export const RECONNECT_TIMEOUT_MS = 1000
+
 export const ERROR_MSG_TIMEOUT = 3
 
 export const SPHERE_RADIUS = 0.5

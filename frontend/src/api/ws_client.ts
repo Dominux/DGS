@@ -17,11 +17,20 @@ export default class WSClient {
 		}
 		this.socket.onclose = (e) => {
 			console.log(e)
+			this.reconnect(addr, user)
 		}
 
 		this.socket.onmessage = (e) => {
 			this.messages.push(e.data)
 		}
+	}
+
+	private reconnect(addr: string, user: User) {
+		const job = setInterval(() => {
+			console.log('trying to reconnect')
+			this.socket = new WSClient(addr, user).socket
+			clearInterval(job)
+		})
 	}
 
 	public sendMsg(msg: string) {
