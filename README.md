@@ -2,6 +2,7 @@
 
 ##### [The game of Go](<https://en.wikipedia.org/wiki/Go_(game)>) implementation with some brand new features.
 
+
 </br>
 
 <p align="center">
@@ -12,6 +13,12 @@
     <img src="https://img.shields.io/github/stars/Dominux/spherical-go?style=for-the-badge&logo=apachespark&color=eebebe&logoColor=D9E0EE&labelColor=302D41"/>
   </a>
 </p>
+
+## ⚠️ NOTICE
+
+I've shut down my server with a multiplayer version because it's just a side pet-project of mine like a [POC](https://en.wikipedia.org/wiki/Proof_of_concept) and I don't have mental resources to maintain the server by being some kinda administrator. At this point, to still have access for people willing to try it as it is (a singleplayer version) I rolled back the previous Github Pages.
+
+It's [available here](https://dominux.github.io/DGS/). All the next links, referencing to the multiplayer version, won't be working so keep in mind that you still can try to play with it in a singleplayer version by going to [this Github Pages link](https://dominux.github.io/DGS/).
 
 # :pinching_hand: TL/DR
 
